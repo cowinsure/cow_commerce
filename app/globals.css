@@ -1,26 +1,262 @@
 @import "tailwindcss";
 
+@layer utilities {
+  @keyframes slide-in-right {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-slide-in-right {
+    animation: slide-in-right 0.3s ease-out forwards;
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
+  }
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primary Colors - Green Theme */
+  --primary: #154212;
+  --primary-container: #2d5a27;
+  --primary-fixed: #bcf0ae;
+  --primary-fixed-dim: #a1d494;
+  --on-primary: #ffffff;
+  --on-primary-container: #9dd090;
+  --surface-tint: #3b6934;
+  
+  /* Secondary Colors */
+  --secondary: #4c616c;
+  --secondary-container: #cfe6f2;
+  --secondary-fixed: #cfe6f2;
+  --secondary-fixed-dim: #b4cad6;
+  --on-secondary: #ffffff;
+  --on-secondary-container: #526772;
+  --on-secondary-fixed: #071e27;
+  --on-secondary-fixed-variant: #354a53;
+  
+  /* Tertiary Colors */
+  --tertiary: #5a2e00;
+  --tertiary-container: #7c4100;
+  --tertiary-fixed: #ffdcc3;
+  --tertiary-fixed-dim: #ffb77d;
+  --on-tertiary: #ffffff;
+  --on-tertiary-container: #ffb273;
+  --on-tertiary-fixed: #2f1500;
+  --on-tertiary-fixed-variant: #6e3900;
+  
+  /* Surface Colors */
+  --background: #f6fafe;
+  --surface: #f6fafe;
+  --surface-bright: #f6fafe;
+  --surface-dim: #d6dade;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f0f4f8;
+  --surface-container: #eaeef2;
+  --surface-container-high: #e4e9ed;
+  --surface-container-highest: #dfe3e7;
+  --surface-variant: #dfe3e7;
+  --on-surface: #171c1f;
+  --on-surface-variant: #42493e;
+  
+  /* Error Colors */
+  --error: #ba1a1a;
+  --error-container: #ffdad6;
+  --on-error: #ffffff;
+  --on-error-container: #93000a;
+  
+  /* Outline Colors */
+  --outline: #72796e;
+  --outline-variant: #c2c9bb;
+  
+  /* Inverse Colors */
+  --inverse-surface: #2c3134;
+  --inverse-on-surface: #edf1f5;
+  --inverse-primary: #a1d494;
+  
+  /* Fixed Colors */
+  --on-primary-fixed: #002201;
+  --on-primary-fixed-variant: #23501e;
+  --on-background: #171c1f;
+  
+  /* Default values */
+  --foreground: var(--on-surface);
+  --primary-foreground: var(--on-primary);
+  --surface-foreground: var(--on-surface);
+  --muted: var(--surface-container-high);
+  --muted-foreground: var(--on-surface-variant);
+  --border: var(--outline-variant);
+  --card: var(--surface);
+  --card-foreground: var(--on-surface);
+  --success: #16a34a;
 }
 
 @theme inline {
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+  --color-primary-fixed: var(--primary-fixed);
+  --color-primary-fixed-dim: var(--primary-fixed-dim);
+  --color-on-primary: var(--on-primary);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-surface-tint: var(--surface-tint);
+  
+  --color-secondary: var(--secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-secondary-fixed: var(--secondary-fixed);
+  --color-secondary-fixed-dim: var(--secondary-fixed-dim);
+  --color-on-secondary: var(--on-secondary);
+  --color-on-secondary-container: var(--on-secondary-container);
+  --color-on-secondary-fixed: var(--on-secondary-fixed);
+  --color-on-secondary-fixed-variant: var(--on-secondary-fixed-variant);
+  
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-tertiary-fixed: var(--tertiary-fixed);
+  --color-tertiary-fixed-dim: var(--tertiary-fixed-dim);
+  --color-on-tertiary: var(--on-tertiary);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+  --color-on-tertiary-fixed: var(--on-tertiary-fixed);
+  --color-on-tertiary-fixed-variant: var(--on-tertiary-fixed-variant);
+  
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-bright: var(--surface-bright);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-variant: var(--surface-variant);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  
+  --color-error: var(--error);
+  --color-error-container: var(--error-container);
+  --color-on-error: var(--on-error);
+  --color-on-error-container: var(--on-error-container);
+  
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  
+  --color-inverse-surface: var(--inverse-surface);
+  --color-inverse-on-surface: var(--inverse-on-surface);
+  --color-inverse-primary: var(--inverse-primary);
+  
+  --color-on-primary-fixed: var(--on-primary-fixed);
+  --color-on-primary-fixed-variant: var(--on-primary-fixed-variant);
+  --color-on-background: var(--on-background);
+  
+  /* Legacy colors for compatibility */
   --color-foreground: var(--foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-error: var(--error);
+  --color-success: #16a34a;
+  
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-headline: 'Manrope', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0a0f0d;
+    --surface: #0a0f0d;
+    --surface-bright: #1a1f1c;
+    --surface-dim: #0d1210;
+    --surface-container-lowest: #0a0f0d;
+    --surface-container-low: #121a15;
+    --surface-container: #1a231c;
+    --surface-container-high: #242e26;
+    --surface-container-highest: #2e3930;
+    --surface-variant: #404940;
+    --on-surface: #e1e3de;
+    --on-surface-variant: #b9bfb4;
+    
+    --primary: #bcf0ae;
+    --primary-container: #3b6934;
+    --primary-fixed: #bcf0ae;
+    --primary-fixed-dim: #8fbf7a;
+    --on-primary: #0e3312;
+    --on-primary-container: #9dd090;
+    --surface-tint: #bcf0ae;
+    
+    --secondary: #b4cad6;
+    --secondary-container: #354a53;
+    --secondary-fixed: #b4cad6;
+    --secondary-fixed-dim: #94aeb9;
+    --on-secondary: #1c323b;
+    --on-secondary-container: #cfe6f2;
+    --on-secondary-fixed: #071e27;
+    --on-secondary-fixed-variant: #b4cad6;
+    
+    --tertiary: #ffb77d;
+    --tertiary-container: #5e3800;
+    --tertiary-fixed: #ffb77d;
+    --tertiary-fixed-dim: #e09d55;
+    --on-tertiary: #4d1f00;
+    --on-tertiary-container: #ffdcc3;
+    --on-tertiary-fixed: #2f1500;
+    --on-tertiary-fixed-variant: #ffb77d;
+    
+    --error: #ffb4ab;
+    --error-container: #93000a;
+    --on-error: #690005;
+    --on-error-container: #ffdad6;
+    
+    --outline: #8d9388;
+    --outline-variant: #404940;
+    
+    --inverse-surface: #e1e3de;
+    --inverse-on-surface: #2c3134;
+    --inverse-primary: #154212;
+    
+    --on-primary-fixed: #002201;
+    --on-primary-fixed-variant: #9dd090;
+    --on-background: #e1e3de;
+    
+    --foreground: var(--on-surface);
+    --primary-foreground: var(--on-primary);
+    --surface-foreground: var(--on-surface);
+    --muted: var(--surface-container-high);
+    --muted-foreground: var(--on-surface-variant);
+    --border: var(--outline-variant);
+    --card: var(--surface);
+    --card-foreground: var(--on-surface);
+    --success: #4ade80;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headline), system-ui, sans-serif;
 }
