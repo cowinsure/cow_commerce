@@ -134,7 +134,7 @@ export const colors = {
       accent: '#f4f4f5',
       accentForeground: '#18181b',
       border: '#e4e4e7',
-      input: '#e4e4e7',
+
       ring: '#0ea5e9',
     },
     dark: {
@@ -149,7 +149,7 @@ export const colors = {
       accent: '#27272a',
       accentForeground: '#fafafa',
       border: '#27272a',
-      input: '#27272a',
+
       ring: '#0ea5e9',
     },
   },
@@ -362,20 +362,6 @@ export const components = {
     },
   },
   
-  // Input styles
-  input: {
-    base: {
-      backgroundColor: colors.surface.light.background,
-      borderColor: colors.surface.light.border,
-      color: colors.surface.light.foreground,
-      placeholderColor: colors.surface.light.mutedForeground,
-    },
-    focus: {
-      borderColor: colors.primary[500],
-      ringColor: colors.primary[500],
-    },
-  },
-  
   // Card styles
   card: {
     light: {
@@ -528,7 +514,6 @@ export function generateCssVariables(mode: 'light' | 'dark' = 'light'): string {
     `--color-accent: ${surface.accent}`,
     `--color-accent-foreground: ${surface.accentForeground}`,
     `--color-border: ${surface.border}`,
-    `--color-input: ${surface.input}`,
     `--color-ring: ${surface.ring}`,
     
     // Border radius

@@ -91,7 +91,7 @@ export function OrderSummary({ item, logisticsFee = 345, className }: OrderSumma
       </button>
       
       <p className="mt-6 text-center text-xs text-on-surface-variant leading-relaxed">
-        By clicking "Confirm Booking", you agree to the Livestock Purchase Agreement and the Veterinary Inspection Protocols.
+        By clicking Confirm Booking, you agree to the Livestock Purchase Agreement and the Veterinary Inspection Protocols.
       </p>
     </div>
   );

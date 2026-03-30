@@ -1,39 +1,79 @@
-'use client';
+"use client";
 
-import { cn } from '@/lib/theme/theme.config';
+import { cn } from "@/lib/theme/theme.config";
 
 interface AuthToggleProps {
-  mode: 'login' | 'signup';
-  onToggle: (mode: 'login' | 'signup') => void;
+  mode: "login" | "signup";
+  onToggle: (mode: "login" | "signup") => void;
   className?: string;
 }
 
 export function AuthToggle({ mode, onToggle, className }: AuthToggleProps) {
   return (
-    <div className={cn('inline-flex p-1 bg-surface-container-high rounded-full w-full', className)}>
+    <div
+      className={cn(
+        "relative inline-flex p-0.5 rounded-full w-full",
+        "border border-outline-variant/30",
+        "shadow-inner",
+        className,
+      )}
+    >
+      {/* Animated Sliding Pill Background */}
+      <div
+        className={cn(
+          "absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] rounded-full",
+          "bg-surface shadow-md shadow-primary/10",
+          "border border-outline-variant/20",
+          "transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
+          mode === "login" ? "left-1.5" : "left-[calc(50%+3px)]",
+        )}
+      />
+
+      {/* Login Button */}
       <button
         type="button"
-        onClick={() => onToggle('login')}
+        onClick={() => onToggle("login")}
         className={cn(
-          'flex-1 py-2.5 px-6 rounded-full text-sm font-semibold transition-all',
-          mode === 'login'
-            ? 'bg-surface-container-lowest text-primary shadow-sm'
-            : 'text-on-surface-variant hover:text-primary'
+          "relative z-10 flex-1 py-3 px-6 rounded-full text-sm font-semibold cursor-pointer",
+          "transition-all duration-300 ease-out",
+          mode === "login"
+            ? "text-primary scale-105"
+            : "text-gray-400 font-medium hover:text-on-surface",
         )}
       >
-        Sign In
+        <span className="relative flex items-center justify-center gap-2">
+          Sign In
+          {/* Subtle dot indicator for active state */}
+          <span
+            className={cn(
+              "w-1.5 h-1.5 rounded-full bg-green-500 transition-all duration-300",
+              mode === "login" ? "opacity-100 scale-100" : "opacity-0 scale-0",
+            )}
+          />
+        </span>
       </button>
+
+      {/* Signup Button */}
       <button
         type="button"
-        onClick={() => onToggle('signup')}
+        onClick={() => onToggle("signup")}
         className={cn(
-          'flex-1 py-2.5 px-6 rounded-full text-sm font-semibold transition-all',
-          mode === 'signup'
-            ? 'bg-surface-container-lowest text-primary shadow-sm'
-            : 'text-on-surface-variant hover:text-primary'
+          "relative z-10 flex-1 py-3 px-6 rounded-full text-sm font-semibold cursor-pointer",
+          "transition-all duration-300 ease-out",
+          mode === "signup"
+            ? "text-primary scale-105"
+            : "text-gray-400 font-medium hover:text-on-surface",
         )}
       >
-        Create Account
+        <span className="relative flex items-center justify-center gap-2">
+          Create Account
+          <span
+            className={cn(
+              "w-1.5 h-1.5 rounded-full bg-primary transition-all duration-300",
+              mode === "signup" ? "opacity-100 scale-100" : "opacity-0 scale-0",
+            )}
+          />
+        </span>
       </button>
     </div>
   );

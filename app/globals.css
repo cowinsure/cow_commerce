@@ -11,7 +11,7 @@
       opacity: 1;
     }
   }
-  
+
   @keyframes fade-in {
     from {
       opacity: 0;
@@ -22,11 +22,11 @@
       transform: translateY(0);
     }
   }
-  
+
   .animate-slide-in-right {
     animation: slide-in-right 0.3s ease-out forwards;
   }
-  
+
   .animate-fade-in {
     animation: fade-in 0.3s ease-out forwards;
   }
@@ -41,7 +41,7 @@
   --on-primary: #ffffff;
   --on-primary-container: #9dd090;
   --surface-tint: #3b6934;
-  
+
   /* Secondary Colors */
   --secondary: #4c616c;
   --secondary-container: #cfe6f2;
@@ -51,7 +51,7 @@
   --on-secondary-container: #526772;
   --on-secondary-fixed: #071e27;
   --on-secondary-fixed-variant: #354a53;
-  
+
   /* Tertiary Colors */
   --tertiary: #5a2e00;
   --tertiary-container: #7c4100;
@@ -61,42 +61,41 @@
   --on-tertiary-container: #ffb273;
   --on-tertiary-fixed: #2f1500;
   --on-tertiary-fixed-variant: #6e3900;
-  
-  /* Surface Colors */
-  --background: #f6fafe;
-  --surface: #f6fafe;
-  --surface-bright: #f6fafe;
-  --surface-dim: #d6dade;
-  --surface-container-lowest: #ffffff;
-  --surface-container-low: #f0f4f8;
-  --surface-container: #eaeef2;
-  --surface-container-high: #e4e9ed;
-  --surface-container-highest: #dfe3e7;
-  --surface-variant: #dfe3e7;
-  --on-surface: #171c1f;
-  --on-surface-variant: #42493e;
-  
+
   /* Error Colors */
   --error: #ba1a1a;
   --error-container: #ffdad6;
   --on-error: #ffffff;
   --on-error-container: #93000a;
-  
+
   /* Outline Colors */
   --outline: #72796e;
   --outline-variant: #c2c9bb;
-  
+
   /* Inverse Colors */
   --inverse-surface: #2c3134;
   --inverse-on-surface: #edf1f5;
   --inverse-primary: #a1d494;
-  
+
   /* Fixed Colors */
   --on-primary-fixed: #002201;
   --on-primary-fixed-variant: #23501e;
   --on-background: #171c1f;
-  
+
   /* Default values */
+  --background: #ffffff;
+  --surface: #ffffff;
+  --surface-bright: #ffffff;
+  --surface-dim: #f7f7f5;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f5f5f3;
+  --surface-container: #f0f0ed;
+  --surface-container-high: #e6e6e3;
+  --surface-container-highest: #d9d9d5;
+  --surface-variant: #e6e5de;
+  --surface-tint: #3b6934;
+  --on-surface: #171c1f;
+  --on-surface-variant: #44483e;
   --foreground: var(--on-surface);
   --primary-foreground: var(--on-primary);
   --surface-foreground: var(--on-surface);
@@ -116,7 +115,7 @@
   --color-on-primary: var(--on-primary);
   --color-on-primary-container: var(--on-primary-container);
   --color-surface-tint: var(--surface-tint);
-  
+
   --color-secondary: var(--secondary);
   --color-secondary-container: var(--secondary-container);
   --color-secondary-fixed: var(--secondary-fixed);
@@ -125,7 +124,7 @@
   --color-on-secondary-container: var(--on-secondary-container);
   --color-on-secondary-fixed: var(--on-secondary-fixed);
   --color-on-secondary-fixed-variant: var(--on-secondary-fixed-variant);
-  
+
   --color-tertiary: var(--tertiary);
   --color-tertiary-container: var(--tertiary-container);
   --color-tertiary-fixed: var(--tertiary-fixed);
@@ -134,7 +133,7 @@
   --color-on-tertiary-container: var(--on-tertiary-container);
   --color-on-tertiary-fixed: var(--on-tertiary-fixed);
   --color-on-tertiary-fixed-variant: var(--on-tertiary-fixed-variant);
-  
+
   --color-background: var(--background);
   --color-surface: var(--surface);
   --color-surface-bright: var(--surface-bright);
@@ -147,23 +146,23 @@
   --color-surface-variant: var(--surface-variant);
   --color-on-surface: var(--on-surface);
   --color-on-surface-variant: var(--on-surface-variant);
-  
+
   --color-error: var(--error);
   --color-error-container: var(--error-container);
   --color-on-error: var(--on-error);
   --color-on-error-container: var(--on-error-container);
-  
+
   --color-outline: var(--outline);
   --color-outline-variant: var(--outline-variant);
-  
+
   --color-inverse-surface: var(--inverse-surface);
   --color-inverse-on-surface: var(--inverse-on-surface);
   --color-inverse-primary: var(--inverse-primary);
-  
+
   --color-on-primary-fixed: var(--on-primary-fixed);
   --color-on-primary-fixed-variant: var(--on-primary-fixed-variant);
   --color-on-background: var(--on-background);
-  
+
   /* Legacy colors for compatibility */
   --color-foreground: var(--foreground);
   --color-primary-foreground: var(--primary-foreground);
@@ -175,14 +174,14 @@
   --color-card-foreground: var(--card-foreground);
   --color-error: var(--error);
   --color-success: #16a34a;
-  
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-headline: 'Manrope', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --font-headline: "Manrope", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0f0d;
     --surface: #0a0f0d;
@@ -249,7 +248,7 @@
     --card-foreground: var(--on-surface);
     --success: #4ade80;
   }
-}
+} */
 
 body {
   background: var(--background);
@@ -257,6 +256,11 @@ body {
   font-family: var(--font-body), Arial, Helvetica, sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-headline), system-ui, sans-serif;
 }

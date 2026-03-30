@@ -54,7 +54,7 @@ export const cows: Cow[] = [
     certification: 'DNA Cert',
     description: `The Black Onyx V2 represents the pinnacle of our Angus Reserve line. Bred with precision genetics focused on superior marbling and growth efficiency, this specimen stands as a prime example of modern agrarian excellence. This particular bull exhibits exceptional skeletal structure and a calm temperament, making it an ideal foundational asset for high-yield operations.
 
-Our verification process ensures that every unit of Black Onyx V2 comes with full DNA certification, metabolic health reports, and a verified pedigree tracing back three generations of elite ancestry. The current unit availability reflects the exclusive nature of this genetic branch.`,
+Our verification process ensures that every unit of Black Onyx V2 comes with full DNA certification, metabolic health reports, and a verified pedigree tracing back three generations of elite ancestry. The current unit availability reflects the exclusive nature of this genetic bfarm.`,
     genetics: {
       genotype: 'AA-Prime',
       bloodline: 'Onyx Legacy',

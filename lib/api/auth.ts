@@ -1,196 +1,249 @@
-/**
- * Authentication API Layer
- * 
- * This module provides mock authentication functions.
- * Replace the mock implementations with actual API calls when backend is ready.
- */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// API Configuration and Types
+export const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/v1/auth/public`;
 
-export interface LoginData {
-  email: string;
-  password: string;
-  rememberMe?: boolean;
-}
-
-export interface SignupData {
-  email: string;
-  password: string;
-  ranchName: string;
-}
-
-export interface AuthResponse {
-  success: boolean;
-  message: string;
-  user?: {
-    id: string;
-    email: string;
-    name: string;
+export interface ApiResponse<T = any> {
+  statusCode: string;
+  statusMessage: string;
+  data: {
+    message: string;
+    results?: T[];
+    details?: any;
   };
-  token?: string;
 }
 
-// Simulated network delay
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export interface SignupRequest {
+  mobile_number: string;
+  role_id: string;
+  latitude: number;
+  longitude: number;
+}
 
-/**
- * Mock login function
- * Replace this with actual API call to your authentication endpoint
- */
-export async function login(data: LoginData): Promise<AuthResponse> {
-  try {
-    // Simulate network delay
-    await delay(1000);
+export interface OtpVerificationRequest {
+  mobile_number: string;
+  otp: string;
+}
 
-    // Mock validation
-    if (!data.email || !data.password) {
-      return {
-        success: false,
-        message: 'Email and password are required',
-      };
-    }
+export interface SetPasswordRequest {
+  mobile_number: string;
+  password: string;
+}
 
-    // Mock email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
-      return {
-        success: false,
-        message: 'Please enter a valid email address',
-      };
-    }
+export interface LoginRequest {
+  mobile_number: string;
+  password: string;
+}
 
-    // Mock password validation (minimum 6 characters)
-    if (data.password.length < 6) {
-      return {
-        success: false,
-        message: 'Password must be at least 6 characters',
-      };
-    }
+export interface LoginResponse {
+  message: string;
+  role: string;
+  access_token: string;
+  refresh_token: string;
+  is_insurecow_agent: boolean;
+  is_insurance_agent: boolean;
+  is_enterprise_agent: boolean;
+  is_superuser: boolean;
+}
 
-    // Mock successful login
-    // In production, this would be an actual API call
-    return {
-      success: true,
-      message: 'Login successful',
-      user: {
-        id: 'user_123',
-        email: data.email,
-        name: data.email.split('@')[0],
-      },
-      token: 'mock_jwt_token_' + Math.random().toString(36).substring(2),
-    };
-  } catch (error) {
-    console.error('Login error:', error);
-    return {
-      success: false,
-      message: 'An unexpected error occurred. Please try again.',
-    };
+export interface User {
+  role: string;
+  access_token: string;
+  refresh_token: string;
+  is_insurecow_agent: boolean;
+  is_insurance_agent: boolean;
+  is_enterprise_agent: boolean;
+  is_superuser: boolean;
+}
+
+// API Error Types
+export class ApiError extends Error {
+  constructor(
+    public statusCode: string,
+    public statusMessage: string,
+    public details?: any,
+  ) {
+    super(statusMessage);
+    this.name = "ApiError";
   }
 }
 
-/**
- * Mock signup function
- * Replace this with actual API call to your registration endpoint
- */
-export async function signup(data: SignupData): Promise<AuthResponse> {
-  try {
-    // Simulate network delay
-    await delay(1500);
+// Token Management Service
+class TokenManager {
+  private static readonly ACCESS_TOKEN_KEY = "access_token";
+  private static readonly REFRESH_TOKEN_KEY = "refresh_token";
+  private static readonly USER_DATA_KEY = "user_data";
 
-    // Mock validation
-    if (!data.email || !data.password || !data.ranchName) {
-      return {
-        success: false,
-        message: 'All fields are required',
-      };
+  static setTokens(accessToken: string, refreshToken: string): void {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken);
+      localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
     }
+  }
 
-    // Mock email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
-      return {
-        success: false,
-        message: 'Please enter a valid email address',
-      };
+  static getAccessToken(): string | null {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(this.ACCESS_TOKEN_KEY);
     }
+    return null;
+  }
 
-    // Mock password validation (minimum 6 characters)
-    if (data.password.length < 6) {
-      return {
-        success: false,
-        message: 'Password must be at least 6 characters',
-      };
+  static getRefreshToken(): string | null {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(this.REFRESH_TOKEN_KEY);
     }
+    return null;
+  }
 
-    // Mock ranch name validation (minimum 2 characters)
-    if (data.ranchName.length < 2) {
-      return {
-        success: false,
-        message: 'Ranch name must be at least 2 characters',
-      };
+  static setUserData(userData: User): void {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(this.USER_DATA_KEY, JSON.stringify(userData));
     }
+  }
 
-    // Mock successful signup
-    // In production, this would be an actual API call
-    return {
-      success: true,
-      message: 'Account created successfully',
-      user: {
-        id: 'user_' + Math.random().toString(36).substring(2, 9),
-        email: data.email,
-        name: data.ranchName,
-      },
-      token: 'mock_jwt_token_' + Math.random().toString(36).substring(2),
-    };
-  } catch (error) {
-    console.error('Signup error:', error);
-    return {
-      success: false,
-      message: 'An unexpected error occurred. Please try again.',
-    };
+  static getUserData(): User | null {
+    if (typeof window !== "undefined") {
+      const userData = localStorage.getItem(this.USER_DATA_KEY);
+      return userData ? JSON.parse(userData) : null;
+    }
+    return null;
+  }
+
+  static clearTokens(): void {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(this.ACCESS_TOKEN_KEY);
+      localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+      localStorage.removeItem(this.USER_DATA_KEY);
+    }
+  }
+
+  static isAuthenticated(): boolean {
+    return !!this.getAccessToken();
   }
 }
 
-/**
- * Mock logout function
- */
-export async function logout(): Promise<{ success: boolean; message: string }> {
-  try {
-    await delay(500);
-    // In production, clear auth tokens and redirect
-    return {
-      success: true,
-      message: 'Logged out successfully',
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: 'Logout failed',
-    };
-  }
-}
-
-/**
- * Mock forgot password function
- */
-export async function forgotPassword(email: string): Promise<{ success: boolean; message: string }> {
-  try {
-    await delay(1000);
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return {
-        success: false,
-        message: 'Please enter a valid email address',
+// HTTP Client Service
+class HttpClient {
+  private async request<T>(
+    url: string,
+    options: RequestInit = {},
+  ): Promise<ApiResponse<T>> {
+    try {
+      // Add authorization header if token exists
+      const token = TokenManager.getAccessToken();
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
       };
-    }
 
-    return {
-      success: true,
-      message: 'Password reset instructions sent to your email',
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: 'An unexpected error occurred',
-    };
+      if (token) {
+        headers["authorization"] = `Bearer ${token}`;
+      }
+
+      // Merge with provided headers
+      if (options.headers) {
+        const providedHeaders = options.headers as Record<string, string>;
+        Object.assign(headers, providedHeaders);
+      }
+
+      const response = await fetch(url, {
+        ...options,
+        headers,
+      });
+
+      const data: ApiResponse<T> = await response.json();
+
+      if (data.statusCode !== "200") {
+        throw new ApiError(data.statusCode, data.statusMessage, data.data);
+      }
+
+      return data;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new ApiError("500", "Network error occurred", {
+        message: "Failed to connect to server",
+      });
+    }
+  }
+
+  async post<T>(url: string, body: any): Promise<ApiResponse<T>> {
+    return this.request<T>(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+  }
+
+  async get<T>(url: string): Promise<ApiResponse<T>> {
+    return this.request<T>(url, {
+      method: "GET",
+    });
+  }
+
+  async put<T>(url: string, body: any): Promise<ApiResponse<T>> {
+    return this.request<T>(url, {
+      method: "PUT",
+      body: JSON.stringify(body),
+    });
+  }
+
+  async delete<T>(url: string): Promise<ApiResponse<T>> {
+    return this.request<T>(url, {
+      method: "DELETE",
+    });
   }
 }
+
+// Auth Service Implementation
+export class AuthService {
+  private httpClient = new HttpClient();
+
+  async login(data: LoginRequest): Promise<ApiResponse> {
+    return this.httpClient.post(`${API_BASE_URL}/login/`, data);
+  }
+
+  async register(data: SignupRequest): Promise<ApiResponse> {
+    return this.httpClient.post(`${API_BASE_URL}/register/`, data);
+  }
+
+  async verifyOtp(data: OtpVerificationRequest): Promise<ApiResponse> {
+    return this.httpClient.post(`${API_BASE_URL}/register/verify-otp/`, data);
+  }
+
+  async setPassword(data: SetPasswordRequest): Promise<ApiResponse> {
+    return this.httpClient.post(`${API_BASE_URL}/register/set-password/`, data);
+  }
+
+  // Token management methods
+  saveAuthData(loginResponse: LoginResponse): void {
+    TokenManager.setTokens(
+      loginResponse?.access_token,
+      loginResponse?.refresh_token,
+    );
+    TokenManager.setUserData({
+      role: loginResponse?.role,
+      access_token: loginResponse?.access_token,
+      refresh_token: loginResponse?.refresh_token,
+      is_insurecow_agent: loginResponse?.is_insurecow_agent,
+      is_insurance_agent: loginResponse?.is_insurance_agent,
+      is_enterprise_agent: loginResponse?.is_enterprise_agent,
+      is_superuser: loginResponse?.is_superuser,
+    });
+  }
+
+  logout(): void {
+    TokenManager.clearTokens();
+  }
+
+  isAuthenticated(): boolean {
+    return TokenManager.isAuthenticated();
+  }
+
+  getCurrentUser(): User | null {
+    return TokenManager.getUserData();
+  }
+}
+
+// Singleton instance
+export const authService = new AuthService();
+
+export { TokenManager };

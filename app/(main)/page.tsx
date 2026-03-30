@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { Navbar } from '@/components/home/Navbar';
-import { HeroSection } from '@/components/home/HeroSection';
-import { FilterSidebar } from '@/components/home/FilterSidebar';
-import { ProductGrid } from '@/components/home/ProductGrid';
-import { Footer } from '@/components/home/Footer';
-import { cows } from '@/lib/data/cows';
+import { Navbar } from "@/components/home/Navbar";
+import { HeroSection } from "@/components/home/HeroSection";
+import { FilterSidebar } from "@/components/home/FilterSidebar";
+import { ProductGrid } from "@/components/home/ProductGrid";
+import { Footer } from "@/components/home/Footer";
+import { cows } from "@/lib/data/cows";
 
 export default function HomePage() {
   return (
