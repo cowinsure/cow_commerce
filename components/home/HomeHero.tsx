@@ -1,0 +1,644 @@
+/* eslint-disable react-hooks/purity */
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/theme/theme.config";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ArrowRight,
+  Users,
+  Target,
+  Clock,
+  ShieldCheck,
+  Beef,
+  TrendingUp,
+  CheckCircle2,
+} from "lucide-react";
+import Link from "next/link";
+
+// Warm, earthy particles (farm/heritage feel)
+const PARTICLE_COUNT = 8;
+const particleData = Array.from({ length: PARTICLE_COUNT }, () => ({
+  x: Math.random() * 1000,
+  y: Math.random() * 800,
+  duration: 15 + Math.random() * 10,
+  delay: Math.random() * 5,
+}));
+
+// Slides focused on the collective booking model
+const slides = [
+  {
+    image:
+      "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1920&q=80", // Live cattle (heritage breed)
+    tag: "Heritage Angus",
+    title: "Book Your",
+    subtitle: "Share",
+    description:
+      "Join others in funding a premium grass-fed cow. Choose your portion—full unit or fractional shares. Processing begins only when 100% booked.",
+    price: "From $180/quarter share",
+    progress: 75, // Percentage booked
+    unitsAvailable: "3 of 12 units left",
+    icon: Users,
+    cta: "Join This Cow",
+    secondaryCta: "How It Works",
+    badge: "Almost Funded",
+    deadline: "7 days left",
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=1920&q=80", // Cattle in pasture
+    tag: "Collective Buying",
+    title: "Share The",
+    subtitle: "Cost",
+    description:
+      "Premium beef shouldn't require premium prices. Pool together with neighbors, family, or your community. Transparent pricing, no hidden fees.",
+    price: "Save 40% vs retail",
+    progress: 45,
+    unitsAvailable: "7 of 12 units left",
+    icon: Target,
+    cta: "Start a Group",
+    secondaryCta: "Browse Cows",
+    badge: "New Listing",
+    deadline: "21 days left",
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?w=1920&q=80", // Butcher/processing
+    tag: "Farm to Fork",
+    title: "Guaranteed",
+    subtitle: "Fresh",
+    description:
+      "No waste, no uncertainty. Your cow is only processed once fully booked. You'll know exactly when your beef is ready for pickup or delivery.",
+    price: "Processing included",
+    progress: 100,
+    unitsAvailable: "Fully Booked",
+    icon: CheckCircle2,
+    cta: "Join Waitlist",
+    secondaryCta: "See Process",
+    badge: "Sold Out",
+    deadline: "Processing starts tomorrow",
+  },
+];
+
+const trustSignals = [
+  { icon: ShieldCheck, label: "USDA Inspected" },
+  { icon: Clock, label: "14-Day Dry Age" },
+  { icon: Beef, label: "Heritage Breeds" },
+];
+
+export function HomeHero({ className }: { className?: string }) {
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  const slideNext = useCallback(() => {
+    setDirection(1);
+    setCurrent((prev) => (prev + 1) % slides.length);
+  }, []);
+
+  const slidePrev = useCallback(() => {
+    setDirection(-1);
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+  }, []);
+
+  const goToSlide = (index: number) => {
+    setDirection(index > current ? 1 : -1);
+    setCurrent(index);
+  };
+
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    const timer = setInterval(slideNext, 9000); // Longer for reading progress details
+    return () => clearInterval(timer);
+  }, [isAutoPlaying, slideNext]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") slidePrev();
+      if (e.key === "ArrowRight") slideNext();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [slideNext, slidePrev]);
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? "100%" : "-100%",
+      opacity: 0,
+      scale: 1.1,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? "100%" : "-100%",
+      opacity: 0,
+      scale: 0.95,
+    }),
+  };
+
+  const CurrentIcon = slides[current].icon;
+  const currentSlide = slides[current];
+
+  return (
+    <section
+      className={cn(
+        "relative w-full min-h-screen overflow-hidden bg-stone-950",
+        className,
+      )}
+      onMouseEnter={() => setIsAutoPlaying(false)}
+      onMouseLeave={() => setIsAutoPlaying(true)}
+    >
+      {/* Background with Ken Burns */}
+      <AnimatePresence initial={false} custom={direction} mode="popLayout">
+        <motion.div
+          key={current}
+          custom={direction}
+          variants={slideVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{
+            x: { type: "spring", stiffness: 300, damping: 30 },
+            opacity: { duration: 0.6 },
+            scale: { duration: 12, ease: "linear" },
+          }}
+          className="absolute inset-0"
+        >
+          <Image
+            alt={currentSlide.title}
+            className="object-cover"
+            fill
+            priority
+            sizes="100vw"
+            src={currentSlide.image}
+          />
+
+          {/* Warm, earthy gradients (farm feel) */}
+          {/* <div className="absolute inset-0 bg-linear-to-r from-stone-950/95 via-stone-950/70 to-stone-950/40" /> */}
+          <div className="absolute inset-0 bg-linear-to-t from-stone-950/90 via-stone-950/30 to-stone-950/50" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(28,25,23,0.6)_100%)]" />
+
+          {/* Organic grain texture */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.03 }}
+            transition={{ duration: 2 }}
+            className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.7%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')] mix-blend-overlay"
+          />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Floating dust/pollen particles (farm atmosphere) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(PARTICLE_COUNT)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-emerald-200/20 rounded-full blur-[0.5px]"
+            initial={{
+              x: particleData[i].x,
+              y: particleData[i].y,
+            }}
+            animate={{
+              y: [null, -100],
+              x: [null, Math.random() * 50 - 25],
+              opacity: [0, 0.4, 0],
+            }}
+            transition={{
+              duration: particleData[i].duration,
+              repeat: Infinity,
+              delay: particleData[i].delay,
+              ease: "linear",
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Main Content */}
+      <div className="relative z-10 flex items-center min-h-[90vh] px-6 sm:px-12 lg:px-24 pt-20">
+        <div className="max-w-7xl w-full mx-auto grid lg:grid-cols-5 gap-12 items-center">
+          {/* Left Content - 3 columns */}
+          <div className="lg:col-span-3 max-w-2xl">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={current}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                {/* Tag + Badge Row */}
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1, duration: 0.6 }}
+                  className="flex items-center gap-3 mb-6 flex-wrap"
+                >
+                  <motion.div
+                    initial={{ scale: 0, rotate: -180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                    className="p-2.5 rounded-full bg-emerald-500/20 backdrop-blur-sm border border-emerald-400/30"
+                  >
+                    <CurrentIcon className="w-5 h-5 text-emerald-400" />
+                  </motion.div>
+                  <span className="text-emerald-400 font-semibold tracking-[0.2em] text-sm uppercase">
+                    {currentSlide.tag}
+                  </span>
+                  {currentSlide.badge && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.3, type: "spring" }}
+                      className={cn(
+                        "px-3 py-1 rounded-full text-xs font-bold border",
+                        currentSlide.progress === 100
+                          ? "bg-stone-700/50 text-stone-400 border-stone-600/30"
+                          : currentSlide.progress > 70
+                            ? "bg-orange-500/20 text-orange-300 border-orange-500/30"
+                            : "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+                      )}
+                    >
+                      {currentSlide.badge}
+                    </motion.span>
+                  )}
+                </motion.div>
+
+                {/* Title Animation */}
+                <h1 className="text-5xl sm:text-7xl lg:text-8xl font-extrabold tracking-tight mb-4 leading-[0.9]">
+                  <motion.span
+                    initial={{ opacity: 0, y: 80, rotateX: -90 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{
+                      delay: 0.2,
+                      duration: 0.8,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="inline-block text-white"
+                    style={{ transformOrigin: "bottom" }}
+                  >
+                    {currentSlide.title}
+                  </motion.span>
+                  <br />
+                  <motion.span
+                    initial={{ opacity: 0, y: 80, rotateX: -90 }}
+                    animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                    transition={{
+                      delay: 0.35,
+                      duration: 0.8,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="inline-block text-emerald-400"
+                    style={{ transformOrigin: "bottom" }}
+                  >
+                    {currentSlide.subtitle}
+                  </motion.span>
+                </h1>
+
+                {/* Price Tag */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.5, duration: 0.5 }}
+                  className="mb-6"
+                >
+                  <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-emerald-300 font-bold text-lg">
+                    {currentSlide.price}
+                  </span>
+                </motion.div>
+
+                {/* Description */}
+                <motion.p
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                  className="text-stone-300 text-lg sm:text-xl max-w-lg mb-8 leading-relaxed font-medium"
+                >
+                  {currentSlide.description}
+                </motion.p>
+
+                {/* CTAs */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8, duration: 0.6 }}
+                  className="flex flex-wrap gap-4 mb-10"
+                >
+                  <Link href="/cows">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="group relative px-8 py-4 bg-emerald-500 text-stone-950 rounded-full font-bold text-lg overflow-hidden transition-all hover:shadow-2xl hover:shadow-emerald-500/30"
+                    >
+                      <span className="relative z-10 flex items-center gap-2">
+                        {currentSlide.cta}
+                        <motion.span
+                          animate={{ x: [0, 5, 0] }}
+                          transition={{ repeat: Infinity, duration: 1.5 }}
+                        >
+                          <ArrowRight className="w-5 h-5" />
+                        </motion.span>
+                      </span>
+                      <motion.div
+                        className="absolute inset-0 bg-white"
+                        initial={{ x: "-100%" }}
+                        whileHover={{ x: 0 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    </motion.button>
+                  </Link>
+
+                  <Link href="/how-it-works">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-8 py-4 bg-transparent border-2 border-stone-400/50 text-stone-200 rounded-full font-bold text-lg hover:bg-stone-400/10 hover:border-stone-300 transition-all backdrop-blur-sm"
+                    >
+                      {currentSlide.secondaryCta}
+                    </motion.button>
+                  </Link>
+                </motion.div>
+
+                {/* Trust Signals */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1, duration: 0.6 }}
+                  className="flex flex-wrap gap-6 items-center"
+                >
+                  {trustSignals.map((signal, idx) => (
+                    <motion.div
+                      key={signal.label}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 1.1 + idx * 0.1 }}
+                      className="flex items-center gap-2 text-stone-400"
+                    >
+                      <signal.icon className="w-4 h-4 text-emerald-500" />
+                      <span className="text-sm font-medium">
+                        {signal.label}
+                      </span>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Right Side - Funding Progress Card (2 columns) */}
+          <motion.div
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="lg:col-span-2 hidden lg:block"
+          >
+            <div className="relative p-8 rounded-3xl bg-stone-900/60 backdrop-blur-xl border border-stone-700/50 shadow-2xl overflow-hidden">
+              {/* Background glow */}
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl" />
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={current}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <p className="text-stone-400 text-sm mb-1">
+                        Funding Progress
+                      </p>
+                      <p className="text-white font-bold text-2xl flex items-center gap-2">
+                        <TrendingUp className="w-5 h-5 text-emerald-400" />
+                        {currentSlide.progress}% Booked
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-stone-400 text-sm mb-1">Time Left</p>
+                      <p className="text-emerald-400 font-mono font-bold">
+                        {currentSlide.deadline}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="mb-6">
+                    <div className="h-3 rounded-full bg-stone-800 overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${currentSlide.progress}%` }}
+                        transition={{
+                          delay: 0.8,
+                          duration: 1.5,
+                          ease: "easeOut",
+                        }}
+                        className={cn(
+                          "h-full rounded-full",
+                          currentSlide.progress === 100
+                            ? "bg-stone-600"
+                            : currentSlide.progress > 70
+                              ? "bg-linear-to-r from-emerald-500 to-emerald-950"
+                              : "bg-linear-to-r from-emerald-500 to-emerald-400",
+                        )}
+                      />
+                    </div>
+                    <div className="flex justify-between mt-2 text-sm">
+                      <span className="text-stone-500">0%</span>
+                      <span
+                        className={cn(
+                          "font-medium",
+                          currentSlide.progress === 100
+                            ? "text-stone-500"
+                            : "text-emerald-400",
+                        )}
+                      >
+                        {currentSlide.unitsAvailable}
+                      </span>
+                      <span className="text-stone-500">100%</span>
+                    </div>
+                  </div>
+
+                  {/* Unit Breakdown */}
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-stone-800/50 border border-stone-700/30">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                          <Beef className="w-5 h-5 text-emerald-400" />
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold">Full Cow</p>
+                          <p className="text-stone-400 text-sm">
+                            12 units • 100% share
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-emerald-400 font-bold">$720</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-stone-800/50 border border-stone-700/30">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-stone-700/50 flex items-center justify-center">
+                          <Beef className="w-5 h-5 text-stone-400" />
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold">Half Share</p>
+                          <p className="text-stone-400 text-sm">
+                            6 units • 50% share
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-stone-300 font-bold">$360</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-stone-800/50 border border-stone-700/30">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-stone-700/50 flex items-center justify-center">
+                          <Beef className="w-5 h-5 text-stone-400" />
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold">
+                            Quarter Share
+                          </p>
+                          <p className="text-stone-400 text-sm">
+                            3 units • 25% share
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-stone-300 font-bold">$180</span>
+                    </div>
+                  </div>
+
+                  {/* Status Message */}
+                  <div
+                    className={cn(
+                      "p-4 rounded-xl border text-center",
+                      currentSlide.progress === 100
+                        ? "bg-stone-800/50 border-stone-700 text-stone-400"
+                        : currentSlide.progress > 70
+                          ? "bg-orange-500/10 border-orange-500/30 text-orange-300"
+                          : "bg-emerald-500/10 border-emerald-500/30 text-emerald-300",
+                    )}
+                  >
+                    <p className="text-sm font-medium flex items-center justify-center gap-2">
+                      {currentSlide.progress === 100 ? (
+                        <>
+                          <CheckCircle2 className="w-4 h-4" />
+                          Fully funded! Processing begins soon.
+                        </>
+                      ) : currentSlide.progress > 70 ? (
+                        <>
+                          <Clock className="w-4 h-4" />
+                          Almost there!{" "}
+                          {12 -
+                            Math.floor((currentSlide.progress / 100) * 12)}{" "}
+                          units remaining
+                        </>
+                      ) : (
+                        <>
+                          <Users className="w-4 h-4" />
+                          Join {Math.floor(
+                            (currentSlide.progress / 100) * 12,
+                          )}{" "}
+                          others in booking this cow
+                        </>
+                      )}
+                    </p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Bottom Controls */}
+      <div className="absolute bottom-12 left-0 right-0 z-20 px-6 sm:px-12 lg:px-24">
+        <div className="max-w-7xl mx-auto flex items-end justify-between">
+          {/* Progress Bars */}
+          <div className="flex gap-3">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className="group relative h-1.5 rounded-full overflow-hidden bg-stone-800/50 transition-all hover:bg-stone-700/50"
+                style={{ width: index === current ? "80px" : "40px" }}
+              >
+                {index === current && (
+                  <motion.div
+                    className="absolute inset-0 bg-emerald-500 origin-left"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 9, ease: "linear" }}
+                    key={current}
+                  />
+                )}
+                {index < current && (
+                  <div className="absolute inset-0 bg-emerald-500/50" />
+                )}
+                <div className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/20 transition-colors" />
+              </button>
+            ))}
+          </div>
+
+          {/* Navigation */}
+          <div className="flex gap-3">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={slidePrev}
+              className="p-4 rounded-full bg-stone-900/30 backdrop-blur-md border border-stone-400/20 text-stone-300 hover:bg-stone-800/50 hover:border-emerald-400/40 transition-all"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={slideNext}
+              className="p-4 rounded-full bg-stone-900/30 backdrop-blur-md border border-stone-400/20 text-stone-300 hover:bg-stone-800/50 hover:border-emerald-400/40 transition-all"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Counter */}
+        <div className="absolute bottom-0 right-0 text-stone-500 font-mono text-sm tracking-wider">
+          <motion.span
+            key={current}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-emerald-400 font-bold text-2xl"
+          >
+            0{current + 1}
+          </motion.span>
+          <span className="mx-2">/</span>
+          <span>0{slides.length}</span>
+        </div>
+      </div>
+
+      {/* Scroll Indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
+      >
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="flex flex-col items-center gap-2 text-stone-500"
+        >
+          <span className="text-xs tracking-widest uppercase">Scroll</span>
+          <div className="w-px h-12 bg-linear-to-b from-emerald-500 to-transparent" />
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
