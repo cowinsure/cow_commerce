@@ -12,7 +12,7 @@ import { shouldShowNavLink } from "@/lib/config/protected-routes";
 const navLinks = [
   { name: "Home", href: "/" },
   { name: "Marketplace", href: "/marketplace" },
-  { name: "Order History", href: "/orders" },
+  { name: "Order History", href: "/order-history" },
   { name: "About", href: "/about" },
 ];
 
@@ -92,7 +92,9 @@ export function Navbar({ className }: { className?: string }) {
             {/* Desktop Navigation */}
             <div className="hidden md:flex gap-8 items-center font-headline text-sm font-medium tracking-tight">
               {navLinks
-                .filter((link) => shouldShowNavLink(link.href, authService.isAuthenticated()))
+                .filter((link) =>
+                  shouldShowNavLink(link.href, authService.isAuthenticated()),
+                )
                 .map((link) => (
                   <Link
                     key={link.name}
@@ -239,28 +241,33 @@ export function Navbar({ className }: { className?: string }) {
                 {/* Navigation Links */}
                 <div className="flex-1 space-y-2">
                   {navLinks
-                    .filter((link) => shouldShowNavLink(link.href, authService.isAuthenticated()))
+                    .filter((link) =>
+                      shouldShowNavLink(
+                        link.href,
+                        authService.isAuthenticated(),
+                      ),
+                    )
                     .map((link, index) => (
-                    <motion.div
-                      key={link.name}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <Link
-                        href={link.href}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={cn(
-                          "block py-3 px-4 rounded-xl text-lg font-medium transition-all duration-200",
-                          pathname === link.href
-                            ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-900 dark:text-emerald-400"
-                            : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900",
-                        )}
+                      <motion.div
+                        key={link.name}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
                       >
-                        {link.name}
-                      </Link>
-                    </motion.div>
-                  ))}
+                        <Link
+                          href={link.href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={cn(
+                            "block py-3 px-4 rounded-xl text-lg font-medium transition-all duration-200",
+                            pathname === link.href
+                              ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-900 dark:text-emerald-400"
+                              : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900",
+                          )}
+                        >
+                          {link.name}
+                        </Link>
+                      </motion.div>
+                    ))}
                 </div>
 
                 {/* Mobile Auth Section */}

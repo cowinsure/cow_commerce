@@ -20,30 +20,31 @@ export function PaymentOptions({ onChange, className }: PaymentOptionsProps) {
 
   return (
     <section className={cn('', className)}>
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-8">
-        <svg className="w-6 h-6 text-primary" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
-        </svg>
-        <h2 className="font-headline text-xl font-bold">Payment Method</h2>
-      </div>
 
       <div className="space-y-4">
         {/* Credit Card Option */}
         <label
           className={cn(
             'relative flex items-center p-6 cursor-pointer rounded-xl transition-all',
-            'bg-surface-container-low hover:bg-surface-container',
-            selected === 'card' && 'bg-surface-container ring-2 ring-primary'
+            'bg-white border-2 border-gray-300 hover:border-green-950/80 hover:shadow-sm',
+            selected === 'card' && 'border-green-950/80 ring-4 ring-green-600/20'
           )}
         >
+          <div className={cn(
+            "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
+            selected === 'card' ? "border-green-950/80 bg-green-950/80" : "border-gray-300"
+          )}>
+            {selected === 'card' && (
+              <div className="w-2 h-2 rounded-full bg-white" />
+            )}
+          </div>
           <input
             type="radio"
             name="payment"
             value="card"
             checked={selected === 'card'}
             onChange={() => handleSelect('card')}
-            className="w-5 h-5 text-primary border-outline-variant focus:ring-offset-0 focus:ring-0"
+            className="sr-only"
           />
           <div className="ml-4 flex-1">
             <span className="block font-headline font-bold text-on-surface">Credit / Debit Card</span>
@@ -58,17 +59,25 @@ export function PaymentOptions({ onChange, className }: PaymentOptionsProps) {
         <label
           className={cn(
             'relative flex items-center p-6 cursor-pointer rounded-xl transition-all',
-            'bg-surface-container-low hover:bg-surface-container',
-            selected === 'wire' && 'bg-surface-container ring-2 ring-primary'
+            'bg-white border-2 border-gray-300 hover:border-green-950/80 hover:shadow-sm',
+            selected === 'wire' && 'border-green-950/80 ring-4 ring-green-600/20'
           )}
         >
+          <div className={cn(
+            "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
+            selected === 'wire' ? "border-green-950/80 bg-green-950/80" : "border-gray-300"
+          )}>
+            {selected === 'wire' && (
+              <div className="w-2 h-2 rounded-full bg-white" />
+            )}
+          </div>
           <input
             type="radio"
             name="payment"
             value="wire"
             checked={selected === 'wire'}
             onChange={() => handleSelect('wire')}
-            className="w-5 h-5 text-primary border-outline-variant focus:ring-offset-0 focus:ring-0"
+            className="sr-only"
           />
           <div className="ml-4 flex-1">
             <span className="block font-headline font-bold text-on-surface">Wire Transfer</span>

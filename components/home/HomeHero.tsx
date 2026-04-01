@@ -166,23 +166,22 @@ export function HomeHero({ className }: { className?: string }) {
           transition={{
             x: { type: "spring", stiffness: 300, damping: 30 },
             opacity: { duration: 0.6 },
-            scale: { duration: 12, ease: "linear" },
           }}
-          className="absolute inset-0"
+          className="absolute inset-0 bg-emerald-50"
         >
-          <Image
+          {/* <Image
             alt={currentSlide.title}
             className="object-cover"
             fill
             priority
             sizes="100vw"
             src={currentSlide.image}
-          />
+          /> */}
 
           {/* Warm, earthy gradients (farm feel) */}
           {/* <div className="absolute inset-0 bg-linear-to-r from-stone-950/95 via-stone-950/70 to-stone-950/40" /> */}
-          <div className="absolute inset-0 bg-linear-to-t from-stone-950/90 via-stone-950/30 to-stone-950/50" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(28,25,23,0.6)_100%)]" />
+          <div className="absolute inset-0 bg-linear-to-br from-emerald-950 via-emerald-950 to-emerald-400" />
+          {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(28,25,23,0.6)_120%)]" /> */}
 
           {/* Organic grain texture */}
           <motion.div
@@ -221,7 +220,7 @@ export function HomeHero({ className }: { className?: string }) {
 
       {/* Main Content */}
       <div className="relative z-10 flex items-center min-h-[90vh] px-6 sm:px-12 lg:px-24 pt-20">
-        <div className="max-w-7xl w-full mx-auto grid lg:grid-cols-5 gap-12 items-center">
+        <div className="max-w-screen-2xl w-full mx-auto grid lg:grid-cols-5 gap-12 items-center">
           {/* Left Content - 3 columns */}
           <div className="lg:col-span-3 max-w-2xl">
             <AnimatePresence mode="wait">
@@ -307,7 +306,7 @@ export function HomeHero({ className }: { className?: string }) {
                   transition={{ delay: 0.5, duration: 0.5 }}
                   className="mb-6"
                 >
-                  <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-emerald-300 font-bold text-lg">
+                  <span className="inline-flex items-center gap-2 py-  backdrop-blur-sm  text-emerald-300 font-bold text-lg">
                     {currentSlide.price}
                   </span>
                 </motion.div>
@@ -353,15 +352,16 @@ export function HomeHero({ className }: { className?: string }) {
                     </motion.button>
                   </Link>
 
-                  <Link href="/how-it-works">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-8 py-4 bg-transparent border-2 border-stone-400/50 text-stone-200 rounded-full font-bold text-lg hover:bg-stone-400/10 hover:border-stone-300 transition-all backdrop-blur-sm"
-                    >
-                      {currentSlide.secondaryCta}
-                    </motion.button>
-                  </Link>
+                  <motion.button
+                    onClick={() => {
+                      document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-8 py-4 bg-transparent border-2 border-stone-400/50 text-stone-200 rounded-full font-bold text-lg hover:bg-stone-400/10 hover:border-stone-300 transition-all backdrop-blur-sm"
+                  >
+                    {currentSlide.secondaryCta}
+                  </motion.button>
                 </motion.div>
 
                 {/* Trust Signals */}
@@ -397,9 +397,9 @@ export function HomeHero({ className }: { className?: string }) {
             transition={{ delay: 0.5, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-2 hidden lg:block"
           >
-            <div className="relative p-8 rounded-3xl bg-stone-900/60 backdrop-blur-xl border border-stone-700/50 shadow-2xl overflow-hidden">
+            <div className="relative rounded-3xl bg-linear-to-t from-emerald-900 to-emerald-400 backdrop-blur-xl border border-stone-700/50 shadow-2xl overflow-hidden">
               {/* Background glow */}
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl" />
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-emerald-500/80 rounded-full blur-3xl" />
 
               <AnimatePresence mode="wait">
                 <motion.div
@@ -409,148 +409,7 @@ export function HomeHero({ className }: { className?: string }) {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.4 }}
                 >
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <p className="text-stone-400 text-sm mb-1">
-                        Funding Progress
-                      </p>
-                      <p className="text-white font-bold text-2xl flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5 text-emerald-400" />
-                        {currentSlide.progress}% Booked
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-stone-400 text-sm mb-1">Time Left</p>
-                      <p className="text-emerald-400 font-mono font-bold">
-                        {currentSlide.deadline}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Progress Bar */}
-                  <div className="mb-6">
-                    <div className="h-3 rounded-full bg-stone-800 overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${currentSlide.progress}%` }}
-                        transition={{
-                          delay: 0.8,
-                          duration: 1.5,
-                          ease: "easeOut",
-                        }}
-                        className={cn(
-                          "h-full rounded-full",
-                          currentSlide.progress === 100
-                            ? "bg-stone-600"
-                            : currentSlide.progress > 70
-                              ? "bg-linear-to-r from-emerald-500 to-emerald-950"
-                              : "bg-linear-to-r from-emerald-500 to-emerald-400",
-                        )}
-                      />
-                    </div>
-                    <div className="flex justify-between mt-2 text-sm">
-                      <span className="text-stone-500">0%</span>
-                      <span
-                        className={cn(
-                          "font-medium",
-                          currentSlide.progress === 100
-                            ? "text-stone-500"
-                            : "text-emerald-400",
-                        )}
-                      >
-                        {currentSlide.unitsAvailable}
-                      </span>
-                      <span className="text-stone-500">100%</span>
-                    </div>
-                  </div>
-
-                  {/* Unit Breakdown */}
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-stone-800/50 border border-stone-700/30">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                          <Beef className="w-5 h-5 text-emerald-400" />
-                        </div>
-                        <div>
-                          <p className="text-white font-semibold">Full Cow</p>
-                          <p className="text-stone-400 text-sm">
-                            12 units • 100% share
-                          </p>
-                        </div>
-                      </div>
-                      <span className="text-emerald-400 font-bold">$720</span>
-                    </div>
-
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-stone-800/50 border border-stone-700/30">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-stone-700/50 flex items-center justify-center">
-                          <Beef className="w-5 h-5 text-stone-400" />
-                        </div>
-                        <div>
-                          <p className="text-white font-semibold">Half Share</p>
-                          <p className="text-stone-400 text-sm">
-                            6 units • 50% share
-                          </p>
-                        </div>
-                      </div>
-                      <span className="text-stone-300 font-bold">$360</span>
-                    </div>
-
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-stone-800/50 border border-stone-700/30">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-stone-700/50 flex items-center justify-center">
-                          <Beef className="w-5 h-5 text-stone-400" />
-                        </div>
-                        <div>
-                          <p className="text-white font-semibold">
-                            Quarter Share
-                          </p>
-                          <p className="text-stone-400 text-sm">
-                            3 units • 25% share
-                          </p>
-                        </div>
-                      </div>
-                      <span className="text-stone-300 font-bold">$180</span>
-                    </div>
-                  </div>
-
-                  {/* Status Message */}
-                  <div
-                    className={cn(
-                      "p-4 rounded-xl border text-center",
-                      currentSlide.progress === 100
-                        ? "bg-stone-800/50 border-stone-700 text-stone-400"
-                        : currentSlide.progress > 70
-                          ? "bg-orange-500/10 border-orange-500/30 text-orange-300"
-                          : "bg-emerald-500/10 border-emerald-500/30 text-emerald-300",
-                    )}
-                  >
-                    <p className="text-sm font-medium flex items-center justify-center gap-2">
-                      {currentSlide.progress === 100 ? (
-                        <>
-                          <CheckCircle2 className="w-4 h-4" />
-                          Fully funded! Processing begins soon.
-                        </>
-                      ) : currentSlide.progress > 70 ? (
-                        <>
-                          <Clock className="w-4 h-4" />
-                          Almost there!{" "}
-                          {12 -
-                            Math.floor((currentSlide.progress / 100) * 12)}{" "}
-                          units remaining
-                        </>
-                      ) : (
-                        <>
-                          <Users className="w-4 h-4" />
-                          Join {Math.floor(
-                            (currentSlide.progress / 100) * 12,
-                          )}{" "}
-                          others in booking this cow
-                        </>
-                      )}
-                    </p>
-                  </div>
+                  <img src="/banner1removebg.png" alt="" className="w-full h-full object-cover"/>
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -560,7 +419,7 @@ export function HomeHero({ className }: { className?: string }) {
 
       {/* Bottom Controls */}
       <div className="absolute bottom-12 left-0 right-0 z-20 px-6 sm:px-12 lg:px-24">
-        <div className="max-w-7xl mx-auto flex items-end justify-between">
+        <div className="max-w-screen-2xl mx-auto flex items-end justify-between">
           {/* Progress Bars */}
           <div className="flex gap-3">
             {slides.map((_, index) => (

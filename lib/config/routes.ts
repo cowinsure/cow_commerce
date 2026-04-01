@@ -36,8 +36,8 @@ export const routeConfig: RouteConfig = {
 
   // Routes requiring authentication
   protectedRoutes: [
-    "/orders",
-    "/cart",
+    "/order-history",
+    "/checkout",
     "/profile",
   ],
 

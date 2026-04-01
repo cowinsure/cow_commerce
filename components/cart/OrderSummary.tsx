@@ -23,11 +23,9 @@ export function OrderSummary({ item, logisticsFee = 345, className }: OrderSumma
 
   return (
     <div className={cn('', className)}>
-      {/* Header */}
-      <h3 className="font-headline text-2xl font-bold mb-8">Order Summary</h3>
 
       {/* Asset Card */}
-      <div className="flex gap-6 mb-8 p-4 bg-surface-container-low rounded-lg">
+      {/* <div className="flex gap-6 mb-8 p-4 bg-surface-container-low rounded-lg">
         <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
           <Image
             alt={cow.name}
@@ -46,7 +44,7 @@ export function OrderSummary({ item, logisticsFee = 345, className }: OrderSumma
             {cow.certification} · DNA Verified
           </p>
         </div>
-      </div>
+      </div> */}
 
       {/* Financial Details */}
       <div className="space-y-4 mb-8">
@@ -82,17 +80,6 @@ export function OrderSummary({ item, logisticsFee = 345, className }: OrderSumma
         </div>
       </div>
 
-      {/* CTA Button */}
-      <button className="w-full bg-primary text-on-primary py-5 rounded-full font-headline font-bold text-lg shadow-xl shadow-primary/10 hover:bg-primary-container transition-all active:scale-[0.99] flex items-center justify-center gap-3">
-        Confirm Booking
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
-        </svg>
-      </button>
-      
-      <p className="mt-6 text-center text-xs text-on-surface-variant leading-relaxed">
-        By clicking Confirm Booking, you agree to the Livestock Purchase Agreement and the Veterinary Inspection Protocols.
-      </p>
     </div>
   );
 }

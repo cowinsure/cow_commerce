@@ -72,11 +72,53 @@ class TokenManager {
   private static readonly ACCESS_TOKEN_KEY = "access_token";
   private static readonly REFRESH_TOKEN_KEY = "refresh_token";
   private static readonly USER_DATA_KEY = "user_data";
+  private static readonly ACCESS_TOKEN_COOKIE = "access_token";
+  private static readonly REFRESH_TOKEN_COOKIE = "refresh_token";
 
+  /**
+   * Set tokens in both localStorage (for client-side auth check) and cookies (for middleware)
+   */
   static setTokens(accessToken: string, refreshToken: string): void {
     if (typeof window !== "undefined") {
       localStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken);
       localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
+      
+      // Also set cookies for middleware to read
+      this.setCookie(this.ACCESS_TOKEN_COOKIE, accessToken);
+      this.setCookie(this.REFRESH_TOKEN_COOKIE, refreshToken);
+    }
+  }
+
+  /**
+   * Set a cookie (client-side helper)
+   */
+  private static setCookie(name: string, value: string, days: number = 7): void {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+  }
+
+  /**
+   * Clear tokens from both localStorage and cookies
+   */
+  static clearTokens(): void {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(this.ACCESS_TOKEN_KEY);
+      localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+      localStorage.removeItem(this.USER_DATA_KEY);
+      
+      // Clear cookies
+      this.deleteCookie(this.ACCESS_TOKEN_COOKIE);
+      this.deleteCookie(this.REFRESH_TOKEN_COOKIE);
+    }
+  }
+
+  /**
+   * Delete a cookie
+   */
+  private static deleteCookie(name: string): void {
+    if (typeof window !== "undefined") {
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
     }
   }
 
@@ -106,14 +148,6 @@ class TokenManager {
       return userData ? JSON.parse(userData) : null;
     }
     return null;
-  }
-
-  static clearTokens(): void {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem(this.ACCESS_TOKEN_KEY);
-      localStorage.removeItem(this.REFRESH_TOKEN_KEY);
-      localStorage.removeItem(this.USER_DATA_KEY);
-    }
   }
 
   static isAuthenticated(): boolean {

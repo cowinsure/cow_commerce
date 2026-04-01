@@ -88,6 +88,7 @@ const colorVariants = {
 export default function HowItWorks({ className }: { className?: string }) {
   return (
     <section
+      id="how-it-works"
       className={cn(
         "relative bg-linear-to-b from-emerald-50 via-white to-emerald-50/50 py-24 px-6 sm:px-12 lg:px-24 overflow-hidden",
         className,
@@ -111,7 +112,7 @@ export default function HowItWorks({ className }: { className?: string }) {
         }}
       />
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-screen-2xl mx-auto relative z-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}

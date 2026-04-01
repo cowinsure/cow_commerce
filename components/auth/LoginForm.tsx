@@ -58,6 +58,23 @@ export function LoginForm({ className }: { className?: string }) {
       if (response.statusCode === "200") {
         // Save auth data (tokens and user data) BEFORE redirecting
         authService.saveAuthData(response.data as unknown as LoginResponse);
+        
+        // Also set cookies via API for middleware to read
+        try {
+          const loginResponse = response.data as unknown as LoginResponse;
+          await fetch("/api/auth/set-cookies", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              accessToken: loginResponse.access_token,
+              refreshToken: loginResponse.refresh_token,
+            }),
+          });
+        } catch (cookieError) {
+          console.error("Failed to set cookies:", cookieError);
+          // Continue anyway - localStorage auth will still work
+        }
+        
         showToast(response.data.message || "Login successful", "success");
         router.push("/");
         console.log("Login successful:", response.data);

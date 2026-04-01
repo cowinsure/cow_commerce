@@ -82,10 +82,12 @@ Our verification process ensures that every unit of Black Onyx V2 comes with ful
     availableUnits: 45,
     tag: 'Growth',
     tagColor: 'primary-fixed',
-    image: 'https://images.unsplash.com/photo-1544984243-ec57ea16fe25?w=800&q=80',
+    image: '/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM (1).jpeg',
     images: [
-      'https://images.unsplash.com/photo-1544984243-ec57ea16fe25?w=800&q=80',
-      'https://images.unsplash.com/photo-1583468323330-9032ad490fed?w=800&q=80',
+      '/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM (1).jpeg',
+      '/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM.jpeg',
+      '/cowImg/WhatsApp Image 2026-04-01 at 3.57.20 PM.jpeg',
+      '/cowImg/WhatsApp Image 2026-04-01 at 3.57.31 PM.jpeg',
     ],
     certification: 'Certified Bio',
     description: `The Golden Meadow specimen showcases exceptional growth potential with a golden-hued coat that signifies premium genetics. Bred from our elite Hereford Gold line, this animal demonstrates superior feed conversion efficiency and gentle temperament ideal for both breeding and finishing operations.

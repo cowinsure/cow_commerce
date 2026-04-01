@@ -15,6 +15,7 @@ import {
   TrendingUp,
   Clock,
 } from "lucide-react";
+import Link from "next/link";
 
 interface ProductCardProps {
   cow: Cow;
@@ -47,7 +48,7 @@ export function ProductCard({
   const totalUnits = 12; // Assuming 12 units per cow
   const bookedUnits = totalUnits - cow.availableUnits;
   const progressPercent = (bookedUnits / totalUnits) * 100;
-
+  console.log(cow);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -250,14 +251,16 @@ export function ProductCard({
             isListView && "border-t border-emerald-100 pt-4",
           )}
         >
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex-1 py-3.5 bg-emerald-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/25 hover:bg-emerald-600 hover:shadow-emerald-500/40 transition-all flex items-center justify-center gap-2 group/btn"
-          >
-            Book Units
-            <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-          </motion.button>
+          <Link href={`/cows/${cow.id}`} className="w-full">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex-1 py-3.5 bg-emerald-500 text-white rounded-xl font-bold text-sm w-full cursor-pointer shadow-lg shadow-emerald-500/25 hover:bg-emerald-600 hover:shadow-emerald-500/40 transition-all flex items-center justify-center gap-2 group/btn"
+            >
+              Book Units
+              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+            </motion.button>
+          </Link>
 
           {/* Estimated Processing */}
           <div className="hidden sm:flex items-center gap-1.5 text-xs text-emerald-600/60 font-medium shrink-0">
