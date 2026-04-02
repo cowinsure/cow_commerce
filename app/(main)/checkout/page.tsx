@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/home/Navbar";
@@ -72,6 +72,37 @@ const slideInRight = {
 };
 
 export default function CartPage() {
+  return (
+    <Suspense fallback={<CheckoutLoadingState />}>
+      <CheckoutContent />
+    </Suspense>
+  );
+}
+
+function CheckoutLoadingState() {
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      <main className="grow pt-24 pb-24 overflow-hidden">
+        <div className="px-4 sm:px-8 max-w-screen-2xl mx-auto">
+          <div className="animate-pulse space-y-8">
+            <div className="h-8 w-64 bg-slate-200 rounded" />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+              <div className="lg:col-span-7 space-y-6">
+                <div className="h-64 bg-slate-200 rounded-3xl" />
+                <div className="h-64 bg-slate-200 rounded-3xl" />
+              </div>
+              <div className="lg:col-span-5">
+                <div className="h-96 bg-slate-200 rounded-3xl" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function CheckoutContent() {
   const searchParams = useSearchParams();
   const cowId = searchParams.get("cowId");
   const quantityParam = searchParams.get("quantity");
