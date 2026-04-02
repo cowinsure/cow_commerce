@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -5,33 +6,36 @@ import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthToggle } from "@/components/auth/AuthToggle";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignupForm } from "@/components/auth/SignupForm";
-import { authService } from "@/lib/api/auth";
+import { isAuthenticated } from "@/lib/auth/tokenService";
 import { useToast } from "@/components/ui/Toast";
 import { useRouter } from "next/navigation";
 
 type AuthMode = "login" | "signup";
 
-export default function AuthPage() {
+function AuthContent() {
+  // Default to login mode to match server-side rendering
   const [mode, setMode] = useState<AuthMode>("login");
-  const [isLoading, setIsLoading] = useState(true);
   const { showToast } = useToast();
   const router = useRouter();
 
-  // Check if user is already authenticated
+  // Check URL and auth on client-side after mount (avoids hydration mismatch)
   useEffect(() => {
-    if (authService.isAuthenticated()) {
-      showToast("You are already logged in. Please logout first to access this page.", "error");
+    // Check URL for signup param
+    const urlParams = new URLSearchParams(window.location.search);
+    const signup = urlParams.get("signup");
+    if (signup === "true") {
+      setMode("signup");
+    }
+
+    // Check if user is already authenticated
+    if (isAuthenticated()) {
+      showToast(
+        "You are already logged in. Please logout first to access this page.",
+        "error",
+      );
       router.push("/");
-    } else {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      setIsLoading(false);
     }
   }, [showToast, router]);
-
-  // Don't render anything while checking auth
-  if (isLoading) {
-    return null;
-  }
 
   return (
     <AuthLayout>
@@ -56,4 +60,8 @@ export default function AuthPage() {
       </div>
     </AuthLayout>
   );
+}
+
+export default function AuthPage() {
+  return <AuthContent />;
 }

@@ -7,7 +7,8 @@ import { z } from "zod";
 import { useToast } from "@/components/ui/Toast";
 import { cn } from "@/lib/theme/theme.config";
 import InputField from "../ui/InputField";
-import { authService, SignupRequest, SetPasswordRequest } from "@/lib/api/auth";
+import { useAuth } from "@/hooks/auth/useAuth";
+import { SetPasswordRequest, SignupRequest } from "@/lib/models/authDTO";
 
 const signupSchema = z
   .object({
@@ -29,6 +30,11 @@ export function SignupForm({ className }: { className?: string }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { showToast } = useToast();
+  const {
+    register: registerApi,
+    setPassword: setPasswordApi,
+    loading,
+  } = useAuth();
 
   const {
     register,
@@ -61,34 +67,31 @@ export function SignupForm({ className }: { className?: string }) {
         longitude: position.longitude,
       };
 
-      const registerResponse = await authService.register(registerData);
+      const registerResponse = await registerApi(registerData);
 
-      if (registerResponse.statusCode === "200") {
+      if (registerResponse.status === "success") {
         // Then set the password
         const passwordData: SetPasswordRequest = {
           mobile_number: signupData.mobile_number,
           password: signupData.password,
         };
 
-        const passwordResponse = await authService.setPassword(passwordData);
+        const passwordResponse = await setPasswordApi(
+          signupData.mobile_number,
+          signupData.password,
+        );
 
-        if (passwordResponse.statusCode === "200") {
+        if (passwordResponse.status === "success") {
           showToast(
-            passwordResponse.data.message || "Registration successful",
+            passwordResponse.message || "Registration successful",
             "success",
           );
-          console.log("Signup successful:", passwordResponse.data);
+          console.log("Signup successful:", passwordResponse);
         } else {
-          showToast(
-            passwordResponse.data.message || "Registration failed",
-            "error",
-          );
+          showToast(passwordResponse.message || "Registration failed", "error");
         }
       } else {
-        showToast(
-          registerResponse.data.message || "Registration failed",
-          "error",
-        );
+        showToast(registerResponse.message || "Registration failed", "error");
       }
     } catch (error) {
       // Show backend error message if available

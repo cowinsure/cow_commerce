@@ -48,7 +48,6 @@ export function ProductCard({
   const totalUnits = 12; // Assuming 12 units per cow
   const bookedUnits = totalUnits - cow.availableUnits;
   const progressPercent = (bookedUnits / totalUnits) * 100;
-  console.log(cow);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

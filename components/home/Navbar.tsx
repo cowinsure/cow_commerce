@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/theme/theme.config";
 import Link from "next/link";
-import { authService } from "@/lib/api/auth";
+import { useAuth } from "@/hooks/auth/useAuth";
+import { removeToken } from "@/lib/auth/tokenService";
 import { Menu, X, User, LogOut, Sprout } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { shouldShowNavLink } from "@/lib/config/protected-routes";
@@ -19,9 +20,10 @@ const navLinks = [
 export function Navbar({ className }: { className?: string }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState(authService.isAuthenticated());
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
+
+  const { isAuthenticated, loading, logout } = useAuth();
 
   // Handle scroll effect for navbar background
   useEffect(() => {
@@ -44,19 +46,52 @@ export function Navbar({ className }: { className?: string }) {
     };
   }, [mobileMenuOpen]);
 
-  // Re-check auth status on navigation
-  // This triggers a re-render when pathname changes so auth state is checked fresh
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, authService.isAuthenticated()]);
-
-  const handleLogout = () => {
-    authService.logout();
-    setUser(false);
+  const handleLogout = async () => {
+    await logout();
     setMobileMenuOpen(false);
+    // Optionally redirect to home or refresh
+    window.location.href = "/";
   };
 
   const hideNavbar = pathname.startsWith("/auth");
+
+  // Show loading skeleton while checking auth
+  if (loading) {
+    return (
+      <motion.nav
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className={cn(
+          "fixed top-0 w-full z-50 transition-all duration-300",
+          scrolled
+            ? "bg-emerald-50 backdrop-blur-xl shadow-lg shadow-emerald-900/5"
+            : "bg-emerald-50 backdrop-blur-xl",
+          className,
+        )}
+      >
+        <div className="flex justify-between items-center w-full px-4 sm:px-8 py-4 max-w-screen-2xl mx-auto">
+          <div className="flex items-center gap-10">
+            {/* Logo Skeleton */}
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-emerald-200 rounded-full animate-pulse" />
+              <div className="w-40 h-6 bg-emerald-100 rounded animate-pulse" />
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            {/* Nav Links Skeleton */}
+            <div className="hidden md:flex gap-8">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="w-16 h-4 bg-emerald-100 rounded animate-pulse" />
+              ))}
+            </div>
+            {/* Button Skeleton */}
+            <div className="w-24 h-10 bg-emerald-100 rounded-full animate-pulse" />
+          </div>
+        </div>
+      </motion.nav>
+    );
+  }
 
   if (hideNavbar) return null;
 
@@ -92,9 +127,7 @@ export function Navbar({ className }: { className?: string }) {
             {/* Desktop Navigation */}
             <div className="hidden md:flex gap-8 items-center font-headline text-sm font-medium tracking-tight">
               {navLinks
-                .filter((link) =>
-                  shouldShowNavLink(link.href, authService.isAuthenticated()),
-                )
+                .filter((link) => shouldShowNavLink(link.href, isAuthenticated))
                 .map((link) => (
                   <Link
                     key={link.name}
@@ -114,7 +147,7 @@ export function Navbar({ className }: { className?: string }) {
 
           {/* Desktop Auth */}
           <div className="hidden md:flex items-center gap-4">
-            {authService.isAuthenticated() ? (
+            {isAuthenticated ? (
               <div
                 className="relative group"
                 onMouseEnter={() => setDropdownOpen(true)}
@@ -161,17 +194,11 @@ export function Navbar({ className }: { className?: string }) {
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                {/* <Link
-                  href="/auth"
-                  className="px-5 py-2 text-sm font-semibold text-emerald-900 dark:text-emerald-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 rounded-full transition-all duration-200"
-                >
-                  Login
-                </Link> */}
                 <Link
-                  href="/auth?signup=true"
+                  href="/auth?login=true"
                   className="px-5 py-2 bg-emerald-700 text-white rounded-full font-semibold text-sm hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-600/20 active:scale-95 transition-all duration-200"
                 >
-                  Get Started
+                  Login
                 </Link>
               </div>
             )}
@@ -242,10 +269,7 @@ export function Navbar({ className }: { className?: string }) {
                 <div className="flex-1 space-y-2">
                   {navLinks
                     .filter((link) =>
-                      shouldShowNavLink(
-                        link.href,
-                        authService.isAuthenticated(),
-                      ),
+                      shouldShowNavLink(link.href, isAuthenticated),
                     )
                     .map((link, index) => (
                       <motion.div
@@ -272,7 +296,7 @@ export function Navbar({ className }: { className?: string }) {
 
                 {/* Mobile Auth Section */}
                 <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 space-y-3">
-                  {authService.isAuthenticated() ? (
+                  {isAuthenticated ? (
                     <>
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
@@ -301,30 +325,17 @@ export function Navbar({ className }: { className?: string }) {
                     </>
                   ) : (
                     <>
-                      {/* <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                      >
-                        <Link
-                          href="/auth"
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="block py-3 px-4 rounded-xl text-center font-semibold text-emerald-900 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all duration-200"
-                        >
-                          Login
-                        </Link>
-                      </motion.div> */}
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
                       >
                         <Link
-                          href="/auth?signup=true"
+                          href="/auth?login=true"
                           onClick={() => setMobileMenuOpen(false)}
                           className="block py-3 px-4 rounded-xl text-center font-semibold bg-emerald-600 dark:bg-emerald-500 text-white hover:bg-emerald-700 dark:hover:bg-emerald-400 transition-all duration-200"
                         >
-                          Get Started
+                          Login
                         </Link>
                       </motion.div>
                     </>

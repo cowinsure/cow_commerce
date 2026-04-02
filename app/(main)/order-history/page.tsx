@@ -190,8 +190,8 @@ export default function OrderHistoryPage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 mt-16">
-      <main className="flex-grow pt-24 pb-24 overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-slate-50 mt-10">
+      <main className="grow pt-24 pb-24 overflow-hidden">
         {/* Background Elements */}
         <div className="fixed inset-0 pointer-events-none">
           <div className="absolute top-20 -left-40 w-96 h-96 bg-emerald-200/20 rounded-full blur-3xl" />
@@ -350,7 +350,7 @@ export default function OrderHistoryPage() {
                       <div className="lg:col-span-3 flex items-center gap-4">
                         <motion.div
                           whileHover={{ scale: 1.05 }}
-                          className="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 relative flex-shrink-0"
+                          className="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 relative shrink-0"
                         >
                           <Image
                             src={order.image}

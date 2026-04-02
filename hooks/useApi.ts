@@ -6,7 +6,7 @@ import type {
   InternalAxiosRequestConfig,
 } from "axios";
 import { useState, useCallback } from "react";
-import { TokenManager } from "@/lib/api/auth";
+import { getToken } from "@/lib/auth/tokenService";
 
 // Create Axios instance
 const apiClient = axios.create({
@@ -19,7 +19,7 @@ const apiClient = axios.create({
 // Add interceptor for auth token
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = TokenManager.getAccessToken();
+    const token = getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
