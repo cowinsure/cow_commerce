@@ -180,6 +180,7 @@ export function CowBodyDiagram({ className }: CowBodyDiagramProps) {
                 alt="Beef Cuts Diagram"
                 src="/cow-body.png" // RECOMMEND: Replace with butcher diagram
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className={cn(
                   "object-contain transition-opacity duration-500",
                   isImageLoaded ? "opacity-100" : "opacity-0",

@@ -68,7 +68,7 @@ export function BestSellingCategories({
   className,
 }: BestSellingCategoriesProps) {
   return (
-    <section className={cn("py-24 px-8 max-w-screen-2xl mx-auto", className)}>
+    <section className={cn("py-24 px-6 max-w-screen-2xl mx-auto", className)}>
       {/* Section Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -105,6 +105,7 @@ export function BestSellingCategories({
                 alt={category.name}
                 src={category.image}
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-surface-container via-transparent to-transparent" />

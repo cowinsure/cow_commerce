@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/theme/theme.config";
 import Link from "next/link";
 import { useAuth } from "@/hooks/auth/useAuth";
-import { removeToken } from "@/lib/auth/tokenService";
 import { Menu, X, User, LogOut, Sprout } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { shouldShowNavLink } from "@/lib/config/protected-routes";
@@ -82,7 +81,10 @@ export function Navbar({ className }: { className?: string }) {
             {/* Nav Links Skeleton */}
             <div className="hidden md:flex gap-8">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-16 h-4 bg-emerald-100 rounded animate-pulse" />
+                <div
+                  key={i}
+                  className="w-16 h-4 bg-emerald-100 rounded animate-pulse"
+                />
               ))}
             </div>
             {/* Button Skeleton */}
@@ -155,7 +157,7 @@ export function Navbar({ className }: { className?: string }) {
               >
                 {/* Avatar Button */}
                 <motion.button
-                  className="flex items-center gap-2 px-2 py-2 rounded-full hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors duration-200"
+                  className="flex items-center gap-2 px-2 py-2 rounded-full hover:bg-emerald-50 transition-colors duration-200"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -172,18 +174,18 @@ export function Navbar({ className }: { className?: string }) {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
                       transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute right-0 mt-2 w-48 py-2 bg-white dark:bg-zinc-900 rounded-2xl shadow-xl shadow-emerald-900/10 border border-emerald-100 dark:border-emerald-800/30 overflow-hidden"
+                      className="absolute right-0 mt-2 w-48 py-2 bg-white  rounded-2xl shadow-xl shadow-emerald-900/10 border border-emerald-100 /30 overflow-hidden"
                     >
                       <Link
                         href="/profile"
-                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors duration-200"
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700  hover:bg-emerald-50 transition-colors duration-200"
                       >
                         <User className="w-4 h-4 text-emerald-600" />
                         <span>Profile</span>
                       </Link>
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600  hover:bg-red-50 transition-colors duration-200"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Logout</span>
@@ -207,7 +209,7 @@ export function Navbar({ className }: { className?: string }) {
           {/* Mobile Menu Button */}
           <motion.button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
+            className="md:hidden relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-emerald-50 transition-colors"
             whileTap={{ scale: 0.95 }}
           >
             <AnimatePresence mode="wait">
@@ -219,7 +221,7 @@ export function Navbar({ className }: { className?: string }) {
                   exit={{ rotate: 90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <X className="w-6 h-6 text-emerald-900 dark:text-emerald-100" />
+                  <X className="w-6 h-6 text-emerald-900" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -229,7 +231,7 @@ export function Navbar({ className }: { className?: string }) {
                   exit={{ rotate: -90, opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Menu className="w-6 h-6 text-emerald-900 dark:text-emerald-100" />
+                  <Menu className="w-6 h-6 text-emerald-900" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -262,9 +264,9 @@ export function Navbar({ className }: { className?: string }) {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute right-0 top-0 h-full w-70 bg-white dark:bg-zinc-950 shadow-2xl"
+              className="absolute right-0 top-0 h-full w-full bg-emerald-50 shadow-2xl"
             >
-              <div className="flex flex-col h-full pt-20 pb-6 px-6">
+              <div className="flex flex-col h-full pt-26 pb-6 px-6">
                 {/* Navigation Links */}
                 <div className="flex-1 space-y-2">
                   {navLinks
@@ -284,8 +286,8 @@ export function Navbar({ className }: { className?: string }) {
                           className={cn(
                             "block py-3 px-4 rounded-xl text-lg font-medium transition-all duration-200",
                             pathname === link.href
-                              ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-900 dark:text-emerald-400"
-                              : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900",
+                              ? "bg-emerald-50 text-emerald-900 "
+                              : "text-zinc-700 hover:bg-zinc-50 ",
                           )}
                         >
                           {link.name}
@@ -295,7 +297,7 @@ export function Navbar({ className }: { className?: string }) {
                 </div>
 
                 {/* Mobile Auth Section */}
-                <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 space-y-3">
+                <div className="border-t border-zinc-200  pt-6 space-y-3">
                   {isAuthenticated ? (
                     <>
                       <motion.div
@@ -306,7 +308,7 @@ export function Navbar({ className }: { className?: string }) {
                         <Link
                           href="/profile"
                           onClick={() => setMobileMenuOpen(false)}
-                          className="flex items-center gap-3 py-3 px-4 rounded-xl text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all duration-200"
+                          className="flex items-center gap-3 py-3 px-4 rounded-xl text-zinc-700  hover:bg-zinc-50 transition-all duration-200"
                         >
                           <User className="w-5 h-5" />
                           <span className="font-medium">Profile</span>
@@ -317,7 +319,7 @@ export function Navbar({ className }: { className?: string }) {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-3 py-3 px-4 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
+                        className="w-full flex items-center gap-3 py-3 px-4 rounded-xl text-red-600  hover:bg-red-50 transition-all duration-200"
                       >
                         <LogOut className="w-5 h-5" />
                         <span className="font-medium">Logout</span>
@@ -333,7 +335,7 @@ export function Navbar({ className }: { className?: string }) {
                         <Link
                           href="/auth?login=true"
                           onClick={() => setMobileMenuOpen(false)}
-                          className="block py-3 px-4 rounded-xl text-center font-semibold bg-emerald-600 dark:bg-emerald-500 text-white hover:bg-emerald-700 dark:hover:bg-emerald-400 transition-all duration-200"
+                          className="block py-3 px-4 rounded-xl text-center font-semibold bg-emerald-600  text-white hover:bg-emerald-700 transition-all duration-200"
                         >
                           Login
                         </Link>

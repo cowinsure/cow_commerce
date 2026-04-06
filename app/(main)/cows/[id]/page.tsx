@@ -1,7 +1,56 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
+import { useProduct } from "@/hooks/product/useProduct";
+import { CowDetails, LivestockItem } from "@/lib/models/productDTO";
+
+// Adapter to map CowDetails API response to page expected format
+interface CowDetailsAdapter {
+  id: number;
+  name: string;
+  breed: string;
+  price: number;
+  image: string;
+  tag: string;
+  tagColor: string;
+  weight: number;
+  age: number;
+  certification: string;
+  availableUnits: number;
+  gender: string;
+  color: string;
+}
+
+function mapCowDetailsToAdapter(details: CowDetails): CowDetailsAdapter {
+  const baseImageUrl = process.env.NEXT_PUBLIC_API_BASE_IMAGE_URL || "";
+  const getImageUrl = (path: string) => {
+    if (!path || ["None", "null", "undefined"].includes(path)) return null;
+
+    // Absolute URL
+    if (path.startsWith("http")) return path;
+
+    // Relative path → attach base URL properly
+    return `${baseImageUrl.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
+  };
+  const imageUrl = getImageUrl(details.left_side_image);
+  return {
+    id: details.id,
+    name: details.name || `${details.breed} #${details.id}`,
+    breed: details.breed,
+    price: details.weight_kg * 1000,
+    image: imageUrl ?? "/cowImg/fallback.jpg",
+    tag: details.vet_certificate ? "Premium" : "Standard",
+    tagColor: details.vet_certificate ? "primary-fixed" : "secondary",
+    weight: details.weight_kg,
+    age: details.age_in_months,
+    certification: details.vet_certificate ? "Verified" : "Pending",
+    availableUnits: 8,
+    gender: details.gender,
+    color: details.color,
+  };
+}
+
 import {
   motion,
   AnimatePresence,
@@ -12,7 +61,6 @@ import Image from "next/image";
 import { Navbar } from "@/components/home/Navbar";
 import { Footer } from "@/components/home/Footer";
 import { CowGallery } from "@/components/cow/CowGallery";
-import { getCowById } from "@/lib/data/cows";
 import {
   Weight,
   Calendar,
@@ -77,27 +125,113 @@ const glassPanel = {
 
 export default function CowDetailsPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
+  const { cowDetails, fetchCowDetails, loading } = useProduct();
   const cowId = params.id as string;
-  const cow = getCowById(cowId);
+  const numericCowId = parseInt(cowId, 10);
+
+  // Get preloaded cow data from URL query parameter
+  const preloadedCowData = searchParams.get("data");
+  const preloadedCow = useMemo(() => {
+    if (!preloadedCowData) return null;
+    try {
+      return JSON.parse(atob(preloadedCowData)) as LivestockItem;
+    } catch {
+      return null;
+    }
+  }, [preloadedCowData]);
+
+  // Fetch cow details on mount (always fetch for full details)
+  useEffect(() => {
+    if (numericCowId) {
+      fetchCowDetails(numericCowId);
+    }
+  }, [numericCowId, fetchCowDetails]);
+
+  // Map API response to page-compatible format
+  const cow = cowDetails?.[0] ? mapCowDetailsToAdapter(cowDetails[0]) : null;
   const [quantity, setQuantity] = useState(1);
   const [isLiked, setIsLiked] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
   const { scrollYProgress } = useScroll();
 
-  const heroY = useTransform(scrollYProgress, [0, 0.5], [0, -100]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+  // const heroY = useTransform(scrollYProgress, [0, 0.5], [0, -100]);
+  // const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 1]);
 
+  // Use price from adapter for calculations
   const totalPrice = useMemo(() => {
-    return cow ? cow.price * quantity : 0;
+    return preloadedCow?.booking_amount
+      ? preloadedCow?.booking_amount * quantity
+      : 0;
   }, [cow, quantity]);
 
-  // Calculate booking progress
+  // Calculate booking progress (using placeholder values since CowDetails doesn't have availability)
   const totalUnits = 12;
-  const bookedUnits = totalUnits - (cow?.availableUnits || 0);
+  const bookedUnits = 4; // Placeholder - should come from API
   const progressPercent = (bookedUnits / totalUnits) * 100;
   const isAlmostFull = progressPercent >= 75;
   const isFull = progressPercent >= 100;
 
+  // Show loading state while fetching data
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-slate-50">
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center pt-24">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="text-center px-4"
+          >
+            <div className="relative">
+              <div className="w-24 h-24 mx-auto mb-6">
+                <div className="relative w-24 h-24">
+                  <div className="absolute inset-0 rounded-full border-4 border-emerald-100"></div>
+                  <motion.div
+                    className="absolute inset-0 rounded-full border-4 border-transparent border-t-emerald-500"
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                  />
+                </div>
+              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="mt-6"
+              >
+                <p className="text-lg font-semibold text-slate-700 mb-2">
+                  Loading Cow Details
+                </p>
+                <p className="text-sm text-slate-500">
+                  Fetching premium livestock information...
+                </p>
+              </motion.div>
+              {/* Skeleton Animation */}
+              <motion.div
+                className="mt-8 max-w-md mx-auto space-y-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <div className="h-4 bg-slate-200 rounded w-3/4 mx-auto animate-pulse"></div>
+                <div className="h-4 bg-slate-200 rounded w-1/2 mx-auto animate-pulse"></div>
+                <div className="h-32 bg-slate-200 rounded-2xl mt-6 animate-pulse"></div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Show error state if no cow data found
   if (!cow) {
     return (
       <div className="min-h-screen flex flex-col bg-slate-50">
@@ -162,14 +296,14 @@ export default function CowDetailsPage() {
     },
   ];
 
+  console.log(preloadedCow);
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      <Navbar />
-
-      <main className="flex-grow">
+      <main className="grow">
         {/* Immersive Hero Section with Parallax */}
         <motion.section
-          style={{ y: heroY, opacity: heroOpacity }}
+          // style={{ y: heroY, opacity: heroOpacity }}
           className="relative min-h-screen pt-20 pb-12 overflow-hidden"
         >
           {/* Background Elements */}
@@ -189,10 +323,22 @@ export default function CowDetailsPage() {
                 className="lg:col-span-7 relative "
               >
                 <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-emerald-900/10 bg-white">
-                  <CowGallery cow={cow} />
+                  {cowDetails[0] ? (
+                    <CowGallery cow={cowDetails[0]} />
+                  ) : (
+                    <div className="relative aspect-[4/3]">
+                      <Image
+                        alt={cow.name}
+                        src={cow.image}
+                        fill
+                        className="object-cover"
+                        priority
+                      />
+                    </div>
+                  )}
 
                   {/* Floating Badge */}
-                  <motion.div
+                  {/* <motion.div
                     initial={{ opacity: 0, scale: 0 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.5, type: "spring" }}
@@ -203,16 +349,16 @@ export default function CowDetailsPage() {
                         "px-4 py-2 rounded-full text-sm font-bold text-white shadow-lg flex items-center gap-2",
                         cow.tagColor === "primary-fixed"
                           ? "bg-linear-to-r from-amber-500 to-orange-500 shadow-amber-500/30"
-                          : "bg-gradient-to-r from-emerald-600 to-emerald-500 shadow-emerald-500/30",
+                          : "bg-linear-to-r from-emerald-600 to-emerald-500 shadow-emerald-500/30",
                       )}
                     >
                       <Sparkles className="w-4 h-4" />
                       {cow.tag || "Premium"} Grade
                     </span>
-                  </motion.div>
+                  </motion.div> */}
 
                   {/* Image Overlay Info */}
-                  <div className="absolute bottom-32 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-8">
+                  <div className="absolute bottom-32 left-0 right-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-8">
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -252,7 +398,7 @@ export default function CowDetailsPage() {
                     variants={glassPanel}
                     className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl shadow-emerald-900/5 border border-white/50 overflow-hidden"
                   >
-                    {/* Decorative gradient */}
+                    {/* Decorative linear */}
                     <div className="absolute -top-20 -right-20 w-40 h-40 bg-emerald-400/20 rounded-full blur-2xl" />
 
                     {/* Header */}
@@ -295,11 +441,11 @@ export default function CowDetailsPage() {
                     </div>
 
                     {/* Price Display */}
-                    <div className="relative z-10 mb-8 p-6 bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-2xl border border-emerald-100">
+                    <div className="relative z-10 mb-8 p-6 bg-linear-to-br from-emerald-50 to-emerald-100/50 rounded-2xl border border-emerald-100">
                       <div className="flex items-baseline gap-1 text-emerald-700 mb-1">
                         <FaBangladeshiTakaSign className="text-2xl" />
                         <span className="text-5xl font-black tracking-tight">
-                          {cow.price.toLocaleString()}
+                          {preloadedCow?.unit_price.toLocaleString()}
                         </span>
                       </div>
                       <p className="text-emerald-600/80 font-medium">
@@ -337,12 +483,12 @@ export default function CowDetailsPage() {
                             isFull
                               ? "bg-slate-400"
                               : isAlmostFull
-                                ? "bg-gradient-to-r from-amber-500 to-orange-500"
-                                : "bg-gradient-to-r from-emerald-500 to-teal-400",
+                                ? "bg-linear-to-r from-amber-500 to-orange-500"
+                                : "bg-linear-to-r from-emerald-500 to-teal-400",
                           )}
                         >
                           <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+                            className="absolute inset-0 bg-linear-to-r from-transparent via-white/50 to-transparent"
                             animate={{ x: ["-100%", "200%"] }}
                             transition={{
                               duration: 2,
@@ -391,8 +537,8 @@ export default function CowDetailsPage() {
 
                     {/* Total & CTA */}
                     <div className="relative z-10 space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-slate-900 rounded-xl text-white">
-                        <span className="font-medium">Total Investment</span>
+                      <div className="flex items-center justify-between p-4 border-slate-900 rounded-xl text-gray-500">
+                        <span className="font-medium">Total Unit Price</span>
                         <div className="flex items-center gap-1 text-2xl font-bold">
                           <FaBangladeshiTakaSign />
                           {totalPrice.toLocaleString()}
@@ -414,7 +560,7 @@ export default function CowDetailsPage() {
                             "w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all",
                             isFull
                               ? "bg-slate-300 text-slate-500 cursor-not-allowed"
-                              : "bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40",
+                              : "bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40",
                           )}
                         >
                           {isFull ? (
@@ -423,10 +569,15 @@ export default function CowDetailsPage() {
                               Join Waitlist
                             </>
                           ) : (
-                            <>
-                              Book Now
-                              <ArrowRight className="w-5 h-5" />
-                            </>
+                            <span className="flex items-center justify-between w-full px-4">
+                              <span className="flex items-center gap-2">
+                                Book Now
+                                <ArrowRight className="w-5 h-5" />
+                              </span>
+                              <span>
+                                <small className="font-normal text-xs">BDT</small> {totalPrice.toLocaleString()}
+                              </span>
+                            </span>
                           )}
                         </motion.button>
                       </Link>
@@ -449,7 +600,7 @@ export default function CowDetailsPage() {
                     variants={staggerContainer}
                     initial="hidden"
                     animate="visible"
-                    className="grid grid-cols-2 gap-3"
+                    className="grid grid-cols-4 gap-3"
                   >
                     {[
                       {
@@ -570,10 +721,10 @@ export default function CowDetailsPage() {
                         src={cow.image}
                         alt={`${cow.name} grazing`}
                         fill
-                        className="object-cover"
+                        className="object-cover rounded-lg"
                       />
                     </div>
-                    <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-6 shadow-xl">
+                    {/* <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-6 shadow-xl">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
                           <TrendingUp className="w-6 h-6 text-emerald-600" />
@@ -587,7 +738,7 @@ export default function CowDetailsPage() {
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </motion.div>
               )}
@@ -754,7 +905,7 @@ export default function CowDetailsPage() {
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
                     <div className="absolute top-4 left-4">
                       <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-bold text-emerald-700">
                         {relatedCow.tag}

@@ -5,47 +5,63 @@
  */
 
 import { useState, useCallback } from "react";
-import { getProductsApi, getProductByIdApi, getCategoriesApi } from "@/lib/api/product/product";
-import { GetProductsRequest, Product, Category } from "@/lib/models/productDTO";
+import { getLiveStocksApi, getCowDetailsApi } from "@/lib/api/product/product";
+import { LivestockItem, CowDetails, CowDetailsData } from "@/lib/models/productDTO";
 
 interface ProductState {
-  products: Product[];
-  currentProduct: Product | null;
-  categories: Category[];
+  products: LivestockItem[];
+  currentProduct: LivestockItem | null;
   loading: boolean;
   error: string | null;
   total: number;
   page: number;
   totalPages: number;
+  // Cow Details State
+  cowDetails: CowDetails[];
+  cowSummary: { Total: number; Active: number } | null;
 }
 
 export function useProduct() {
   const [state, setState] = useState<ProductState>({
     products: [],
     currentProduct: null,
-    categories: [],
     loading: false,
     error: null,
     total: 0,
     page: 1,
     totalPages: 1,
+    // Cow Details State
+    cowDetails: [],
+    cowSummary: null,
   });
 
-  const fetchProducts = useCallback(async (params?: GetProductsRequest) => {
+  const fetchProducts = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
-      const response = await getProductsApi(params);
+      const response = await getLiveStocksApi({
+        page_size: 10,
+        start_record: 1,
+        min_weight: 0,
+        max_weight: 1000,
+        min_price: 0,
+        max_price: 50000000,
+        breed_id: -1,
+        id: "-1",
+      });
+      console.log(response);
       setState((prev) => ({
         ...prev,
-        products: response.products,
-        total: response.total,
-        page: response.page,
-        totalPages: response.total_pages,
+        products: response.data,
+        total: response.data.length,
+        page: 1,
+        totalPages: 1,
         loading: false,
       }));
+      console.log(response);
       return response;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to fetch products";
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch products";
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -55,18 +71,47 @@ export function useProduct() {
     }
   }, []);
 
-  const fetchProductById = useCallback(async (id: string) => {
+  // const fetchProductById = useCallback(async (id: string) => {
+  //   setState((prev) => ({ ...prev, loading: true, error: null }));
+  //   try {
+  //     const response = await getProductByIdApi(id);
+  //     setState((prev) => ({
+  //       ...prev,
+  //       currentProduct: response.data,
+  //       loading: false,
+  //     }));
+  //     return response;
+  //   } catch (error: unknown) {
+  //     const errorMessage =
+  //       error instanceof Error ? error.message : "Failed to fetch product";
+  //     setState((prev) => ({
+  //       ...prev,
+  //       loading: false,
+  //       error: errorMessage,
+  //     }));
+  //     throw error;
+  //   }
+  // }, []);
+
+  // ==================== COW DETAILS ====================
+
+
+  const fetchCowDetails = useCallback(async (id: number) => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
-      const response = await getProductByIdApi(id);
+      const response = await getCowDetailsApi({
+        asset_id: id,
+      });
       setState((prev) => ({
         ...prev,
-        currentProduct: response.product,
+        cowDetails: response.data.list,
+        cowSummary: response.data.summary,
         loading: false,
       }));
       return response;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to fetch product";
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch cow details";
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -76,42 +121,44 @@ export function useProduct() {
     }
   }, []);
 
-  const fetchCategories = useCallback(async () => {
-    setState((prev) => ({ ...prev, loading: true, error: null }));
-    try {
-      const response = await getCategoriesApi();
-      setState((prev) => ({
-        ...prev,
-        categories: response.categories,
-        loading: false,
-      }));
-      return response;
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to fetch categories";
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
-      throw error;
-    }
-  }, []);
+  // const fetchCategories = useCallback(async () => {
+  //   setState((prev) => ({ ...prev, loading: true, error: null }));
+  //   try {
+  //     const response = await getCategoriesApi();
+  //     setState((prev) => ({
+  //       ...prev,
+  //       categories: response.categories,
+  //       loading: false,
+  //     }));
+  //     return response;
+  //   } catch (error: unknown) {
+  //     const errorMessage =
+  //       error instanceof Error ? error.message : "Failed to fetch categories";
+  //     setState((prev) => ({
+  //       ...prev,
+  //       loading: false,
+  //       error: errorMessage,
+  //     }));
+  //     throw error;
+  //   }
+  // }, []);
 
-  const clearError = useCallback(() => {
-    setState((prev) => ({ ...prev, error: null }));
-  }, []);
+  // const clearError = useCallback(() => {
+  //   setState((prev) => ({ ...prev, error: null }));
+  // }, []);
 
-  const clearCurrentProduct = useCallback(() => {
-    setState((prev) => ({ ...prev, currentProduct: null }));
-  }, []);
+  // const clearCurrentProduct = useCallback(() => {
+  //   setState((prev) => ({ ...prev, currentProduct: null }));
+  // }, []);
 
   return {
     ...state,
     fetchProducts,
-    fetchProductById,
-    fetchCategories,
-    clearError,
-    clearCurrentProduct,
+    fetchCowDetails,
+    // fetchProductById,
+    // fetchCategories,
+    // clearError,
+    // clearCurrentProduct,
   };
 }
 

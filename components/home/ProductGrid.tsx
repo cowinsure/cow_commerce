@@ -3,12 +3,11 @@
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/theme/theme.config";
 import { ProductCard } from "./ProductCard";
-import type { Cow } from "@/lib/data/cows";
-import { totalAssets } from "@/lib/data/cows";
 import { usePathname } from "next/navigation";
+import { LivestockItem } from "@/lib/models/productDTO";
 
 interface ProductGridProps {
-  cows: Cow[];
+  cows: LivestockItem[];
   className?: string;
 }
 
@@ -32,7 +31,7 @@ export function ProductGrid({ cows, className }: ProductGridProps) {
   return (
     <div
       className={cn(
-        `${isHome ? "col-span-16 mt-32 mb-20" : "col-span-9"}`,
+        `${isHome ? "col-span-8 lg:col-span-16 mt-32 mb-20" : "col-span-9"}`,
         className,
       )}
     >
@@ -87,7 +86,7 @@ export function ProductGrid({ cows, className }: ProductGridProps) {
         className={cn(
           "grid gap-8",
           viewMode === "grid"
-            ? `${isHome ? "grid-cols-4" : "grid-cols-3"}`
+            ? `${isHome ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"}`
             : "grid-cols-1",
         )}
       >
@@ -119,7 +118,7 @@ export function ProductGrid({ cows, className }: ProductGridProps) {
             </svg>
           </button>
           <p className="mt-4 text-xs font-bold text-outline uppercase tracking-widest">
-            Viewing {visibleCount} of {totalAssets} Assets
+            Viewing {visibleCount} of {cows.length} Assets
           </p>
         </div>
       )}

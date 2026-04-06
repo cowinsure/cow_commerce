@@ -19,14 +19,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-// Warm, earthy particles (farm/heritage feel)
-const PARTICLE_COUNT = 8;
-const particleData = Array.from({ length: PARTICLE_COUNT }, () => ({
-  x: Math.random() * 1000,
-  y: Math.random() * 800,
-  duration: 15 + Math.random() * 10,
-  delay: Math.random() * 5,
-}));
 
 // Slides focused on the collective booking model
 const slides = [
@@ -193,31 +185,6 @@ export function HomeHero({ className }: { className?: string }) {
         </motion.div>
       </AnimatePresence>
 
-      {/* Floating dust/pollen particles (farm atmosphere) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(PARTICLE_COUNT)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-emerald-200/20 rounded-full blur-[0.5px]"
-            initial={{
-              x: particleData[i].x,
-              y: particleData[i].y,
-            }}
-            animate={{
-              y: [null, -100],
-              x: [null, Math.random() * 50 - 25],
-              opacity: [0, 0.4, 0],
-            }}
-            transition={{
-              duration: particleData[i].duration,
-              repeat: Infinity,
-              delay: particleData[i].delay,
-              ease: "linear",
-            }}
-          />
-        ))}
-      </div>
-
       {/* Main Content */}
       <div className="relative z-10 flex items-center min-h-[90vh] px-6 sm:px-12 lg:px-24 pt-20">
         <div className="max-w-screen-2xl w-full mx-auto grid lg:grid-cols-5 gap-12 items-center">
@@ -255,7 +222,7 @@ export function HomeHero({ className }: { className?: string }) {
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.3, type: "spring" }}
                       className={cn(
-                        "px-3 py-1 rounded-full text-xs font-bold border",
+                        "px-3 py-1 rounded-full text-xs font-bold border hidden md:block",
                         currentSlide.progress === 100
                           ? "bg-stone-700/50 text-stone-400 border-stone-600/30"
                           : currentSlide.progress > 70
@@ -354,7 +321,9 @@ export function HomeHero({ className }: { className?: string }) {
 
                   <motion.button
                     onClick={() => {
-                      document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
+                      document
+                        .getElementById("how-it-works")
+                        ?.scrollIntoView({ behavior: "smooth" });
                     }}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -409,7 +378,11 @@ export function HomeHero({ className }: { className?: string }) {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.4 }}
                 >
-                  <img src="/banner1removebg.png" alt="" className="w-full h-full object-cover"/>
+                  <img
+                    src="/banner1removebg.png"
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -447,7 +420,7 @@ export function HomeHero({ className }: { className?: string }) {
           </div>
 
           {/* Navigation */}
-          <div className="flex gap-3">
+          <div className="hidden lg:flex gap-3">
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -468,7 +441,7 @@ export function HomeHero({ className }: { className?: string }) {
         </div>
 
         {/* Counter */}
-        <div className="absolute bottom-0 right-0 text-stone-500 font-mono text-sm tracking-wider">
+        <div className="hidden lg:block absolute bottom-0 right-0 text-stone-500 font-mono text-sm tracking-wider">
           <motion.span
             key={current}
             initial={{ opacity: 0, y: 10 }}
@@ -487,7 +460,7 @@ export function HomeHero({ className }: { className?: string }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
+        className="hidden lg:block absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
       >
         <motion.div
           animate={{ y: [0, 10, 0] }}

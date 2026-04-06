@@ -181,6 +181,7 @@ export default function HowItWorks({ className }: { className?: string }) {
                         src={step.image}
                         alt={step.title}
                         fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                       />
                       <div className="absolute inset-0 bg-linear-to-t from-emerald-950/60 via-transparent to-transparent" />
