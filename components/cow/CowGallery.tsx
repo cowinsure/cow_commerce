@@ -75,7 +75,7 @@ export function CowGallery({ cow, className }: CowGalleryProps) {
           </div>
 
           {/* Grade Tag - above image */}
-          <div className="absolute top-6 left-6 z-20">
+          {/* <div className="absolute top-6 left-6 z-20">
             <span
               className={cn(
                 "text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-lg",
@@ -86,11 +86,11 @@ export function CowGallery({ cow, className }: CowGalleryProps) {
             >
               {tag} Grade
             </span>
-          </div>
+          </div> */}
 
           {/* Action Buttons - above image */}
           <div className="absolute top-6 right-6 z-20 flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
+            {/* <button
               onClick={(e) => {
                 e.stopPropagation();
                 handleShare();
@@ -111,7 +111,7 @@ export function CowGallery({ cow, className }: CowGalleryProps) {
                   d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
                 />
               </svg>
-            </button>
+            </button> */}
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -206,11 +206,14 @@ export function CowGallery({ cow, className }: CowGalleryProps) {
             className={cn(
               "shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 transition-all",
               activeImage === index
-                ? "border-primary ring-2 ring-primary ring-offset-2"
+                ? "border-emerald-400"
                 : "border-transparent hover:border-primary/40 bg-surface-container",
             )}
           >
             <div className="relative w-full h-full">
+              {activeImage === index && (
+                <div className="bg-emerald-950/50 inset-0 absolute w-full h-full z-50"></div>
+              )}
               <Image
                 alt={`View ${index + 1}`}
                 className="w-full h-full object-cover"
@@ -223,7 +226,7 @@ export function CowGallery({ cow, className }: CowGalleryProps) {
         ))}
 
         {/* Video Button */}
-        <button className="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 border-transparent hover:border-primary/40 transition-all bg-surface-container flex items-center justify-center">
+        {/* <button className="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 border-transparent hover:border-primary/40 transition-all bg-surface-container flex items-center justify-center">
           <div className="flex flex-col items-center gap-1">
             <svg
               className="w-6 h-6 text-on-surface-variant"
@@ -246,10 +249,10 @@ export function CowGallery({ cow, className }: CowGalleryProps) {
             </svg>
             <span className="text-xs text-on-surface-variant">Video</span>
           </div>
-        </button>
+        </button> */}
 
         {/* 360° View Button */}
-        <button className="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 border-transparent hover:border-primary/40 transition-all bg-surface-container flex items-center justify-center">
+        {/* <button className="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden border-2 border-transparent hover:border-primary/40 transition-all bg-surface-container flex items-center justify-center">
           <div className="flex flex-col items-center gap-1">
             <svg
               className="w-6 h-6 text-on-surface-variant"
@@ -266,7 +269,7 @@ export function CowGallery({ cow, className }: CowGalleryProps) {
             </svg>
             <span className="text-xs text-on-surface-variant">360°</span>
           </div>
-        </button>
+        </button> */}
       </div>
     </div>
   );

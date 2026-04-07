@@ -54,12 +54,8 @@ function mapCowDetailsToAdapter(details: CowDetails): CowDetailsAdapter {
 import {
   motion,
   AnimatePresence,
-  useScroll,
-  useTransform,
 } from "framer-motion";
 import Image from "next/image";
-import { Navbar } from "@/components/home/Navbar";
-import { Footer } from "@/components/home/Footer";
 import { CowGallery } from "@/components/cow/CowGallery";
 import {
   Weight,
@@ -80,9 +76,22 @@ import {
   ArrowLeft,
   AlertCircle,
   Sparkles,
+  Ruler,
+  Palette,
+  Syringe,
+  Activity,
+  Play,
+  Pause,
+  Volume2,
+  ClipboardList,
 } from "lucide-react";
 import { FaBangladeshiTakaSign } from "react-icons/fa6";
 import Link from "next/link";
+import { AnimatedPrice } from "@/components/ui/CounterAnimation";
+import { CircularShareMenu } from "@/components/ui/ShareMenu";
+import { CowImageGallery } from "@/components/cow/CowImageGallery";
+import { CowVideoPlayer } from "@/components/cow/CowVideoPlayer";
+import { BreedAdvantages } from "@/components/ui/BreedContent";
 
 // Animation variants
 const fadeInUp = {
@@ -151,32 +160,28 @@ export default function CowDetailsPage() {
   // Map API response to page-compatible format
   const cow = cowDetails?.[0] ? mapCowDetailsToAdapter(cowDetails[0]) : null;
   const [quantity, setQuantity] = useState(1);
-  const [isLiked, setIsLiked] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
-  const { scrollYProgress } = useScroll();
 
   // const heroY = useTransform(scrollYProgress, [0, 0.5], [0, -100]);
   // const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 1]);
 
   // Use price from adapter for calculations
   const totalPrice = useMemo(() => {
-    return preloadedCow?.booking_amount
-      ? preloadedCow?.booking_amount * quantity
-      : 0;
+    return preloadedCow?.unit_price ? preloadedCow?.unit_price * quantity : 0;
   }, [cow, quantity]);
 
-  // Calculate booking progress (using placeholder values since CowDetails doesn't have availability)
-  const totalUnits = 12;
-  const bookedUnits = 4; // Placeholder - should come from API
-  const progressPercent = (bookedUnits / totalUnits) * 100;
-  const isAlmostFull = progressPercent >= 75;
+  // Calculate booking progress
+  const totalUnits = preloadedCow?.unit_qty ?? 0;
+  const bookedUnits =
+    (preloadedCow?.unit_qty ?? 0) - (preloadedCow?.available_qty ?? 0);
+  const progressPercent = totalUnits > 0 ? (bookedUnits / totalUnits) * 100 : 0;
+  // const isAlmostFull = progressPercent >= 75;
   const isFull = progressPercent >= 100;
 
   // Show loading state while fetching data
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-slate-50">
-        <Navbar />
         <main className="flex-1 flex items-center justify-center pt-24">
           <motion.div
             initial={{ opacity: 0 }}
@@ -226,7 +231,6 @@ export default function CowDetailsPage() {
             </div>
           </motion.div>
         </main>
-        <Footer />
       </div>
     );
   }
@@ -235,7 +239,6 @@ export default function CowDetailsPage() {
   if (!cow) {
     return (
       <div className="min-h-screen flex flex-col bg-slate-50">
-        <Navbar />
         <main className="flex-1 flex items-center justify-center pt-24">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -264,7 +267,6 @@ export default function CowDetailsPage() {
             </Link>
           </motion.div>
         </main>
-        <Footer />
       </div>
     );
   }
@@ -326,7 +328,7 @@ export default function CowDetailsPage() {
                   {cowDetails[0] ? (
                     <CowGallery cow={cowDetails[0]} />
                   ) : (
-                    <div className="relative aspect-[4/3]">
+                    <div className="relative aspect-4/3">
                       <Image
                         alt={cow.name}
                         src={cow.image}
@@ -392,29 +394,29 @@ export default function CowDetailsPage() {
                 animate="visible"
                 className="lg:col-span-5 relative"
               >
-                <div className="lg:sticky lg:top-28 space-y-6">
+                <div className="lg:sticky space-y-6">
                   {/* Glassmorphism Cart Panel */}
                   <motion.div
                     variants={glassPanel}
-                    className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl shadow-emerald-900/5 border border-white/50 overflow-hidden"
+                    className="relative bg-white/80 backdrop-blur-xl rounded-3xl p-5 shadow-2xl shadow-emerald-900/5 border border-white/50 "
                   >
                     {/* Decorative linear */}
                     <div className="absolute -top-20 -right-20 w-40 h-40 bg-emerald-400/20 rounded-full blur-2xl" />
 
                     {/* Header */}
-                    <div className="relative z-10 mb-6">
+                    <div className="relative z-10 mb-3">
                       <div className="flex items-start justify-between mb-2">
-                        <div>
+                        <div className="flex items-center gap-2">
                           <h1 className="text-4xl font-black text-slate-900 mb-2 leading-tight">
                             {cow.name}
                           </h1>
-                          <p className="text-emerald-600 font-semibold flex items-center gap-2">
+                          <p className="text-white bg-emerald-500 font-semibold flex items-center gap-1 border rounded-full px-2 py-1 text-xs mb-1">
                             <ShieldCheck className="w-4 h-4" />
-                            {cow.breed} • {cow.certification}
+                            Vet Certified
                           </p>
                         </div>
                         <div className="flex gap-2">
-                          <motion.button
+                          {/* <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
                             onClick={() => setIsLiked(!isLiked)}
@@ -428,116 +430,148 @@ export default function CowDetailsPage() {
                                   : "text-slate-600",
                               )}
                             />
-                          </motion.button>
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="p-3 rounded-full bg-slate-100 hover:bg-emerald-50 transition-colors"
-                          >
-                            <Share2 className="w-5 h-5 text-slate-600" />
-                          </motion.button>
+                          </motion.button> */}
+                          {/* Like & Share */}
+                          <div className="flex gap-2">
+                            {/* Circular Share Menu */}
+                            <CircularShareMenu
+                              shareUrl={`https://yoursite.com/cows/${cow.id}`}
+                              shareTitle={`Check out ${cow.name} - Premium ${cow.breed}`}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
 
                     {/* Price Display */}
-                    <div className="relative z-10 mb-8 p-6 bg-linear-to-br from-emerald-50 to-emerald-100/50 rounded-2xl border border-emerald-100">
+                    <div className="relative z-10 mb-8 p-6 bg-linear-to-br from-emerald-50 to-emerald-100/50 rounded-2xl border border-emerald-100 flex ">
                       <div className="flex items-baseline gap-1 text-emerald-700 mb-1">
                         <FaBangladeshiTakaSign className="text-2xl" />
-                        <span className="text-5xl font-black tracking-tight">
-                          {preloadedCow?.unit_price.toLocaleString()}
-                        </span>
+                        <AnimatedPrice
+                          value={preloadedCow?.unit_price || 0}
+                          duration={2}
+                          className="text-5xl font-black tracking-tight"
+                        />
                       </div>
-                      <p className="text-emerald-600/80 font-medium">
-                        per unit (1/12th share)
-                      </p>
+                      <small className="text-emerald-600/80 font-medium flex items-center mt-3 ml-1">
+                        /per unit
+                      </small>
                     </div>
 
                     {/* Booking Progress */}
-                    <div className="relative z-10 mb-8">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          <Users className="w-4 h-4 text-emerald-600" />
-                          <span className="text-sm font-semibold text-slate-700">
-                            {cow.availableUnits} of {totalUnits} units available
-                          </span>
-                        </div>
-                        {isAlmostFull && !isFull && (
-                          <span className="text-amber-600 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
-                            <Zap className="w-3 h-3" />
+                    <div className="mb-8">
+                      <div className="flex items-center justify-between text-xs mb-1.5">
+                        <span className="text-gray-700/60 font-medium flex items-center gap-1">
+                          <Users className="w-3.5 h-3.5" />
+                          {preloadedCow?.available_qty ?? 0} of {totalUnits}{" "}
+                          units available
+                        </span>
+                        {progressPercent >= 75 && (
+                          <span className="text-amber-600 font-bold text-[10px] uppercase tracking-wider">
                             Almost Full
                           </span>
                         )}
                       </div>
-                      <div className="h-3 bg-slate-200 rounded-full overflow-hidden">
+                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${progressPercent}%` }}
-                          transition={{
-                            duration: 1.2,
-                            delay: 0.5,
-                            ease: [0.22, 1, 0.36, 1] as const,
-                          }}
+                          transition={{ duration: 0.8, delay: 0.2 }}
                           className={cn(
-                            "h-full rounded-full relative",
-                            isFull
-                              ? "bg-slate-400"
-                              : isAlmostFull
-                                ? "bg-linear-to-r from-amber-500 to-orange-500"
-                                : "bg-linear-to-r from-emerald-500 to-teal-400",
+                            "h-full rounded-full transition-all",
+                            progressPercent >= 90
+                              ? "bg-amber-500"
+                              : progressPercent >= 50
+                                ? "bg-gray-500"
+                                : "bg-teal-400",
                           )}
-                        >
-                          <motion.div
-                            className="absolute inset-0 bg-linear-to-r from-transparent via-white/50 to-transparent"
-                            animate={{ x: ["-100%", "200%"] }}
-                            transition={{
-                              duration: 2,
-                              repeat: Infinity,
-                              ease: "linear",
-                            }}
-                          />
-                        </motion.div>
+                        />
                       </div>
-                      <p className="text-xs text-slate-500 mt-2">
-                        {progressPercent > 0
-                          ? `${Math.round(progressPercent)}% already booked by other investors`
-                          : "Be the first to book this premium cow"}
-                      </p>
                     </div>
 
                     {/* Quantity Selector */}
-                    <div className="relative z-10 mb-6">
+                    <div className="relative z-10 mb-4">
                       <label className="text-sm font-semibold text-slate-700 mb-3 block">
                         Select Units to Book
                       </label>
                       <div className="flex items-center gap-4">
                         <div className="flex items-center bg-slate-100 rounded-xl p-1">
-                          {[1, 2, 3, 4].map((num) => (
-                            <motion.button
-                              key={num}
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              onClick={() => setQuantity(num)}
-                              className={cn(
-                                "w-12 h-12 rounded-lg font-bold text-sm transition-all",
-                                quantity === num
-                                  ? "bg-white text-emerald-600 shadow-md"
-                                  : "text-slate-600 hover:text-emerald-600",
-                              )}
+                          {/* Decrease Button */}
+                          <motion.button
+                            whileHover={{ scale: quantity > 1 ? 1.05 : 1 }}
+                            whileTap={{ scale: quantity > 1 ? 0.95 : 1 }}
+                            onClick={() =>
+                              setQuantity(Math.max(1, quantity - 1))
+                            }
+                            disabled={quantity <= 1}
+                            className={cn(
+                              "w-12 h-12 rounded-lg font-bold text-lg transition-all flex items-center justify-center",
+                              quantity > 1
+                                ? "bg-white text-emerald-600 shadow-sm hover:text-emerald-700"
+                                : "text-slate-300 cursor-not-allowed",
+                            )}
+                          >
+                            −
+                          </motion.button>
+
+                          {/* Quantity Display */}
+                          <div className="w-14 h-12 flex items-center justify-center">
+                            <motion.span
+                              key={quantity}
+                              initial={{ scale: 0.8, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{
+                                type: "spring",
+                                stiffness: 300,
+                                damping: 20,
+                              }}
+                              className="font-bold text-lg text-slate-900"
                             >
-                              {num}
-                            </motion.button>
-                          ))}
+                              {quantity}
+                            </motion.span>
+                          </div>
+
+                          {/* Increase Button */}
+                          <motion.button
+                            whileHover={{
+                              scale:
+                                quantity < (preloadedCow?.available_qty ?? 0)
+                                  ? 1.05
+                                  : 1,
+                            }}
+                            whileTap={{
+                              scale:
+                                quantity < (preloadedCow?.available_qty ?? 0)
+                                  ? 0.95
+                                  : 1,
+                            }}
+                            onClick={() =>
+                              setQuantity(
+                                Math.min(
+                                  preloadedCow?.available_qty ?? 0,
+                                  quantity + 1,
+                                ),
+                              )
+                            }
+                            disabled={
+                              quantity >= (preloadedCow?.available_qty ?? 0)
+                            }
+                            className={cn(
+                              "w-12 h-12 rounded-lg font-bold text-lg transition-all flex items-center justify-center",
+                              quantity < (preloadedCow?.available_qty ?? 0)
+                                ? "bg-white text-emerald-600 shadow-sm hover:text-emerald-700"
+                                : "text-slate-300 cursor-not-allowed",
+                            )}
+                          >
+                            +
+                          </motion.button>
                         </div>
-                        <span className="text-sm text-slate-500 font-medium">
-                          Max 4 units per person
-                        </span>
                       </div>
                     </div>
 
                     {/* Total & CTA */}
                     <div className="relative z-10 space-y-4">
-                      <div className="flex items-center justify-between p-4 border-slate-900 rounded-xl text-gray-500">
+                      <div className="flex items-center justify-between border-slate-900 rounded-xl text-gray-500">
                         <span className="font-medium">Total Unit Price</span>
                         <div className="flex items-center gap-1 text-2xl font-bold">
                           <FaBangladeshiTakaSign />
@@ -546,7 +580,7 @@ export default function CowDetailsPage() {
                       </div>
 
                       <Link
-                        href={`/checkout?cowId=${cow.id}&quantity=${quantity}`}
+                        href={`/checkout?cowId=${preloadedCow?.livestock_id}&quantity=${quantity}&data=${btoa(JSON.stringify(preloadedCow))}`}
                       >
                         <motion.button
                           whileHover={{
@@ -574,8 +608,15 @@ export default function CowDetailsPage() {
                                 Book Now
                                 <ArrowRight className="w-5 h-5" />
                               </span>
-                              <span>
-                                <small className="font-normal text-xs">BDT</small> {totalPrice.toLocaleString()}
+                              <span className="flex items-center gap-2">
+                                <p className="font-semibold text-sm">For</p>
+                                <div className="flex items-center gap-0.5">
+                                  {/* <FaBangladeshiTakaSign />{" "} */}
+                                  {preloadedCow?.booking_amount.toLocaleString()}
+                                  <small className="text-xs mt-1 font-normal">
+                                    /BDT
+                                  </small>
+                                </div>
                               </span>
                             </span>
                           )}
@@ -614,7 +655,7 @@ export default function CowDetailsPage() {
                         value: "Purified",
                       },
                       { icon: Sun, label: "Sunlight", value: "12 hrs/day" },
-                      { icon: MapPin, label: "Location", value: "Farm #42" },
+                      { icon: MapPin, label: "Location", value: "InsureCow" },
                     ].map((stat, i) => (
                       <motion.div
                         key={stat.label}
@@ -638,7 +679,7 @@ export default function CowDetailsPage() {
           </div>
         </motion.section>
 
-        {/* Story & Details Section */}
+        {/* Tab Section */}
         <section className="relative z-20 bg-white py-20">
           <div className="px-4 sm:px-8 max-w-screen-2xl mx-auto">
             {/* Section Tabs */}
@@ -649,7 +690,7 @@ export default function CowDetailsPage() {
               className="flex justify-center mb-12"
             >
               <div className="bg-slate-100 p-1 rounded-2xl inline-flex">
-                {["details", "Certification"].map((tab) => (
+                {["details", "gallery"].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
@@ -660,7 +701,7 @@ export default function CowDetailsPage() {
                         : "text-slate-600 hover:text-slate-900",
                     )}
                   >
-                    {tab === "Certification" ? "Certification" : `${tab}`}
+                    {tab === "Gallery" ? "Gallery" : `${tab}`}
                   </button>
                 ))}
               </div>
@@ -668,7 +709,7 @@ export default function CowDetailsPage() {
 
             {/* Content Based on Tab */}
             <AnimatePresence mode="wait">
-              {activeTab === "details" && (
+              {activeTab === "details" && cowDetails[0] && (
                 <motion.div
                   key="details"
                   initial={{ opacity: 0, y: 20 }}
@@ -676,144 +717,265 @@ export default function CowDetailsPage() {
                   exit={{ opacity: 0, y: -20 }}
                   className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
                 >
-                  <div className="space-y-6">
-                    <h2 className="text-4xl font-black text-slate-900 leading-tight">
-                      Raised with Care, <br />
-                      <span className="text-emerald-600">
-                        Ready for Your Table
-                      </span>
-                    </h2>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      {cow.name} comes from our premium heritage breeding
-                      program, raised on organic pastures with 100% natural
-                      feed. Each cow receives individual attention from our
-                      expert veterinary team, ensuring optimal health and meat
-                      quality.
-                    </p>
-                    <div className="space-y-4">
-                      {[
-                        "Born and raised in Bangladesh",
-                        "100% organic grass-fed diet",
-                        "Regular health monitoring",
-                        "Ethical farming practices",
-                      ].map((item, i) => (
+                  {/* Left: Specifications - Clean List Style */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="space-y-6"
+                  >
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                        <ClipboardList className="w-6 h-6 text-emerald-600" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-black text-slate-900">
+                          Specifications
+                        </h2>
+                        <p className="text-sm text-slate-500">
+                          Complete animal profile
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="bg-white rounded-3xl p-2 shadow-lg shadow-slate-200/50 border border-slate-100">
+                      {/* Spec List */}
+                      <div className="divide-y divide-slate-100">
+                        {/* Age */}
                         <motion.div
-                          key={i}
-                          initial={{ opacity: 0, x: -20 }}
+                          initial={{ opacity: 0, x: -10 }}
                           whileInView={{ opacity: 1, x: 0 }}
                           viewport={{ once: true }}
-                          transition={{ delay: i * 0.1 }}
-                          className="flex items-center gap-3"
+                          transition={{ delay: 0.05 }}
+                          className="flex items-center justify-between p-4 hover:bg-slate-50 rounded-2xl transition-colors group"
                         >
-                          <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                              <Calendar className="w-5 h-5 text-gray-600" />
+                            </div>
+                            <span className="font-medium text-slate-600">
+                              Age
+                            </span>
                           </div>
-                          <span className="font-medium text-slate-800">
-                            {item}
+                          <span className="font-bold text-slate-900">
+                            {cowDetails[0].age_in_months} Months
                           </span>
+                        </motion.div>
+
+                        {/* Weight */}
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.1 }}
+                          className="flex items-center justify-between p-4 hover:bg-slate-50 rounded-2xl transition-colors group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                              <Weight className="w-5 h-5 text-gray-600" />
+                            </div>
+                            <span className="font-medium text-slate-600">
+                              Weight
+                            </span>
+                          </div>
+                          <span className="font-bold text-slate-900">
+                            {cowDetails[0].weight_kg} kg
+                          </span>
+                        </motion.div>
+
+                        {/* Height */}
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.15 }}
+                          className="flex items-center justify-between p-4 hover:bg-slate-50 rounded-2xl transition-colors group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                              <Ruler className="w-5 h-5 text-gray-600" />
+                            </div>
+                            <span className="font-medium text-slate-600">
+                              Height
+                            </span>
+                          </div>
+                          <span className="font-bold text-slate-900">
+                            {cowDetails[0].height} ft
+                          </span>
+                        </motion.div>
+
+                        {/* Color */}
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.2 }}
+                          className="flex items-center justify-between p-4 hover:bg-slate-50 rounded-2xl transition-colors group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                              <Palette className="w-5 h-5 text-gray-600" />
+                            </div>
+                            <span className="font-medium text-slate-600">
+                              Color
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-slate-900 capitalize">
+                              {cowDetails[0].color || "N/A"}
+                            </span>
+                          </div>
+                        </motion.div>
+
+                        {/* Gender */}
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.25 }}
+                          className="flex items-center justify-between p-4 hover:bg-slate-50 rounded-2xl transition-colors group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                              <Activity className="w-5 h-5 text-gray-600" />
+                            </div>
+                            <span className="font-medium text-slate-600">
+                              Gender
+                            </span>
+                          </div>
+                          <span
+                            className={cn(
+                              "px-3 py-1 rounded-full text-xs font-bold uppercase",
+                              cowDetails[0].gender === "male"
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-pink-100 text-pink-700",
+                            )}
+                          >
+                            {cowDetails[0].gender || "N/A"}
+                          </span>
+                        </motion.div>
+
+                        {/* Vaccine */}
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.3 }}
+                          className="flex items-center justify-between p-4 hover:bg-slate-50 rounded-2xl transition-colors group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                              <Syringe className="w-5 h-5 text-gray-600" />
+                            </div>
+                            <span className="font-medium text-slate-600">
+                              Vaccination
+                            </span>
+                          </div>
+                          <span
+                            className={cn(
+                              "px-3 py-1 rounded-full text-xs font-bold",
+                              cowDetails[0].vaccine_status
+                                ?.toLowerCase()
+                                .includes("vaccinated")
+                                ? "bg-emerald-100 text-emerald-700"
+                                : "text-amber-600",
+                            )}
+                          >
+                            {cowDetails[0].vaccine_status || "N/A"}
+                          </span>
+                        </motion.div>
+
+                        {/* Deworming */}
+                        <motion.div
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.35 }}
+                          className="flex items-center justify-between p-4 hover:bg-slate-50 rounded-2xl transition-colors group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                              <ShieldCheck className="w-5 h-5 text-gray-600" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="font-medium text-slate-600">
+                                Deworming
+                              </span>
+                              {cowDetails[0].last_deworming_date && (
+                                <span className="text-xs text-slate-400">
+                                  Last: {cowDetails[0].last_deworming_date}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <span
+                            className={cn(
+                              "px-3 py-1 rounded-full text-xs font-bold",
+                              cowDetails[0].deworming_status
+                                ?.toLowerCase()
+                                .includes("dewormed")
+                                ? "bg-emerald-100 text-emerald-700"
+                                : "bg-amber-100 text-amber-700",
+                            )}
+                          >
+                            {cowDetails[0].deworming_status || "N/A"}
+                          </span>
+                        </motion.div>
+                      </div>
+                    </div>
+
+                    {/* Quick Stats Row */}
+                    <div className="grid grid-cols-3 gap-3">
+                      {[
+                        { label: "Daily Feed", value: "12kg", icon: Leaf },
+                        { label: "Water Intake", value: "40L", icon: Droplets },
+                        { label: "Exercise", value: "4hrs", icon: Sun },
+                      ].map((stat, i) => (
+                        <motion.div
+                          key={stat.label}
+                          initial={{ opacity: 0, y: 10 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: 0.4 + i * 0.05 }}
+                          className="bg-emerald-50 rounded-2xl p-3 text-center border border-emerald-100"
+                        >
+                          <stat.icon className="w-4 h-4 text-gray-600 mx-auto mb-1" />
+                          <p className="text-xs text-emerald-600 font-medium">
+                            {stat.label}
+                          </p>
+                          <p className="text-sm font-bold text-emerald-900">
+                            {stat.value}
+                          </p>
                         </motion.div>
                       ))}
                     </div>
-                  </div>
-                  <div className="relative">
-                    <div className="aspect-square rounded-3xl overflow-hidden bg-emerald-100">
-                      <Image
-                        src={cow.image}
-                        alt={`${cow.name} grazing`}
-                        fill
-                        className="object-cover rounded-lg"
-                      />
-                    </div>
-                    {/* <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-6 shadow-xl">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                          <TrendingUp className="w-6 h-6 text-emerald-600" />
-                        </div>
-                        <div>
-                          <p className="text-2xl font-black text-slate-900">
-                            98%
-                          </p>
-                          <p className="text-sm text-slate-500">
-                            Customer Satisfaction
-                          </p>
-                        </div>
-                      </div>
-                    </div> */}
-                  </div>
+                  </motion.div>
+
+                  {/* Right: Video Player */}
+                  <CowVideoPlayer
+                    videoUrl={cowDetails[0].muzzle_video}
+                    cowName={cow.name}
+                  />
                 </motion.div>
               )}
 
-              {activeTab === "Certification" && (
-                <motion.div
-                  key="Certification"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-6"
-                >
-                  {[
-                    {
-                      label: "Weight",
-                      value: `${cow.weight} kg`,
-                      icon: Weight,
-                      desc: "Live weight at processing",
-                    },
-                    {
-                      label: "Age",
-                      value: `${cow.age} months`,
-                      icon: Calendar,
-                      desc: "Optimal maturity age",
-                    },
-                    {
-                      label: "Breed",
-                      value: cow.breed,
-                      icon: ShieldCheck,
-                      desc: "Certified pure breed",
-                    },
-                    {
-                      label: "Feed Type",
-                      value: "Organic Grass",
-                      icon: Leaf,
-                      desc: "100% natural diet",
-                    },
-                    {
-                      label: "Health Score",
-                      value: "A+",
-                      icon: Zap,
-                      desc: "Veterinary certified",
-                    },
-                    {
-                      label: "Processing",
-                      value: "14 Days",
-                      icon: Clock,
-                      desc: "From booking to delivery",
-                    },
-                  ].map((spec, i) => (
-                    <motion.div
-                      key={spec.label}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.1 }}
-                      whileHover={{ y: -8, scale: 1.02 }}
-                      className="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-900/5 transition-all"
-                    >
-                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-4 shadow-sm">
-                        <spec.icon className="w-6 h-6 text-emerald-600" />
-                      </div>
-                      <p className="text-sm text-slate-500 mb-1">
-                        {spec.label}
-                      </p>
-                      <p className="text-2xl font-bold text-slate-900 mb-2">
-                        {spec.value}
-                      </p>
-                      <p className="text-xs text-slate-400">{spec.desc}</p>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              )}
+              {activeTab === "gallery" &&
+                (cowDetails?.[0] ? (
+                  <motion.div
+                    key="Gallery"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                  >
+                    <CowImageGallery cow={cowDetails[0]} />
+                  </motion.div>
+                ) : (
+                  <div className="text-center py-12 text-slate-500">
+                    No gallery available
+                  </div>
+                ))}
 
-              {activeTab === "care" && (
+              {/* {activeTab === "care" && (
                 <motion.div
                   key="care"
                   initial={{ opacity: 0, y: 20 }}
@@ -854,9 +1016,14 @@ export default function CowDetailsPage() {
                     ))}
                   </div>
                 </motion.div>
-              )}
+              )} */}
             </AnimatePresence>
           </div>
+        </section>
+
+        {/* Breed Advantages */}
+        <section className="relative z-20 bg-white py-20">
+          <BreedAdvantages breed={cow.breed as "Sahiwal" | "Deshi"} />
         </section>
 
         {/* Related Cows - Cross Selling */}
@@ -898,7 +1065,7 @@ export default function CowDetailsPage() {
                   whileHover={{ y: -8 }}
                   className="group bg-white rounded-2xl overflow-hidden shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-emerald-900/5 transition-all border border-slate-100"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden">
+                  <div className="relative aspect-4/3 overflow-hidden">
                     <Image
                       src={relatedCow.image}
                       alt={relatedCow.name}
@@ -967,8 +1134,6 @@ export default function CowDetailsPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   );
 }

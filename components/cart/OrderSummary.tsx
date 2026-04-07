@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { cn } from '@/lib/theme/theme.config';
-import type { Cow } from '@/lib/data/cows';
+import Image from "next/image";
+import { cn } from "@/lib/theme/theme.config";
+import { LivestockItem } from "@/lib/models/productDTO";
 
 interface OrderItem {
-  cow: Cow;
+  cow: LivestockItem;
   quantity: number;
 }
 
@@ -15,15 +15,18 @@ interface OrderSummaryProps {
   className?: string;
 }
 
-export function OrderSummary({ item, logisticsFee = 345, className }: OrderSummaryProps) {
+export function OrderSummary({
+  item,
+  logisticsFee = 345,
+  className,
+}: OrderSummaryProps) {
   const { cow, quantity } = item;
-  const unitPrice = cow.price;
+  const unitPrice = cow.unit_price;
   const subtotal = unitPrice * quantity;
   const total = subtotal + logisticsFee;
 
   return (
-    <div className={cn('', className)}>
-
+    <div className={cn("", className)}>
       {/* Asset Card */}
       {/* <div className="flex gap-6 mb-8 p-4 bg-surface-container-low rounded-lg">
         <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
@@ -50,23 +53,32 @@ export function OrderSummary({ item, logisticsFee = 345, className }: OrderSumma
       <div className="space-y-4 mb-8">
         <div className="flex justify-between items-center text-sm">
           <span className="text-on-surface-variant">Unit Investment</span>
-          <span className="font-medium">${unitPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+          <span className="font-medium">
+            ${unitPrice.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          </span>
         </div>
         <div className="flex justify-between items-center text-sm">
           <span className="text-on-surface-variant">Quantity</span>
-          <span className="font-medium">{String(quantity).padStart(2, '0')} Unit{quantity > 1 ? 's' : ''}</span>
+          <span className="font-medium">
+            {String(quantity).padStart(2, "0")} Unit{quantity > 1 ? "s" : ""}
+          </span>
         </div>
         <div className="flex justify-between items-center text-sm">
           <span className="text-on-surface-variant">Logistics & Insurance</span>
-          <span className="font-medium">${logisticsFee.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+          <span className="font-medium">
+            $
+            {logisticsFee.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          </span>
         </div>
 
         {/* Total */}
         <div className="pt-4 border-t border-outline-variant/20 flex justify-between items-end">
           <div>
-            <span className="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Total Investment</span>
+            <span className="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+              Total Investment
+            </span>
             <span className="block font-headline text-3xl font-extrabold text-primary">
-              ${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              ${total.toLocaleString("en-US", { minimumFractionDigits: 2 })}
             </span>
           </div>
           <div className="text-right">
@@ -79,7 +91,6 @@ export function OrderSummary({ item, logisticsFee = 345, className }: OrderSumma
           </div>
         </div>
       </div>
-
     </div>
   );
 }

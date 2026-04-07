@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Footer } from "@/components/home/Footer";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { cn } from "@/lib/theme/theme.config";
 import {
@@ -281,8 +280,6 @@ export default function ProfilePage() {
           </motion.div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

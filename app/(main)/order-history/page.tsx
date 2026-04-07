@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Footer } from "@/components/home/Footer";
 import {
   Search,
   Download,
@@ -516,8 +515,6 @@ export default function OrderHistoryPage() {
           </motion.div>
         </motion.div>
       </main>
-
-      <Footer />
     </div>
   );
 }

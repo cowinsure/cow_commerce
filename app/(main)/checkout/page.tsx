@@ -1,15 +1,11 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Navbar } from "@/components/home/Navbar";
-import { Footer } from "@/components/home/Footer";
 import { ShippingForm } from "@/components/cart/ShippingForm";
 import { PaymentOptions } from "@/components/cart/PaymentOptions";
-import { OrderSummary } from "@/components/cart/OrderSummary";
 import { TrustBadges } from "@/components/cart/TrustBadges";
-import { cows, getCowById } from "@/lib/data/cows";
 import {
   ShieldCheck,
   Lock,
@@ -17,9 +13,15 @@ import {
   CheckCircle2,
   Truck,
   Clock,
+  AlertCircle,
+  Weight,
+  Calendar,
+  Shield,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { LivestockItem } from "@/lib/models/productDTO";
+import { FaBangladeshiTakaSign } from "react-icons/fa6";
 
 // Animation variants
 const containerVariants = {
@@ -108,26 +110,79 @@ function CheckoutContent() {
   const quantityParam = searchParams.get("quantity");
   const quantity = quantityParam ? parseInt(quantityParam, 10) : 1;
 
-  // Get cow by ID from query param, or fallback to first cow
-  const cowData = cowId ? getCowById(cowId) : null;
-  const cartItem = cowData || cows[0];
-  const isValidItem = cowData !== null || cowId === null;
+  const preloadedCowData = searchParams.get("data");
+  const preloadedCow = useMemo(() => {
+    if (!preloadedCowData) return null;
+    try {
+      return JSON.parse(atob(preloadedCowData)) as LivestockItem;
+    } catch {
+      return null;
+    }
+  }, [preloadedCowData]);
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const cartItem = preloadedCow
+    ? {
+        id: preloadedCow.livestock_id,
+        name: preloadedCow.breed,
+        breed: preloadedCow.breed,
+        image: "/cowImg/fallback.jpg",
+        tag: preloadedCow.livestock_id ? "Premium" : "Standard",
+        price: preloadedCow.unit_price,
+      }
+    : null;
+
+  const totalPrice = preloadedCow ? preloadedCow.unit_price * quantity : 0;
+  const bookingAmount = preloadedCow ? preloadedCow.booking_amount : 0;
+
   const handleCheckout = async () => {
     setIsProcessing(true);
-    // Simulate processing
     await new Promise((resolve) => setTimeout(resolve, 2000));
     setIsProcessing(false);
     setShowSuccess(true);
   };
 
+  if (!preloadedCow) {
+    return (
+      <div className="min-h-screen flex flex-col bg-slate-50">
+        <main className="flex-1 flex items-center justify-center pt-24">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
+            className="text-center px-4"
+          >
+            <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <AlertCircle className="w-12 h-12 text-emerald-600" />
+            </div>
+            <h1 className="text-3xl font-bold text-slate-900 mb-4">
+              No Item Selected
+            </h1>
+            <p className="text-slate-600 mb-8 max-w-md mx-auto">
+              Please select a cow from the marketplace to proceed with checkout.
+            </p>
+            <Link href="/">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold shadow-lg shadow-emerald-500/25 hover:bg-emerald-500 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Marketplace
+              </motion.button>
+            </Link>
+          </motion.div>
+        </main>
+      </div>
+    );
+  }
+
   if (showSuccess) {
     return (
       <div className="min-h-screen flex flex-col bg-slate-50">
-        <Navbar />
         <main className="flex-1 flex items-center justify-center pt-24 pb-24 px-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -149,7 +204,7 @@ function CheckoutContent() {
             <p className="text-slate-600 mb-8">
               Your booking for{" "}
               <span className="font-semibold text-emerald-600">
-                {cartItem.name}
+                {preloadedCow.breed}
               </span>{" "}
               has been secured. You will receive a confirmation email shortly.
             </p>
@@ -157,15 +212,19 @@ function CheckoutContent() {
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 relative">
                   <Image
-                    src={cartItem.image}
-                    alt={cartItem.name}
+                    src={cartItem?.image || "/cowImg/fallback.jpg"}
+                    alt={preloadedCow.breed}
                     fill
                     className="object-cover"
                   />
                 </div>
                 <div>
-                  <p className="font-bold text-slate-900">{cartItem.name}</p>
-                  <p className="text-sm text-slate-500">{cartItem.breed}</p>
+                  <p className="font-bold text-slate-900">
+                    {preloadedCow.breed}
+                  </p>
+                  <p className="text-sm text-slate-500">
+                    {preloadedCow.breed} Cow
+                  </p>
                 </div>
               </div>
               <div className="border-t border-slate-100 pt-4 flex justify-between text-sm">
@@ -184,7 +243,6 @@ function CheckoutContent() {
             </Link>
           </motion.div>
         </main>
-        <Footer />
       </div>
     );
   }
@@ -342,36 +400,72 @@ function CheckoutContent() {
                     <div className="flex gap-4 p-4 bg-slate-50 rounded-2xl mb-6">
                       <div className="w-20 h-20 rounded-xl overflow-hidden bg-white relative shrink-0">
                         <Image
-                          src={cartItem.image}
-                          alt={cartItem.name}
+                          src={preloadedCow?.livestock_id ? "/cowImg/fallback.jpg" : "/cowImg/fallback.jpg"}
+                          alt={preloadedCow?.breed || "Cow"}
                           fill
                           className="object-cover"
                         />
                       </div>
                       <div className="flex-1">
                         <h4 className="font-bold text-slate-900 mb-1">
-                          {cartItem.name}
+                          {preloadedCow?.breed || "Premium Cow"} #{preloadedCow?.livestock_id}
                         </h4>
                         <p className="text-sm text-slate-500 mb-2">
-                          {cartItem.breed}
+                          {preloadedCow?.breed} Breed
                         </p>
                         <div className="flex items-center gap-2">
                           <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-xs font-semibold">
-                            {cartItem.tag || "Premium"}
+                            Premium
                           </span>
                           <span className="text-xs text-slate-400">
-                            × 1 unit
+                            × {quantity} unit{quantity > 1 ? "s" : ""}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <OrderSummary
-                      item={{
-                        cow: cartItem,
-                        quantity: quantity,
-                      }}
-                    />
+                    {/* Financial Details */}
+                    <div className="space-y-4 mb-8">
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-slate-500">Unit Price</span>
+                        <span className="font-medium text-slate-900 flex items-center gap-1">
+                          <FaBangladeshiTakaSign className="w-3 h-3" />
+                          {totalPrice.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-slate-500">Quantity</span>
+                        <span className="font-medium text-slate-900">
+                          {String(quantity).padStart(2, "0")} Unit{quantity > 1 ? "s" : ""}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-slate-500">Booking Amount</span>
+                        <span className="font-medium text-slate-900 flex items-center gap-1">
+                          <FaBangladeshiTakaSign className="w-3 h-3" />
+                          {bookingAmount.toLocaleString()}
+                        </span>
+                      </div>
+
+                      {/* Total */}
+                      <div className="pt-4 border-t border-slate-200 flex justify-between items-end">
+                        <div>
+                          <span className="block text-xs font-bold uppercase tracking-wider text-slate-500">
+                            Total Investment
+                          </span>
+                          <span className="block text-3xl font-extrabold text-emerald-600 flex items-center gap-1">
+                            <FaBangladeshiTakaSign className="w-5 h-5" />
+                            {totalPrice.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded">
+                            <ShieldCheck className="w-3 h-3" />
+                            SECURED
+                          </span>
+                        </div>
+                      </div>
+                    </div>
 
                     {/* Checkout Button */}
                     <motion.button
@@ -400,7 +494,7 @@ function CheckoutContent() {
                       ) : (
                         <>
                           <Lock className="w-5 h-5" />
-                          Complete Secure Payment
+                          Pay {bookingAmount.toLocaleString()} BDT
                         </>
                       )}
                     </motion.button>
@@ -439,8 +533,6 @@ function CheckoutContent() {
           </div>
         </motion.div>
       </main>
-
-      <Footer />
     </div>
   );
 }

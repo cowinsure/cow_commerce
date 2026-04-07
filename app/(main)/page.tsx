@@ -5,7 +5,6 @@ import { CowBodyDiagram } from "@/components/home/CowBodyDiagram";
 import { QualityHealthSection } from "@/components/home/QualityHealthSection";
 import { BestSellingCategories } from "@/components/home/BestSellingCategories";
 import { ProductGrid } from "@/components/home/ProductGrid";
-import { Footer } from "@/components/home/Footer";
 import { HomeHero } from "@/components/home/HomeHero";
 import HowItWorks from "@/components/home/HowItWorks";
 import useProduct from "@/hooks/product/useProduct";
@@ -30,7 +29,6 @@ export default function HomePage() {
         <CowBodyDiagram />
         <QualityHealthSection />
       </main>
-      <Footer />
     </div>
   );
 }

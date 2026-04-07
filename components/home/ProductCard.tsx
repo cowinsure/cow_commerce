@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 
 import { LivestockItem } from "@/lib/models/productDTO";
+import { ForSaleSticker } from "../ui/StickerComponent";
 
 interface ProductCardProps {
   cow: LivestockItem;
@@ -34,7 +35,7 @@ export function ProductCard({
   const isListView = viewMode === "list";
 
   // Calculate booking progress
-  const totalUnits = 12; // Assuming 12 units per cow
+  const totalUnits = cow.unit_qty; // Assuming 12 units per cow
   const bookedUnits = totalUnits - (cow.available_qty ?? 0);
   const progressPercent = (bookedUnits / totalUnits) * 100;
 
@@ -47,13 +48,14 @@ export function ProductCard({
       transition={{ delay: index * 0.05 }}
       whileHover={{ y: -4 }}
       className={cn(
-        "group relative bg-white rounded-2xl overflow-hidden border border-emerald-100",
+        "group relative bg-white rounded-2xl border border-emerald-100",
         "shadow-lg shadow-emerald-900/5 hover:shadow-xl hover:shadow-emerald-500/10",
         "transition-all duration-300",
         isListView && "flex flex-row",
         className,
       )}
     >
+      {/* <ForSaleSticker variant="default" position="top-left" /> */}
       {/* Image Section */}
       <div
         className={cn(
@@ -63,7 +65,7 @@ export function ProductCard({
       >
         <Image
           alt={cow.breed}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 rounded-t-2xl"
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           src="/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM (1).jpeg" // TODO: Get from API when image field is available
@@ -73,14 +75,14 @@ export function ProductCard({
         <div className="absolute inset-0 bg-linear-to-t from-emerald-950/60 via-transparent to-transparent" />
 
         {/* Progress Badge (if partially booked) */}
-        {progressPercent > 0 && progressPercent < 100 && (
+        {/* {progressPercent > 0 && progressPercent < 100 && (
           <div className="absolute top-4 right-4">
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm text-emerald-700 text-xs font-bold border border-emerald-200">
               <TrendingUp className="w-3.5 h-3.5" />
               {Math.round(progressPercent)}% Booked
             </div>
           </div>
-        )}
+        )} */}
 
         {/* List View: Quick Stats Overlay */}
         {isListView && (
@@ -102,7 +104,7 @@ export function ProductCard({
       {/* Content Section */}
       <div
         className={cn(
-          "flex-1 p-6 flex flex-col",
+          "flex-1 p-4 flex flex-col",
           isListView && "justify-between",
         )}
       >
@@ -115,14 +117,14 @@ export function ProductCard({
         >
           <div>
             <h3 className="text-xl font-bold text-gray-950 mb-1 group-hover:text-gray-700 transition-colors">
-              {cow.breed} #{cow.id}
+              {cow.breed}
             </h3>
-            <span className="text-xs font-semibold text-gray-600/70 uppercase tracking-wider">
+            {/* <span className="text-xs font-semibold text-gray-600/70 uppercase tracking-wider">
               {cow.owner}
-            </span>
+            </span> */}
           </div>
           <div className="text-right">
-            <span className=" text-2xl font-black text-emerald-600 flex items-center">
+            <span className=" text-2xl font-black text-emerald-600 flex items-center -mb-2">
               <FaBangladeshiTakaSign /> {(cow.unit_price ?? 0).toLocaleString()}
             </span>
             <span className="text-[10px] text-gray-500/60 font-bold uppercase tracking-wider">
@@ -190,7 +192,7 @@ export function ProductCard({
               <p className="text-[10px] text-gray-500/60 font-bold uppercase tracking-wider">
                 Age
               </p>
-              <p className="text-sm font-semibold">{cow.livestock_id} Months</p>
+              <p className="text-sm font-semibold">...</p>
             </div>
           </div>
 
@@ -214,11 +216,9 @@ export function ProductCard({
             </div>
             <div>
               <p className="text-[10px] text-gray-500/60 font-bold uppercase tracking-wider">
-                Certified
+                Certified by
               </p>
-              <p className="text-sm font-semibold truncate">
-                {cow.listing_status}
-              </p>
+              <p className="text-sm font-semibold truncate">Vet</p>
             </div>
           </div>
         </div>
@@ -230,7 +230,7 @@ export function ProductCard({
             isListView && "border-t border-emerald-100 pt-4",
           )}
         >
-          <Link href={`/cows/${cow.id}?data=${cowData}`} className="w-full">
+          <Link href={`/cows/${cow.livestock_id}?data=${cowData}`} className="w-full">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
