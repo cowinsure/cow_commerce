@@ -1,13 +1,12 @@
 "use client";
 
 import { cn } from "@/lib/theme/theme.config";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import {
   Beef,
   Utensils,
   Flame,
   Award,
-  Leaf,
   Droplets,
   ChevronRight,
   Star,
@@ -76,7 +75,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20, filter: "blur(10px)" },
   visible: {
     opacity: 1,
@@ -84,12 +83,12 @@ const itemVariants = {
     filter: "blur(0px)",
     transition: {
       duration: 0.5,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
     },
   },
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, scale: 0.95 },
   visible: (i: number) => ({
     opacity: 1,
@@ -97,7 +96,7 @@ const cardVariants = {
     transition: {
       delay: i * 0.1,
       duration: 0.5,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
     },
   }),
   hover: {
@@ -200,7 +199,7 @@ export function BreedAdvantages({ breed, className }: BreedAdvantagesProps) {
                 >
                   <div
                     className={cn(
-                      "w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5",
+                      "w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5",
                       isSahiwal
                         ? "bg-emerald-100 text-emerald-600"
                         : "bg-emerald-100 text-emerald-600",
@@ -221,7 +220,7 @@ export function BreedAdvantages({ breed, className }: BreedAdvantagesProps) {
             variants={cardVariants}
             custom={1}
             whileHover="hover"
-            className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 text-white relative overflow-hidden"
+            className="bg-linear-to-br from-slate-900 to-slate-800 rounded-2xl p-6 text-white relative overflow-hidden"
           >
             {/* Decorative gradient */}
             <div
@@ -335,7 +334,7 @@ export function BreedAdvantages({ breed, className }: BreedAdvantagesProps) {
         </div>
 
         {/* Bottom CTA */}
-          {/* <motion.div
+        {/* <motion.div
           variants={itemVariants}
           className="mt-8 flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100"
         >

@@ -6,7 +6,7 @@
 
 import { useState, useCallback } from "react";
 import { getLiveStocksApi, getCowDetailsApi } from "@/lib/api/product/product";
-import { LivestockItem, CowDetails, CowDetailsData } from "@/lib/models/productDTO";
+import { LivestockItem, CowDetails, CowDetailsData, GetLiveStockParams } from "@/lib/models/productDTO";
 
 interface ProductState {
   products: LivestockItem[];
@@ -35,20 +35,29 @@ export function useProduct() {
     cowSummary: null,
   });
 
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = useCallback(async (filters?: {
+    minWeight?: number;
+    maxWeight?: number;
+    minPrice?: number;
+    maxPrice?: number;
+    breedIds?: string[];
+  }) => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
-      const response = await getLiveStocksApi({
+      // Build API params from filters
+      const params: GetLiveStockParams = {
         page_size: 10,
         start_record: 1,
-        min_weight: 0,
-        max_weight: 1000,
-        min_price: 0,
-        max_price: 50000000,
-        breed_id: -1,
+        min_weight: filters?.minWeight ?? 0,
+        max_weight: filters?.maxWeight ?? 9999,
+        min_price: filters?.minPrice ?? 0,
+        max_price: filters?.maxPrice ?? 50000000,
+        breed_id: -1, // Will be updated when breed API is available
         id: "-1",
-      });
-      console.log(response);
+      };
+      
+      const response = await getLiveStocksApi(params);
+      console.log("Products response:", response);
       setState((prev) => ({
         ...prev,
         products: response.data,
@@ -57,7 +66,6 @@ export function useProduct() {
         totalPages: 1,
         loading: false,
       }));
-      console.log(response);
       return response;
     } catch (error: unknown) {
       const errorMessage =

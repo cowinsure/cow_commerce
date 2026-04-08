@@ -69,8 +69,9 @@ export function middleware(request: NextRequest) {
   // 1. Handle protected routes (require authentication)
   if (isProtectedRoute(pathname)) {
     if (!authenticated) {
-      // Redirect to login with return URL
-      const loginUrl = getLoginRedirectUrl(pathname);
+      // Get full URL including query params for redirect
+      const fullPath = request.nextUrl.href;
+      const loginUrl = getLoginRedirectUrl(fullPath);
       return NextResponse.redirect(new URL(loginUrl, request.url));
     }
     // User is authenticated, allow access

@@ -50,6 +50,21 @@ export function useAuth() {
       // Store tokens
       console.log("Storing tokens:", response.access_token, response.refresh_token);
       setToken(response.access_token, response.refresh_token);
+      
+      // Also set httpOnly cookies for middleware
+      try {
+        await fetch("/api/auth/set-cookies", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            accessToken: response.access_token,
+            refreshToken: response.refresh_token,
+          }),
+        });
+      } catch (cookieError) {
+        console.error("Failed to set cookies:", cookieError);
+      }
+      
       // Store user data
       const user: User = {
         role: response.role,

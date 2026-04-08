@@ -1,4 +1,4 @@
-import apiClient from "@/lib/api/apiClient";
+import { publicApiClient } from "@/lib/api/apiClient";
 import { PRODUCT_API } from "@/lib/api/routes";
 import {
   ApiResponse,
@@ -11,10 +11,10 @@ import {
 export async function getLiveStocksApi(
   params: GetLiveStockParams,
 ): Promise<ApiResponse<LivestockItem>> {
-  const response = await apiClient.get<ApiResponse<LivestockItem>>(
+  const response = await publicApiClient.get<ApiResponse<LivestockItem>>(
     PRODUCT_API.GET_PRODUCTS,
     {
-      params, // ✅ THIS is the key
+      params, // ✅ Using publicApiClient for guest access
     },
   );
 
@@ -22,7 +22,7 @@ export async function getLiveStocksApi(
 }
 
 /**
- * Get Cow Details API
+ Get Cow Details API
  */
 export async function getCowDetailsApi(
   params: GetCowDetailsParams,
@@ -36,7 +36,7 @@ export async function getCowDetailsApi(
 
   const endpoint = "/lms/assets-service/";
 
-  const response = await apiClient.get<CowDetailsResponse>(endpoint, {
+  const response = await publicApiClient.get<CowDetailsResponse>(endpoint, {
     params: { asset_id: id },
   });
   return response.data;

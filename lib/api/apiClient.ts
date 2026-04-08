@@ -34,15 +34,45 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     // Handle 401 Unauthorized - token expired or invalid
+    // Only redirect if we actually have a token (user was authenticated)
     if (error.response?.status === 401) {
-      removeToken();
-      // Optional: redirect to login page
-      if (typeof window !== "undefined") {
-        window.location.href = "/auth?expired=true";
+      const hasToken = typeof window !== "undefined" && !!localStorage.getItem("access_token");
+      
+      if (hasToken) {
+        // User was authenticated but token expired - redirect to login
+        removeToken();
+        if (typeof window !== "undefined") {
+          window.location.href = "/auth?expired=true";
+        }
       }
+      // If no token, user is already logged out - don't redirect
     }
     return Promise.reject(error);
   }
 );
 
 export default apiClient;
+
+// Public API client - for guest/public users
+// Uses a hardcoded guest token that has read-only permissions
+const PUBLIC_GUEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjo0OTAyMjg1MDc5LCJpYXQiOjE3NDg2ODUwNzksImp0aSI6ImRmZGY1ZTBjODYzODRlZDhhZTRiNzJhOTE0YjJhYzNkIiwidXNlcl9pZCI6M30.-pqxLUI9Ojxl1bpcnxVge3VkxU5U7DBF6Kn5ZVY-6G0";
+
+export const publicApiClient: AxiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Add guest token to public API requests
+publicApiClient.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    if (config.headers) {
+      config.headers.Authorization = `Bearer ${PUBLIC_GUEST_TOKEN}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/Toast";
 import { cn } from "@/lib/theme/theme.config";
 import InputField from "../ui/InputField";
 import { useAuth } from "@/hooks/auth/useAuth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { LoginRequest } from "@/lib/models/authDTO";
 
 const loginSchema = z.object({
@@ -27,6 +27,8 @@ export function LoginForm({ className }: { className?: string }) {
   const [showPassword, setShowPassword] = useState(false);
   const { showToast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/";
   const { login, loading } = useAuth();
 
   const {
@@ -71,9 +73,9 @@ export function LoginForm({ className }: { className?: string }) {
       
       showToast("Login successful", "success");
         
-        // Navigate and force refresh after toast is visible for 2 seconds
+        // Navigate to redirect URL (or home if no redirect) and force refresh
         setTimeout(() => {
-          router.push("/");
+          router.push(redirectUrl);
           setTimeout(() => window.location.reload(), 100);
         }, 2000);
     } catch (error: unknown) {

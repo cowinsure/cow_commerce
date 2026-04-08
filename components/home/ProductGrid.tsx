@@ -9,9 +9,10 @@ import { LivestockItem } from "@/lib/models/productDTO";
 interface ProductGridProps {
   cows: LivestockItem[];
   className?: string;
+  loading?: boolean;
 }
 
-export function ProductGrid({ cows, className }: ProductGridProps) {
+export function ProductGrid({ cows, className, loading }: ProductGridProps) {
   const [visibleCount, setVisibleCount] = useState(6);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const pathname = usePathname();
@@ -82,21 +83,36 @@ export function ProductGrid({ cows, className }: ProductGridProps) {
       </div>
 
       {/* Product Grid */}
-      <div
-        className={cn(
-          "grid gap-8",
-          viewMode === "grid"
-            ? `${isHome ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"}`
-            : "grid-cols-1",
-        )}
-      >
-        {visibleCows.map((cow) => (
-          <ProductCard key={cow.id} cow={cow} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-20">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <p className="mt-4 text-sm font-medium text-outline">Loading premium assets...</p>
+        </div>
+      ) : visibleCows.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20">
+          <svg className="w-16 h-16 text-outline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p className="mt-4 text-lg font-bold text-on-surface">No Assets Found</p>
+          <p className="mt-2 text-sm text-outline">Try adjusting your filters to find more results</p>
+        </div>
+      ) : (
+        <div
+          className={cn(
+            "grid gap-8",
+            viewMode === "grid"
+              ? `${isHome ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"}`
+              : "grid-cols-1",
+          )}
+        >
+          {visibleCows.map((cow) => (
+            <ProductCard key={cow.id} cow={cow} />
+          ))}
+        </div>
+      )}
 
       {/* Load More */}
-      {hasMore && (
+      {!loading && hasMore && (
         <div className="mt-16 flex flex-col items-center">
           <button
             onClick={handleLoadMore}

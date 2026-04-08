@@ -109,11 +109,28 @@ export function getProtectedRoutePatterns(): string[] {
 
 /**
  * Get the login redirect URL with return URL
+ * Preserves query parameters in the redirect URL
  */
-export function getLoginRedirectUrl(currentPath: string): string {
+export function getLoginRedirectUrl(url: string): string {
+  // Extract pathname and preserve query params
+  let pathname = "/";
+  let queryParams = "";
+  
+  if (url.includes("?")) {
+    const urlObj = new URL(url, "http://localhost");
+    pathname = urlObj.pathname;
+    queryParams = urlObj.search; // This includes the ?
+  } else {
+    pathname = url;
+  }
+  
   // Don't redirect to auth routes or API routes
-  if (currentPath.startsWith("/auth") || currentPath.startsWith("/api")) {
+  if (pathname.startsWith("/auth") || pathname.startsWith("/api")) {
     return "/";
   }
-  return `/auth?redirect=${encodeURIComponent(currentPath)}`;
+  
+  // Build the redirect URL with the original path AND query params
+  // Don't encode the full path+query as it would double-encode the query params
+  const redirectValue = pathname + queryParams;
+  return `/auth?redirect=${encodeURIComponent(redirectValue)}`;
 }
