@@ -62,7 +62,7 @@ export const config = {
  * Middleware function
  * Protects routes based on authentication status
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const authenticated = isAuthenticated(request);
 

@@ -355,6 +355,7 @@ export default function OrderHistoryPage() {
                             src={order.image}
                             alt={order.name}
                             fill
+                            sizes="96px"
                             className="object-cover"
                           />
                         </motion.div>

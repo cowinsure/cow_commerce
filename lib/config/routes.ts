@@ -29,7 +29,7 @@ export const routeConfig: RouteConfig = {
   // Routes accessible to everyone (public)
   publicRoutes: [
     "/",
-    "/about",
+    "/about-us",
     "/marketplace",
     "/cows/*", // Individual cow details
   ],

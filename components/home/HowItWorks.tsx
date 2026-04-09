@@ -18,8 +18,7 @@ const steps = [
     title: "Choose a Cow",
     description:
       "Browse available cows and check unit availability in real-time. View breed details, weight estimates, and farm origins.",
-    image:
-      "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=80",
+    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM.jpeg",
     icon: Beef,
     color: "emerald",
   },
@@ -27,8 +26,7 @@ const steps = [
     title: "Book Your Share",
     description:
       "Select full or partial units based on your needs and budget. Secure your portion with a simple deposit.",
-    image:
-      "https://images.unsplash.com/photo-1556745757-8d76bdb6984b?w=800&q=80",
+    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.20 PM.jpeg",
     icon: Target,
     color: "green",
   },
@@ -36,8 +34,7 @@ const steps = [
     title: "Collective Booking",
     description:
       "Other buyers join until all units of the cow are fully reserved. Track progress in real-time as the community grows.",
-    image:
-      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=80",
+    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM (1).jpeg",
     icon: Users,
     color: "teal",
   },
@@ -45,8 +42,7 @@ const steps = [
     title: "100% Completion",
     description:
       "Processing only begins once the cow is completely booked. No waste, no uncertainty, guaranteed full utilization.",
-    image:
-      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80",
+    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.31 PM.jpeg",
     icon: CheckCircle2,
     color: "emerald",
   },
@@ -54,8 +50,7 @@ const steps = [
     title: "Processing & Delivery",
     description:
       "Your portion is prepared fresh by certified butchers and delivered to your door or ready for farm pickup.",
-    image:
-      "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=800&q=80",
+    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.20 PM.jpeg",
     icon: Truck,
     color: "green",
   },

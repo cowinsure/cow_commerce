@@ -13,8 +13,7 @@ const categories = [
     tagline: "Premium Black Angus Excellence",
     description:
       "World-renowned for exceptional marbling and superior meat quality. Our Angus selection represents the pinnacle of beef genetics.",
-    image:
-      "https://images.unsplash.com/photo-1583468323330-9032ad490fed?w=600&q=80",
+    image:"/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM.jpeg",
     stats: {
       sales: "2,450",
       rating: 4.9,
@@ -30,8 +29,7 @@ const categories = [
     tagline: "Japanese A5 Genetics",
     description:
       "Authentic Wagyu bloodlines producing the world's most prized beef. Exceptional intramuscular fat distribution for unmatched flavor.",
-    image:
-      "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=600&q=80",
+    image:"/cowImg/WhatsApp Image 2026-04-01 at 3.57.20 PM.jpeg",
     stats: {
       sales: "890",
       rating: 5.0,
@@ -47,8 +45,7 @@ const categories = [
     tagline: "Classic British Heritage",
     description:
       "Time-proven breed known for excellent mothering ability, gentle temperament, and consistent meat quality.",
-    image:
-      "https://images.unsplash.com/photo-1544984243-ec57ea16fe25?w=600&q=80",
+    image:"/cowImg/WhatsApp Image 2026-04-01 at 3.57.31 PM.jpeg",
     stats: {
       sales: "3,120",
       rating: 4.8,

@@ -215,6 +215,7 @@ function CheckoutContent() {
                     src={cartItem?.image || "/cowImg/fallback.jpg"}
                     alt={preloadedCow.breed}
                     fill
+                    sizes="64px"
                     className="object-cover"
                   />
                 </div>
@@ -403,6 +404,7 @@ function CheckoutContent() {
                           src={preloadedCow?.livestock_id ? "/cowImg/fallback.jpg" : "/cowImg/fallback.jpg"}
                           alt={preloadedCow?.breed || "Cow"}
                           fill
+                          sizes="80px"
                           className="object-cover"
                         />
                       </div>

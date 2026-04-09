@@ -21,6 +21,7 @@ export interface LivestockItem {
   id: number;
   breed: string;
   owner: string;
+  image_with_owner: string;
   breed_id: number;
   unit_qty: number;
   branch_id: number;

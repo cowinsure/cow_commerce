@@ -8,24 +8,21 @@ import { ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react";
 
 const slides = [
   {
-    image:
-      "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1920&q=80",
+    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM.jpeg",
     tag: "Curated Listings",
     title: "Prime Cattle Selection",
     description:
       "Experience the next generation of livestock procurement. Precision-bred assets for the discerning digital producer.",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=1920&q=80",
+    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.20 PM.jpeg",
     tag: "Premium Stock",
     title: "Angus Excellence",
     description:
       "Discover award-winning bloodlines with full genetic documentation and verified health records.",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?w=1920&q=80",
+    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.31 PM.jpeg",
     tag: "Verified Quality",
     title: "Heritage Breeds",
     description:
@@ -188,7 +185,7 @@ export function HeroSection({ className }: { className?: string }) {
                 </motion.p>
 
                 {/* Buttons */}
-                <motion.div
+                {/* <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
@@ -210,7 +207,7 @@ export function HeroSection({ className }: { className?: string }) {
                   <button className="px-8 py-4 bg-white/10 backdrop-blur-xl border border-white/30 text-white rounded-full font-bold hover:bg-white/20 hover:border-white/50 transition-all active:scale-95">
                     View Trends
                   </button>
-                </motion.div>
+                </motion.div> */}
               </motion.div>
             </AnimatePresence>
           </div>

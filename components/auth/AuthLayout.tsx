@@ -115,7 +115,7 @@ export function AuthLayout({ children, className }: AuthLayoutProps) {
             fill
             priority
             sizes="50vw"
-            src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1920&q=80"
+            src="/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM.jpeg"
           />
         </motion.div>
 

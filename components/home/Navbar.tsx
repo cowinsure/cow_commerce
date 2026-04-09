@@ -13,7 +13,7 @@ const navLinks = [
   { name: "Home", href: "/" },
   { name: "Marketplace", href: "/marketplace" },
   { name: "Order History", href: "/order-history" },
-  { name: "About", href: "/about" },
+  { name: "About", href: "/about-us" },
 ];
 
 export function Navbar({ className }: { className?: string }) {

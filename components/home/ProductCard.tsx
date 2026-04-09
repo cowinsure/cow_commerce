@@ -11,13 +11,10 @@ import {
   ShieldCheck,
   ArrowRight,
   Users,
-  TrendingUp,
-  Clock,
 } from "lucide-react";
 import Link from "next/link";
 
 import { LivestockItem } from "@/lib/models/productDTO";
-import { ForSaleSticker } from "../ui/StickerComponent";
 
 interface ProductCardProps {
   cow: LivestockItem;
@@ -40,6 +37,16 @@ export function ProductCard({
   const progressPercent = (bookedUnits / totalUnits) * 100;
 
   const cowData = btoa(JSON.stringify(cow));
+
+  // Get base URL from environment
+  const baseImageUrl = process.env.NEXT_PUBLIC_API_BASE_IMAGE_URL || "";
+
+  // Helper to prepend base URL to image path
+  const getImageUrl = (path: string) => {
+    if (!path) return "";
+    if (path.startsWith("http") || path.startsWith("/")) return path;
+    return `${baseImageUrl}${path}`;
+  };
 
   return (
     <motion.div
@@ -68,7 +75,7 @@ export function ProductCard({
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 rounded-t-2xl"
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          src="/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM (1).jpeg" // TODO: Get from API when image field is available
+          src={getImageUrl(cow.image_with_owner)} // TODO: Get from API when image field is available
         />
 
         {/* Gradient Overlay */}
@@ -230,7 +237,10 @@ export function ProductCard({
             isListView && "border-t border-emerald-100 pt-4",
           )}
         >
-          <Link href={`/cows/${cow.livestock_id}?data=${cowData}`} className="w-full">
+          <Link
+            href={`/cows/${cow.livestock_id}?data=${cowData}`}
+            className="w-full"
+          >
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}

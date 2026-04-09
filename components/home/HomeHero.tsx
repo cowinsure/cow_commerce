@@ -24,7 +24,7 @@ import Link from "next/link";
 const slides = [
   {
     image:
-      "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1920&q=80", // Live cattle (heritage breed)
+      "/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM.jpeg", // Live cattle (heritage breed)
     tag: "Heritage Angus",
     title: "Book Your",
     subtitle: "Share",
@@ -41,7 +41,7 @@ const slides = [
   },
   {
     image:
-      "https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=1920&q=80", // Cattle in pasture
+      "/cowImg/WhatsApp Image 2026-04-01 at 3.57.20 PM.jpeg", // Cattle in pasture
     tag: "Collective Buying",
     title: "Share The",
     subtitle: "Cost",
@@ -58,7 +58,7 @@ const slides = [
   },
   {
     image:
-      "https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?w=1920&q=80", // Butcher/processing
+      "/cowImg/WhatsApp Image 2026-04-01 at 3.57.31 PM.jpeg", // Butcher/processing
     tag: "Farm to Fork",
     title: "Guaranteed",
     subtitle: "Fresh",

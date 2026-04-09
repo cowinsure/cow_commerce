@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthToggle } from "@/components/auth/AuthToggle";
 import { LoginForm } from "@/components/auth/LoginForm";
@@ -9,8 +9,35 @@ import { SignupForm } from "@/components/auth/SignupForm";
 import { isAuthenticated } from "@/lib/auth/tokenService";
 import { useToast } from "@/components/ui/Toast";
 import { useRouter } from "next/navigation";
+import { Circle } from "lucide-react";
+
 
 type AuthMode = "login" | "signup";
+
+// Suspense wrapper for forms using useSearchParams
+function LoginFormWithSuspense() {
+  return (
+    <Suspense fallback={<FormLoading />}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function SignupFormWithSuspense() {
+  return (
+    <Suspense fallback={<FormLoading />}>
+      <SignupForm />
+    </Suspense>
+  );
+}
+
+function FormLoading() {
+  return (
+    <div className="flex items-center justify-center min-h-64">
+      <Circle className="w-8 h-8 text-emerald-600 animate-spin" />
+    </div>
+  );
+}
 
 function AuthContent() {
   // Default to login mode to match server-side rendering
@@ -49,11 +76,11 @@ function AuthContent() {
         <div className="min-h-112.5">
           {mode === "login" ? (
             <div key="login" className="animate-fade-in">
-              <LoginForm />
+              <LoginFormWithSuspense />
             </div>
           ) : (
             <div key="signup" className="animate-fade-in">
-              <SignupForm />
+              <SignupFormWithSuspense />
             </div>
           )}
         </div>

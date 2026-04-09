@@ -15,13 +15,13 @@ export const AUTH_API = {
 } as const;
 
 // Order endpoints
-// export const ORDER_API = {
-//   CREATE_ORDER: "/v1/orders/create/",
-//   GET_ORDERS: "/v1/orders/",
-//   GET_ORDER_BY_ID: (id: string) => `/v1/orders/${id}/`,
-//   UPDATE_ORDER: (id: string) => `/v1/orders/${id}/`,
-//   CANCEL_ORDER: (id: string) => `/v1/orders/${id}/cancel/`,
-// } as const;
+export const ORDER_API = {
+  CREATE_ORDER: "/v1/orders/create/",
+  GET_ORDERS: "/v1/orders/",
+  GET_ORDER_BY_ID: (id: string) => `/v1/orders/${id}/`,
+  UPDATE_ORDER: (id: string) => `/v1/orders/${id}/`,
+  CANCEL_ORDER: (id: string) => `/v1/orders/${id}/cancel/`,
+} as const;
 
 // Product endpoints
 export const PRODUCT_API = {

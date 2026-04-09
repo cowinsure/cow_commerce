@@ -67,8 +67,8 @@ export function FilterSidebar({
   const [breeds, setBreeds] = useState(breedOptions.map((b) => ({ ...b })));
   const [selectedWeight, setSelectedWeight] = useState("600-800");
   // Actual filter values for API
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000000]);
-  const [weightRange, setWeightRange] = useState<[number, number]>([0, 1500]);
+  const [priceRange, setPriceRange] = useState<[number | "", number | ""]>(["", ""]);
+  const [weightRange, setWeightRange] = useState<[number | "", number | ""]>(["", ""]);
   const [expandedSections, setExpandedSections] = useState({
     breed: true,
     price: true,
@@ -87,19 +87,25 @@ export function FilterSidebar({
 
     // Set new timer - wait 800ms after user stops typing
     debounceTimer.current = setTimeout(() => {
+      // Inject defaults only when calling API
+      const minWeight = weightRange[0] === "" ? 0 : weightRange[0];
+      const maxWeight = weightRange[1] === "" ? 1500 : weightRange[1];
+      const minPrice = priceRange[0] === "" ? 0 : priceRange[0];
+      const maxPrice = priceRange[1] === "" ? 50000000 : priceRange[1];
+
       // Ensure valid min/max order
-      const minWeight = Math.min(weightRange[0], weightRange[1]);
-      const maxWeight = Math.max(weightRange[0], weightRange[1]);
-      const minPrice = Math.min(priceRange[0], priceRange[1]);
-      const maxPrice = Math.max(priceRange[0], priceRange[1]);
+      const finalMinWeight = Math.min(minWeight, maxWeight);
+      const finalMaxWeight = Math.max(minWeight, maxWeight);
+      const finalMinPrice = Math.min(minPrice, maxPrice);
+      const finalMaxPrice = Math.max(minPrice, maxPrice);
 
       onFilterChange?.({
         breeds: breeds.filter((b) => b.checked).map((b) => b.id),
         weightClass: selectedWeight,
-        minWeight: minWeight,
-        maxWeight: maxWeight,
-        minPrice: minPrice,
-        maxPrice: maxPrice,
+        minWeight: finalMinWeight,
+        maxWeight: finalMaxWeight,
+        minPrice: finalMinPrice,
+        maxPrice: finalMaxPrice,
       });
     }, 800);
 
@@ -115,7 +121,7 @@ export function FilterSidebar({
   const activeFiltersCount =
     breeds.filter((b) => b.checked).length +
     (selectedWeight !== "all" ? 1 : 0) +
-    (priceRange[0] > 0 || priceRange[1] < 50000000 ? 1 : 0);
+    (priceRange[0] !== "" || priceRange[1] !== "" ? 1 : 0);
 
   const toggleBreed = (id: string) => {
     const updated = breeds.map((b) =>
@@ -127,12 +133,12 @@ export function FilterSidebar({
 
   const handlePriceMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
-    
+
     if (rawValue === "") {
-      setPriceRange([0, priceRange[1]]);
+      setPriceRange(["", priceRange[1]]);
       return;
     }
-    
+
     const numValue = Number(rawValue);
     if (!isNaN(numValue) && numValue >= 0) {
       setPriceRange([numValue, priceRange[1]]);
@@ -141,12 +147,12 @@ export function FilterSidebar({
 
   const handlePriceMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
-    
+
     if (rawValue === "") {
-      setPriceRange([priceRange[0], 50000000]);
+      setPriceRange([priceRange[0], ""]);
       return;
     }
-    
+
     const numValue = Number(rawValue);
     if (!isNaN(numValue) && numValue >= 0) {
       setPriceRange([priceRange[0], numValue]);
@@ -155,12 +161,12 @@ export function FilterSidebar({
 
   const handleWeightMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
-    
+
     if (rawValue === "") {
-      setWeightRange([0, weightRange[1]]);
+      setWeightRange(["", weightRange[1]]);
       return;
     }
-    
+
     const numValue = Number(rawValue);
     if (!isNaN(numValue) && numValue >= 0) {
       setWeightRange([numValue, weightRange[1]]);
@@ -169,12 +175,12 @@ export function FilterSidebar({
 
   const handleWeightMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value;
-    
+
     if (rawValue === "") {
-      setWeightRange([weightRange[0], 1500]);
+      setWeightRange([weightRange[0], ""]);
       return;
     }
-    
+
     const numValue = Number(rawValue);
     if (!isNaN(numValue) && numValue >= 0) {
       setWeightRange([weightRange[0], numValue]);
@@ -184,8 +190,8 @@ export function FilterSidebar({
   const resetFilters = () => {
     setBreeds(breedOptions.map((b) => ({ ...b, checked: false })));
     setSelectedWeight("400-600");
-    setPriceRange([0, 50000000]);
-    setWeightRange([0, 1500]);
+    setPriceRange(["", ""]);
+    setWeightRange(["", ""]);
     // No need to call debounce - useEffect handles it
   };
 
@@ -350,7 +356,7 @@ export function FilterSidebar({
                           value={priceRange[0]}
                           onChange={handlePriceMinChange}
                           className="w-full pl-6 pr-3 py-2.5 text-sm font-semibold bg-slate-50 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
-                          placeholder="Min"
+                          placeholder="e.g. 20000"
                         />
                       </div>
                       <span className="text-slate-400">-</span>
@@ -363,7 +369,7 @@ export function FilterSidebar({
                           value={priceRange[1]}
                           onChange={handlePriceMaxChange}
                           className="w-full pl-6 pr-3 py-2.5 text-sm font-semibold bg-slate-50 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
-                          placeholder="Max"
+                          placeholder="e.g. 500000"
                         />
                       </div>
                     </div>
@@ -414,7 +420,7 @@ export function FilterSidebar({
                           value={weightRange[0]}
                           onChange={handleWeightMinChange}
                           className="w-full px-3 py-2 text-sm font-semibold bg-slate-50 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
-                          placeholder="Min"
+                          placeholder="e.g. 200"
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">
                           kg
@@ -427,7 +433,7 @@ export function FilterSidebar({
                           value={weightRange[1]}
                           onChange={handleWeightMaxChange}
                           className="w-full px-3 py-2 text-sm font-semibold bg-slate-50 rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
-                          placeholder="Max"
+                          placeholder="e.g. 800"
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">
                           kg
