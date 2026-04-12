@@ -46,9 +46,9 @@ export function useAuth() {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
       const response = await loginApi(credentials);
-      console.log("Login API response:", response);
+      // console.log("Login API response:", response);
       // Store tokens
-      console.log("Storing tokens:", response.access_token, response.refresh_token);
+      // console.log("Storing tokens:", response.access_token, response.refresh_token);
       setToken(response.access_token, response.refresh_token);
       
       // Also set httpOnly cookies for middleware

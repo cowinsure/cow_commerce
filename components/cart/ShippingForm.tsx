@@ -1,48 +1,32 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { cn } from '@/lib/theme/theme.config';
-import InputField from '@/components/ui/InputField';
+import { cn } from "@/lib/theme/theme.config";
+import InputField from "@/components/ui/InputField";
 
 interface ShippingFormData {
-  fullName: string;
-  farmName: string;
-  streetAddress: string;
-  city: string;
-  state: string;
-  zip: string;
+  address: string;
 }
 
 interface ShippingFormProps {
-  onSubmit?: (data: ShippingFormData) => void;
+  formData: ShippingFormData;
+  setFormData: React.Dispatch<React.SetStateAction<ShippingFormData>>;
   className?: string;
 }
 
-export function ShippingForm({ onSubmit, className }: ShippingFormProps) {
-  const [formData, setFormData] = useState<ShippingFormData>({
-    fullName: '',
-    farmName: '',
-    streetAddress: '',
-    city: '',
-    state: '',
-    zip: '',
-  });
-
+export function ShippingForm({
+  formData,
+  setFormData,
+  className,
+}: ShippingFormProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit?.(formData);
-  };
-
   return (
-    <section className={cn('', className)}>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Full Name */}
-        <InputField
+    <section className={cn("", className)}>
+      {/* Full Name */}
+      {/* <InputField
           id="fullName"
           name="fullName"
           type="text"
@@ -50,10 +34,10 @@ export function ShippingForm({ onSubmit, className }: ShippingFormProps) {
           value={formData.fullName}
           onChange={handleChange}
           placeholder="Johnathan Sterling"
-        />
+        /> */}
 
-        {/* Farm / Company Name */}
-        <InputField
+      {/* Farm / Company Name */}
+      {/* <InputField
           id="farmName"
           name="farmName"
           type="text"
@@ -61,23 +45,26 @@ export function ShippingForm({ onSubmit, className }: ShippingFormProps) {
           value={formData.farmName}
           onChange={handleChange}
           placeholder="Sterling Acres Ltd."
-        />
+        /> */}
 
-        {/* Street Address */}
+      {/* Street Address */}
+      <div className="grid grid-cols-1 w-full gap-6">
         <div className="md:col-span-2">
           <InputField
-            id="streetAddress"
-            name="streetAddress"
+            id="address"
+            name="address"
             type="text"
-            label="Street Address"
-            value={formData.streetAddress}
+            label="Enter You complete address"
+            value={formData.address || ""}
             onChange={handleChange}
-            placeholder="842 High Plains Road"
+            placeholder="House no, Block/Road, Area"
+            className="h-25"
           />
         </div>
+      </div>
 
-        {/* City */}
-        <InputField
+      {/* City */}
+      {/* <InputField
           id="city"
           name="city"
           type="text"
@@ -85,10 +72,10 @@ export function ShippingForm({ onSubmit, className }: ShippingFormProps) {
           value={formData.city}
           onChange={handleChange}
           placeholder="Bozeman"
-        />
+        /> */}
 
-        {/* State & Zip Row */}
-        <div className="grid grid-cols-2 gap-4">
+      {/* State & Zip Row */}
+      {/* <div className="grid grid-cols-2 gap-4">
           <InputField
             id="state"
             name="state"
@@ -107,8 +94,7 @@ export function ShippingForm({ onSubmit, className }: ShippingFormProps) {
             onChange={handleChange}
             placeholder="59715"
           />
-        </div>
-      </form>
+        </div> */}
     </section>
   );
 }

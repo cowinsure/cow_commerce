@@ -15,6 +15,7 @@ import {
 import Link from "next/link";
 
 import { LivestockItem } from "@/lib/models/productDTO";
+import { ImageWithUrl } from "@/hooks/useImage";
 
 interface ProductCardProps {
   cow: LivestockItem;
@@ -38,16 +39,6 @@ export function ProductCard({
 
   const cowData = btoa(JSON.stringify(cow));
 
-  // Get base URL from environment
-  const baseImageUrl = process.env.NEXT_PUBLIC_API_BASE_IMAGE_URL || "";
-
-  // Helper to prepend base URL to image path
-  const getImageUrl = (path: string) => {
-    if (!path) return "";
-    if (path.startsWith("http") || path.startsWith("/")) return path;
-    return `${baseImageUrl}${path}`;
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -70,12 +61,12 @@ export function ProductCard({
           isListView ? "w-72 shrink-0" : "aspect-4/3",
         )}
       >
-        <Image
+        <ImageWithUrl
           alt={cow.breed}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 rounded-t-2xl"
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          src={getImageUrl(cow.image_with_owner)} // TODO: Get from API when image field is available
+          src={cow.image_with_owner} // TODO: Get from API when image field is available
         />
 
         {/* Gradient Overlay */}

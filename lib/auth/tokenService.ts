@@ -29,7 +29,7 @@ export function getRefreshToken(): string | null {
  */
 export function setToken(accessToken: string, refreshToken: string): void {
   if (typeof window === "undefined") return;
-  console.log("setToken called with:", accessToken, refreshToken);
+  // console.log("setToken called with:", accessToken, refreshToken);
   localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
   localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
   // Also set cookies for middleware

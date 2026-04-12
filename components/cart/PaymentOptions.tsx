@@ -1,93 +1,217 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { cn } from '@/lib/theme/theme.config';
-
-type PaymentMethod = 'card' | 'wire';
+import { cn } from "@/lib/theme/theme.config";
+import { PaymentType } from "@/lib/models/paymentTypeDTO";
+import { Banknote, Landmark, CreditCard, Check } from "lucide-react";
 
 interface PaymentOptionsProps {
-  onChange?: (method: PaymentMethod) => void;
+  paymentTypes: PaymentType[];
+  value: {
+    paymentType: PaymentType | null;
+    referenceNo: string;
+    imageFile: File | null;
+  };
+  onChange: (val: PaymentOptionsProps["value"]) => void;
   className?: string;
 }
 
-export function PaymentOptions({ onChange, className }: PaymentOptionsProps) {
-  const [selected, setSelected] = useState<PaymentMethod>('card');
+export function PaymentOptions({
+  paymentTypes,
+  value,
+  onChange,
+  className,
+}: PaymentOptionsProps) {
+  const handleSelect = (method: PaymentType) => {
+    onChange({ ...value, paymentType: method });
+  };
 
-  const handleSelect = (method: PaymentMethod) => {
-    setSelected(method);
-    onChange?.(method);
+  const handleReferenceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange({ ...value, referenceNo: e.target.value });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    onChange({ ...value, imageFile: file });
+  };
+
+  // HELPER FUNCTIONS
+  const getPaymentIcon = (name: string) => {
+    const lowerName = name.toLowerCase();
+    if (lowerName.includes("cash")) return Banknote;
+    if (lowerName.includes("bank")) return Landmark;
+    if (lowerName.includes("credit")) return CreditCard;
+    return Banknote;
+  };
+
+  const formatPaymentName = (name: string) =>
+    name.replace(/\bSale\b/g, "Payment").replace(/\s*\(.*?\)/g, "");
+
+  const getIconColors = (name: string, isSelected: boolean) => {
+    const lowerName = name.toLowerCase();
+    if (lowerName.includes("cash")) {
+      return isSelected
+        ? "bg-emerald-100 text-emerald-700"
+        : "bg-emerald-50 text-emerald-600";
+    }
+    if (lowerName.includes("bank")) {
+      return isSelected
+        ? "bg-blue-100 text-blue-700"
+        : "bg-blue-50 text-blue-600";
+    }
+    if (lowerName.includes("credit")) {
+      return isSelected
+        ? "bg-violet-100 text-violet-700"
+        : "bg-violet-50 text-violet-600";
+    }
+    return isSelected
+      ? "bg-slate-100 text-slate-700"
+      : "bg-slate-50 text-slate-600";
   };
 
   return (
-    <section className={cn('', className)}>
+    <section className={cn("space-y-6", className)}>
+      {/* Payment Type Selection - Modern Card Style */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {paymentTypes.map((method) => {
+          const isSelected =
+            value.paymentType?.payment_type_id === method.payment_type_id;
 
-      <div className="space-y-4">
-        {/* Credit Card Option */}
-        <label
-          className={cn(
-            'relative flex items-center p-6 cursor-pointer rounded-xl transition-all',
-            'bg-white border-2 border-gray-300 hover:border-green-950/80 hover:shadow-sm',
-            selected === 'card' && 'border-green-950/80 ring-4 ring-green-600/20'
-          )}
-        >
-          <div className={cn(
-            "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
-            selected === 'card' ? "border-green-950/80 bg-green-950/80" : "border-gray-300"
-          )}>
-            {selected === 'card' && (
-              <div className="w-2 h-2 rounded-full bg-white" />
-            )}
-          </div>
-          <input
-            type="radio"
-            name="payment"
-            value="card"
-            checked={selected === 'card'}
-            onChange={() => handleSelect('card')}
-            className="sr-only"
-          />
-          <div className="ml-4 flex-1">
-            <span className="block font-headline font-bold text-on-surface">Credit / Debit Card</span>
-            <span className="block text-sm text-on-surface-variant">Secure instant processing via Stripe</span>
-          </div>
-          <svg className="w-6 h-6 text-outline" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
-          </svg>
-        </label>
+          const displayName = formatPaymentName(method.payment_type_name);
+          const Icon = getPaymentIcon(method.payment_type_name);
+          const iconColors = getIconColors(
+            method.payment_type_name,
+            isSelected,
+          );
 
-        {/* Wire Transfer Option */}
-        <label
-          className={cn(
-            'relative flex items-center p-6 cursor-pointer rounded-xl transition-all',
-            'bg-white border-2 border-gray-300 hover:border-green-950/80 hover:shadow-sm',
-            selected === 'wire' && 'border-green-950/80 ring-4 ring-green-600/20'
-          )}
-        >
-          <div className={cn(
-            "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
-            selected === 'wire' ? "border-green-950/80 bg-green-950/80" : "border-gray-300"
-          )}>
-            {selected === 'wire' && (
-              <div className="w-2 h-2 rounded-full bg-white" />
-            )}
-          </div>
-          <input
-            type="radio"
-            name="payment"
-            value="wire"
-            checked={selected === 'wire'}
-            onChange={() => handleSelect('wire')}
-            className="sr-only"
-          />
-          <div className="ml-4 flex-1">
-            <span className="block font-headline font-bold text-on-surface">Wire Transfer</span>
-            <span className="block text-sm text-on-surface-variant">Recommended for high-value transactions over $10,000</span>
-          </div>
-          <svg className="w-6 h-6 text-outline" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M4 10V7h3V4h5v3h3v3h-3v7H7v-7H4zm3 7c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2z" />
-          </svg>
-        </label>
+          return (
+            <button
+              key={method.payment_type_id}
+              onClick={() => handleSelect(method)}
+              className={cn(
+                "group relative flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all duration-300",
+                isSelected
+                  ? "border-emerald-400 bg-emerald-50 shadow-lg shadow-primary/10"
+                  : "border-transparent bg-gray-50 hover:border-outline-variant hover:shadow-md",
+              )}
+            >
+              {/* Check indicator for selected state */}
+              {isSelected && (
+                <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                  <Check className="w-3 h-3 text-on-primary" strokeWidth={3} />
+                </div>
+              )}
+
+              {/* Icon container */}
+              <div
+                className={cn(
+                  "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300",
+                  iconColors,
+                  isSelected && "scale-110",
+                )}
+              >
+                <Icon className="w-6 h-6" />
+              </div>
+
+              {/* Label */}
+              <span
+                className={cn(
+                  "text-sm font-semibold transition-colors",
+                  isSelected ? "text-primary" : "text-on-surface-variant",
+                )}
+              >
+                {displayName}
+              </span>
+            </button>
+          );
+        })}
       </div>
+
+      {/* Fields container - shows when a payment type is selected */}
+      {value.paymentType && (
+        <div className="space-y-5 animate-in fade-in slide-in-from-top-2 duration-300">
+          {/* Reference Input */}
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-on-surface">
+              Reference / Transaction ID
+            </label>
+            <input
+              type="text"
+              value={value.referenceNo}
+              onChange={handleReferenceChange}
+              placeholder="Enter transaction reference number"
+              className="w-full px-4 py-3.5 bg-gray-50 border border-outline-variant/20 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-on-surface-variant/50"
+            />
+          </div>
+
+          {/* Image Upload */}
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-on-surface">
+              Payment Proof
+            </label>
+
+            <div className="relative">
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleFileChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer peer"
+              />
+
+              <div
+                className={cn(
+                  "flex items-center justify-center gap-3 px-4 py-4 rounded-xl border-2 border-dashed transition-all",
+                  value.imageFile
+                    ? "border-primary bg-primary/5"
+                    : "border-outline-variant/30 hover:border-primary hover:bg-surface-container",
+                )}
+              >
+                {value.imageFile ? (
+                  <>
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Check className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <p className="text-sm font-medium text-primary">
+                        {value.imageFile.name}
+                      </p>
+                      <p className="text-xs text-on-surface-variant">
+                        Click to change file
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-on-surface-variant"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1 text-left">
+                      <p className="text-sm font-medium text-on-surface">
+                        Tap to upload proof
+                      </p>
+                      <p className="text-xs text-on-surface-variant">
+                        Screenshot, receipt image
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

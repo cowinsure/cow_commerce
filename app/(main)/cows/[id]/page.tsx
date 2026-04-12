@@ -23,23 +23,13 @@ interface CowDetailsAdapter {
 }
 
 function mapCowDetailsToAdapter(details: CowDetails): CowDetailsAdapter {
-  const baseImageUrl = process.env.NEXT_PUBLIC_API_BASE_IMAGE_URL || "";
-  const getImageUrl = (path: string) => {
-    if (!path || ["None", "null", "undefined"].includes(path)) return null;
-
-    // Absolute URL
-    if (path.startsWith("http")) return path;
-
-    // Relative path → attach base URL properly
-    return `${baseImageUrl.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
-  };
-  const imageUrl = getImageUrl(details.left_side_image);
+  // console.log(imageUrl);
   return {
     id: details.id,
     name: details.name || `${details.breed} #${details.id}`,
     breed: details.breed,
     price: details.weight_kg * 1000,
-    image: imageUrl ?? "/cowImg/fallback.jpg",
+    image: details.image_with_owner ?? "/cowImg/fallback.jpg",
     tag: details.vet_certificate ? "Premium" : "Standard",
     tagColor: details.vet_certificate ? "primary-fixed" : "secondary",
     weight: details.weight_kg,
@@ -51,10 +41,7 @@ function mapCowDetailsToAdapter(details: CowDetails): CowDetailsAdapter {
   };
 }
 
-import {
-  motion,
-  AnimatePresence,
-} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { CowGallery } from "@/components/cow/CowGallery";
 import {
@@ -91,6 +78,7 @@ import { AnimatedPrice } from "@/components/ui/CounterAnimation";
 import { CircularShareMenu } from "@/components/ui/ShareMenu";
 import { CowImageGallery } from "@/components/cow/CowImageGallery";
 import { CowVideoPlayer } from "@/components/cow/CowVideoPlayer";
+import { ImageWithUrl } from "@/hooks/useImage";
 import { BreedAdvantages } from "@/components/ui/BreedContent";
 
 // Animation variants
@@ -298,7 +286,7 @@ export default function CowDetailsPage() {
     },
   ];
 
-  console.log(preloadedCow);
+  // console.log(preloadedCow);
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
@@ -329,7 +317,7 @@ export default function CowDetailsPage() {
                     <CowGallery cow={cowDetails[0]} />
                   ) : (
                     <div className="relative aspect-4/3">
-                      <Image
+                      <ImageWithUrl
                         alt={cow.name}
                         src={cow.image}
                         fill

@@ -31,7 +31,12 @@ export const PRODUCT_API = {
   // GET_CATEGORIES: "/v1/products/categories/",
 } as const;
 
+// Payment type service endpoints
+export const PAYMENT_TYPE_API = {
+GET_PAYMENT_TYPES: "/invms/inventory-payment-type-service/"
+} as const;
+
 // Type for combining all API routes
 // export type ApiRoutes = typeof AUTH_API | typeof ORDER_API | typeof PRODUCT_API;
-export type ApiRoutes = typeof AUTH_API |  typeof PRODUCT_API;
+export type ApiRoutes = typeof AUTH_API |  typeof PRODUCT_API | typeof PAYMENT_TYPE_API;
 

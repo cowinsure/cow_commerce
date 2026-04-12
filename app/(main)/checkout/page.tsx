@@ -2,7 +2,7 @@
 
 import { useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ShippingForm } from "@/components/cart/ShippingForm";
 import { PaymentOptions } from "@/components/cart/PaymentOptions";
 import { TrustBadges } from "@/components/cart/TrustBadges";
@@ -12,16 +12,19 @@ import {
   ArrowLeft,
   CheckCircle2,
   Truck,
-  Clock,
   AlertCircle,
-  Weight,
-  Calendar,
-  Shield,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { LivestockItem } from "@/lib/models/productDTO";
 import { FaBangladeshiTakaSign } from "react-icons/fa6";
+import { ImageWithUrl } from "@/hooks/useImage";
+import { RxCross2 } from "react-icons/rx";
+import { usePaymentTypes } from "@/hooks/payments/usePaymentTypes";
+import { PaymentType } from "@/lib/models/paymentTypeDTO";
+import useApi from "@/hooks/useApi";
+import { useToast } from "@/components/ui/Toast";
 
 // Animation variants
 const containerVariants = {
@@ -105,13 +108,18 @@ function CheckoutLoadingState() {
 }
 
 function CheckoutContent() {
+  const { post } = useApi();
+  const { showToast } = useToast();
   const searchParams = useSearchParams();
   const cowId = searchParams.get("cowId");
   const quantityParam = searchParams.get("quantity");
   const quantity = quantityParam ? parseInt(quantityParam, 10) : 1;
+  const { paymentTypes } = usePaymentTypes("ISSUE");
 
+  //Base64 string data from params
   const preloadedCowData = searchParams.get("data");
-  const preloadedCow = useMemo(() => {
+  //Parsed cow data from base64
+  const parsedPreloadedCow = useMemo(() => {
     if (!preloadedCowData) return null;
     try {
       return JSON.parse(atob(preloadedCowData)) as LivestockItem;
@@ -120,32 +128,92 @@ function CheckoutContent() {
     }
   }, [preloadedCowData]);
 
+  // States
+  const [formData, setFormData] = useState({
+    address: "",
+  });
+  const [paymentData, setPaymentData] = useState({
+    paymentType: null as PaymentType | null,
+    referenceNo: "",
+    imageFile: null as File | null,
+  });
   const [isProcessing, setIsProcessing] = useState(false);
-  const [checkoutStep, setCheckoutStep] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const cartItem = preloadedCow
+  const cartItem = parsedPreloadedCow
     ? {
-        id: preloadedCow.livestock_id,
-        name: preloadedCow.breed,
-        breed: preloadedCow.breed,
+        id: parsedPreloadedCow.livestock_id,
+        name: parsedPreloadedCow.breed,
+        breed: parsedPreloadedCow.breed,
         image: "/cowImg/fallback.jpg",
-        tag: preloadedCow.livestock_id ? "Premium" : "Standard",
-        price: preloadedCow.unit_price,
+        tag: parsedPreloadedCow.livestock_id ? "Premium" : "Standard",
+        price: parsedPreloadedCow.unit_price,
       }
     : null;
 
-  const totalPrice = preloadedCow ? preloadedCow.unit_price * quantity : 0;
-  const bookingAmount = preloadedCow ? preloadedCow.booking_amount : 0;
+  const totalPrice = parsedPreloadedCow
+    ? parsedPreloadedCow.unit_price * quantity
+    : 0;
+  const bookingAmount = parsedPreloadedCow
+    ? parsedPreloadedCow.booking_amount
+    : 0;
 
+  //Handle checkout function
   const handleCheckout = async () => {
     setIsProcessing(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsProcessing(false);
-    setShowSuccess(true);
+    if (!formData.address) {
+      showToast("Please enter delivery address");
+      setIsProcessing(false);
+      return;
+    }
+
+    if (!paymentData?.paymentType) {
+      showToast("Please select a payment method");
+      setIsProcessing(false);
+      return;
+    }
+
+    if (!parsedPreloadedCow) return;
+
+    try {
+      setIsProcessing(true);
+
+      const payload = {
+        customer_id: 3,
+        delivery_address: formData.address,
+        item_details: [
+          {
+            livestock_id: parsedPreloadedCow.livestock_id,
+            inventory_item_id: parsedPreloadedCow.inventory_item_id,
+            unit_price: parsedPreloadedCow.unit_price,
+            quantity: quantity,
+          },
+        ],
+        order_transaction_details: [
+          {
+            payment_type_id: paymentData.paymentType.payment_type_id,
+            reference_no: paymentData.referenceNo,
+            image_path: "xyz/avc.jpg",
+            amount: parsedPreloadedCow.booking_amount,
+          },
+        ],
+      };
+
+      console.log("FINAL PAYLOAD:", payload);
+
+      const res = await post("/invms/inventory-ecom-order-service/", payload);
+      if (res.status === "success") {
+        setShowSuccess(true);
+      }
+      console.log(res);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
-  if (!preloadedCow) {
+  if (!parsedPreloadedCow) {
     return (
       <div className="min-h-screen flex flex-col bg-slate-50">
         <main className="flex-1 flex items-center justify-center pt-24">
@@ -199,21 +267,21 @@ function CheckoutContent() {
               <CheckCircle2 className="w-12 h-12 text-emerald-600" />
             </motion.div>
             <h1 className="text-3xl font-black text-slate-900 mb-4">
-              Investment Confirmed!
+              Booking Confirmed!
             </h1>
             <p className="text-slate-600 mb-8">
               Your booking for{" "}
               <span className="font-semibold text-emerald-600">
-                {preloadedCow.breed}
+                {parsedPreloadedCow.breed}
               </span>{" "}
               has been secured. You will receive a confirmation email shortly.
             </p>
-            <div className="bg-white rounded-2xl p-6 shadow-lg mb-8 text-left">
+            {/* <div className="bg-white rounded-2xl p-6 shadow-lg mb-8 text-left">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 relative">
                   <Image
                     src={cartItem?.image || "/cowImg/fallback.jpg"}
-                    alt={preloadedCow.breed}
+                    alt={parsedPreloadedCow.breed}
                     fill
                     sizes="64px"
                     className="object-cover"
@@ -221,10 +289,10 @@ function CheckoutContent() {
                 </div>
                 <div>
                   <p className="font-bold text-slate-900">
-                    {preloadedCow.breed}
+                    {parsedPreloadedCow.breed}
                   </p>
                   <p className="text-sm text-slate-500">
-                    {preloadedCow.breed} Cow
+                    {parsedPreloadedCow.breed} Cow
                   </p>
                 </div>
               </div>
@@ -232,7 +300,7 @@ function CheckoutContent() {
                 <span className="text-slate-500">Order ID</span>
                 <span className="font-mono font-semibold">#COW-2024-8832</span>
               </div>
-            </div>
+            </div> */}
             <Link href="/">
               <motion.button
                 whileHover={{ scale: 1.02 }}
@@ -295,7 +363,7 @@ function CheckoutContent() {
           </motion.div>
 
           {/* Checkout Progress */}
-          <motion.div variants={itemVariants} className="mb-12">
+          {/* <motion.div variants={itemVariants} className="mb-12">
             <div className="flex items-center justify-center lg:justify-start gap-4">
               {[
                 { step: 1, label: "Shipping", icon: Truck },
@@ -318,7 +386,7 @@ function CheckoutContent() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </motion.div> */}
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
@@ -338,11 +406,11 @@ function CheckoutContent() {
                       Shipping Details
                     </h2>
                     <p className="text-sm text-slate-500">
-                      Where should we deliver your share certificate?
+                      Where should we deliver?
                     </p>
                   </div>
                 </div>
-                <ShippingForm />
+                <ShippingForm formData={formData} setFormData={setFormData} />
               </div>
 
               {/* Payment Section */}
@@ -360,7 +428,11 @@ function CheckoutContent() {
                     </p>
                   </div>
                 </div>
-                <PaymentOptions />
+                <PaymentOptions
+                  paymentTypes={paymentTypes}
+                  value={paymentData}
+                  onChange={setPaymentData}
+                />
               </div>
 
               {/* Security Note */}
@@ -400,9 +472,13 @@ function CheckoutContent() {
                     {/* Product Card Mini */}
                     <div className="flex gap-4 p-4 bg-slate-50 rounded-2xl mb-6">
                       <div className="w-20 h-20 rounded-xl overflow-hidden bg-white relative shrink-0">
-                        <Image
-                          src={preloadedCow?.livestock_id ? "/cowImg/fallback.jpg" : "/cowImg/fallback.jpg"}
-                          alt={preloadedCow?.breed || "Cow"}
+                        <ImageWithUrl
+                          src={
+                            parsedPreloadedCow?.image_with_owner
+                              ? parsedPreloadedCow?.image_with_owner
+                              : "/cowImg/fallback.jpg"
+                          }
+                          alt={parsedPreloadedCow?.breed || "Cow"}
                           fill
                           sizes="80px"
                           className="object-cover"
@@ -410,10 +486,11 @@ function CheckoutContent() {
                       </div>
                       <div className="flex-1">
                         <h4 className="font-bold text-slate-900 mb-1">
-                          {preloadedCow?.breed || "Premium Cow"} #{preloadedCow?.livestock_id}
+                          {parsedPreloadedCow?.breed || "Premium Cow"}
+                          {/* {parsedPreloadedCow?.livestock_id} */}
                         </h4>
                         <p className="text-sm text-slate-500 mb-2">
-                          {preloadedCow?.breed} Breed
+                          {parsedPreloadedCow?.breed} Breed
                         </p>
                         <div className="flex items-center gap-2">
                           <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-xs font-semibold">
@@ -428,23 +505,26 @@ function CheckoutContent() {
 
                     {/* Financial Details */}
                     <div className="space-y-4 mb-8">
-                      <div className="flex justify-between items-center text-sm">
+                      <div className="flex justify-between items-center text-">
+                        <span className="text-slate-500">Quantity</span>
+                        <span className="font-medium text-slate-900 flex items-end">
+                          <span className="font-bold text-gray-500">
+                            <X className="w-3" />
+                          </span>
+                          {quantity}{" "}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-">
                         <span className="text-slate-500">Unit Price</span>
                         <span className="font-medium text-slate-900 flex items-center gap-1">
-                          <FaBangladeshiTakaSign className="w-3 h-3" />
+                          <FaBangladeshiTakaSign className="w-3 h-3 text-gray-500" />
                           {totalPrice.toLocaleString()}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-slate-500">Quantity</span>
-                        <span className="font-medium text-slate-900">
-                          {String(quantity).padStart(2, "0")} Unit{quantity > 1 ? "s" : ""}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm">
+                      <div className="flex justify-between items-center text-">
                         <span className="text-slate-500">Booking Amount</span>
                         <span className="font-medium text-slate-900 flex items-center gap-1">
-                          <FaBangladeshiTakaSign className="w-3 h-3" />
+                          <FaBangladeshiTakaSign className="w-3 h-3 text-gray-500" />
                           {bookingAmount.toLocaleString()}
                         </span>
                       </div>
@@ -453,9 +533,9 @@ function CheckoutContent() {
                       <div className="pt-4 border-t border-slate-200 flex justify-between items-end">
                         <div>
                           <span className="block text-xs font-bold uppercase tracking-wider text-slate-500">
-                            Total Investment
+                            Total Booking
                           </span>
-                          <span className="block text-3xl font-extrabold text-emerald-600 flex items-center gap-1">
+                          <span className=" text-3xl font-extrabold text-emerald-600 flex items-center gap-1">
                             <FaBangladeshiTakaSign className="w-5 h-5" />
                             {totalPrice.toLocaleString()}
                           </span>
@@ -514,7 +594,7 @@ function CheckoutContent() {
                 </div>
 
                 {/* Delivery Estimate */}
-                <motion.div
+                {/* <motion.div
                   whileHover={{ scale: 1.02 }}
                   className="bg-linear-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-100"
                 >
@@ -529,7 +609,7 @@ function CheckoutContent() {
                     available within
                   </p>
                   <p className="text-2xl font-black text-amber-700">14 Days</p>
-                </motion.div>
+                </motion.div> */}
               </div>
             </motion.div>
           </div>

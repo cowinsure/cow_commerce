@@ -22,7 +22,7 @@ export function CowImageGallery({ cow, className }: CowImageGalleryProps) {
 
   // Helper to prepend base URL to image path
   const getImageUrl = (path: string) => {
-    if (!path) return "";
+    if (!path || path === "null" || path === "undefined") return "";
     if (path.startsWith("http") || path.startsWith("/")) return path;
     return `${baseImageUrl}${path}`;
   };

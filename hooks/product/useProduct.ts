@@ -57,7 +57,7 @@ export function useProduct() {
       };
       
       const response = await getLiveStocksApi(params);
-      console.log("Products response:", response);
+      // console.log("Products response:", response);
       setState((prev) => ({
         ...prev,
         products: response.data,

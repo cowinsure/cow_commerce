@@ -215,7 +215,7 @@ export default function OrderHistoryPage() {
           </motion.div>
 
           {/* Stats Cards */}
-          <motion.div
+          {/* <motion.div
             variants={itemVariants}
             className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
           >
@@ -257,7 +257,7 @@ export default function OrderHistoryPage() {
                 </div>
               </motion.div>
             ))}
-          </motion.div>
+          </motion.div> */}
 
           {/* Filters & Search */}
           <motion.div
@@ -271,7 +271,7 @@ export default function OrderHistoryPage() {
                 placeholder="Search orders by ID or animal name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                className="w-full pl-12 pr-4 py-3 bg-white rounded-2xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
               />
             </div>
 
@@ -282,7 +282,7 @@ export default function OrderHistoryPage() {
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setSelectedFilter(filter)}
                   className={cn(
-                    "px-6 py-4 rounded-2xl font-semibold text-sm capitalize whitespace-nowrap transition-all cursor-pointer",
+                    "px-6 py-3 rounded-2xl font-semibold text-sm capitalize whitespace-nowrap transition-all cursor-pointer",
                     selectedFilter === filter
                       ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/25"
                       : "bg-white text-slate-600 border border-slate-200 hover:border-emerald-300 hover:bg-emerald-100",

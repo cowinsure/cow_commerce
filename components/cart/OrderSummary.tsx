@@ -52,7 +52,7 @@ export function OrderSummary({
       {/* Financial Details */}
       <div className="space-y-4 mb-8">
         <div className="flex justify-between items-center text-sm">
-          <span className="text-on-surface-variant">Unit Investment</span>
+          <span className="text-on-surface-variant">Unit Booking</span>
           <span className="font-medium">
             ${unitPrice.toLocaleString("en-US", { minimumFractionDigits: 2 })}
           </span>
@@ -75,7 +75,7 @@ export function OrderSummary({
         <div className="pt-4 border-t border-outline-variant/20 flex justify-between items-end">
           <div>
             <span className="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">
-              Total Investment
+              Total Booking
             </span>
             <span className="block font-headline text-3xl font-extrabold text-primary">
               ${total.toLocaleString("en-US", { minimumFractionDigits: 2 })}

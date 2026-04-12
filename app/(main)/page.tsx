@@ -11,7 +11,7 @@ import useProduct from "@/hooks/product/useProduct";
 
 export default function HomePage() {
   const { products, loading, error, fetchProducts } = useProduct();
-  console.log(products);
+  // console.log(products);
 
   useEffect(() => {
     fetchProducts();

@@ -33,6 +33,16 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Extract backend message if available - prioritize it over generic axios error
+    // Try multiple paths: response.data.message, response.data.data.message
+    const backendMessage = 
+      error.response?.data?.message || 
+      error.response?.data?.data?.message ||
+      error.response?.statusText;
+    if (backendMessage) {
+      error.message = backendMessage;
+    }
+
     // Handle 401 Unauthorized - token expired or invalid
     // Only redirect if we actually have a token (user was authenticated)
     if (error.response?.status === 401) {
@@ -73,6 +83,21 @@ publicApiClient.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor for public API - also extract backend messages
+publicApiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const backendMessage = 
+      error.response?.data?.message || 
+      error.response?.data?.data?.message ||
+      error.response?.statusText;
+    if (backendMessage) {
+      error.message = backendMessage;
+    }
     return Promise.reject(error);
   }
 );

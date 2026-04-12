@@ -26,8 +26,8 @@ const MarketPlacePage = () => {
     fetchProducts();
   }, [fetchProducts]);
 
-  console.log("Products:", products);
-  console.log("Loading:", loading);
+  // console.log("Products:", products);
+  // console.log("Loading:", loading);
 
   return (
     <div className="pt-24 pb-20 flex-1">
