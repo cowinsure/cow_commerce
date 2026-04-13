@@ -5,8 +5,8 @@
  */
 
 import { useState, useCallback } from "react";
-import { createOrderApi, getOrdersApi, getOrderByIdApi } from "@/lib/api/order/order";
-import { CreateOrderRequest, Order } from "@/lib/models/orderDTO";
+import { getOrderByIdApi, getOrdersApi } from "@/lib/api/order/order";
+import { Order } from "@/lib/models/orderDTO";
 
 interface OrderState {
   orders: Order[];
@@ -27,58 +27,59 @@ export function useOrder() {
     page: 1,
   });
 
-  const createOrder = useCallback(async (data: CreateOrderRequest) => {
-    setState((prev) => ({ ...prev, loading: true, error: null }));
-    try {
-      const response = await createOrderApi(data);
-      setState((prev) => ({ ...prev, loading: false }));
-      return response;
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to create order";
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
-      throw error;
-    }
-  }, []);
+  // const createOrder = useCallback(async (data) => {
+  //   setState((prev) => ({ ...prev, loading: true, error: null }));
+  //   try {
+  //     const response = await createOrderApi(data);
+  //     setState((prev) => ({ ...prev, loading: false }));
+  //     return response;
+  //   } catch (error: unknown) {
+  //     const errorMessage =
+  //       error instanceof Error ? error.message : "Failed to create order";
+  //     setState((prev) => ({
+  //       ...prev,
+  //       loading: false,
+  //       error: errorMessage,
+  //     }));
+  //     throw error;
+  //   }
+  // }, []);
 
-  const fetchOrders = useCallback(async (page: number = 1, pageSize: number = 10) => {
-    setState((prev) => ({ ...prev, loading: true, error: null }));
-    try {
-      const response = await getOrdersApi(page, pageSize);
-      setState((prev) => ({
-        ...prev,
-        orders: response.orders,
-        total: response.total,
-        page: response.page,
-        loading: false,
-      }));
-      return response;
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to fetch orders";
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
-      throw error;
-    }
-  }, []);
+  const fetchOrders = useCallback(
+    async (page: number = 1, pageSize: number = 10) => {
+      setState((prev) => ({ ...prev, loading: true, error: null }));
+      try {
+        const response = await getOrdersApi(page, pageSize);
+        setState((prev) => ({
+          ...prev,
+          orders: response.data,
+          total: response.total,
+          page: response.page,
+          loading: false,
+        }));
+        return response;
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to fetch orders";
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+          error: errorMessage,
+        }));
+        throw error;
+      }
+    },
+    [],
+  );
 
-  const fetchOrderById = useCallback(async (id: string) => {
+  const fetchOrderById = useCallback(async (id: number) => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
       const response = await getOrderByIdApi(id);
-      setState((prev) => ({
-        ...prev,
-        currentOrder: response.order,
-        loading: false,
-      }));
       return response;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to fetch order";
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch order";
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -98,7 +99,7 @@ export function useOrder() {
 
   return {
     ...state,
-    createOrder,
+    // createOrder,
     fetchOrders,
     fetchOrderById,
     clearError,

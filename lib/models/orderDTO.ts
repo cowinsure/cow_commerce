@@ -1,63 +1,76 @@
-/**
- * Order DTOs
- * Request and Response interfaces for orders
- */
-
-// ==================== REQUEST DTOS ====================
-
-export interface CreateOrderRequest {
-  product_id: string;
-  quantity: number;
-  shipping_address: string;
-  payment_method: string;
-}
-
-export interface UpdateOrderRequest {
-  status?: string;
-  shipping_address?: string;
-}
-
-// ==================== RESPONSE DTOS ====================
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface OrderItem {
-  id: string;
-  product_id: string;
-  product_name: string;
-  product_image: string;
+  id: number;
+  name: string;
+  breed: string;
+  order_id: number;
   quantity: number;
+  item_name: string;
+  asset_type: string;
+  created_at: string;
   unit_price: number;
-  total_price: number;
+  livestock_id: number;
+  total_amount: number;
+  category_name: string;
+  inventory_item_id: number;
+}
+
+export interface TransactionDetail {
+  id: number;
+  ecom_order_master_id: number;
+
+  amount: number;
+  payment_type_id: number;
+  payment_type_name: string;
+
+  reference_no: string;
+  image_path: string;
+
+  payment_direction: "IN" | "OUT";
+  payment_verification_status: "PENDING" | "VERIFIED" | "REJECTED";
+
+  payment_date: string;
+
+  remarks: string | null;
+
+  created_at: string;
+  created_by: number;
+  updated_at: string;
+
+  verified_at: string | null;
+  verified_by: number | null;
 }
 
 export interface Order {
-  id: string;
-  order_number: string;
-  user_id: string;
-  items: OrderItem[];
-  total_amount: number;
-  status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
-  shipping_address: string;
-  payment_method: string;
-  payment_status: "pending" | "paid" | "failed";
+  id: number;
+  remarks: null | string;
+  order_no: string;
+  last_name: string;
   created_at: string;
-  updated_at: string;
-}
-
-export interface CreateOrderResponse {
-  message: string;
-  order_id: string;
-  order_number: string;
+  created_by: number;
+  customer_id: number;
+  first_name: string;
+  mobile_number: string;
+  order_date: string;
+  order_status: string;
+  payment_status: string;
+  approved_at: null | string;
+  approved_by: null | number;
+  item_details: OrderItem[];
+  total_amount: number;
+  transaction_details: TransactionDetail[];
 }
 
 export interface GetOrdersResponse {
+  data: Order[];
   message: string;
-  orders: Order[];
-  total: number;
-  page: number;
-  page_size: number;
+  status: "success" | string;
+  total: any;
+  page: any;
 }
 
 export interface GetOrderByIdResponse {
+  status: string;
   message: string;
-  order: Order;
+  data: Order[];
 }

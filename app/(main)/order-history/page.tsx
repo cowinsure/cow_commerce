@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -15,8 +15,15 @@ import {
   Calendar,
   Wallet,
   Box,
+  EyeClosed,
+  Eye,
 } from "lucide-react";
 import Image from "next/image";
+import useOrder from "@/hooks/order/useOrder";
+import { Order } from "@/lib/models/orderDTO";
+import Tooltip from "@/components/ui/ToolTip";
+import { Modal } from "@/components/ui/Modal";
+import OrderDetails from "@/components/order/OrderDetails";
 
 // Animation variants
 const containerVariants = {
@@ -61,121 +68,37 @@ const cardVariants = {
   },
 };
 
-// Mock data matching the image
-const orders = [
-  {
-    id: "#AGR-77291",
-    name: "Midnight Sovereign",
-    breed: "Angus Bull",
-    grade: "Grade AAA",
-    image: "/cows/cow1.jpg",
-    units: 1,
-    totalPrice: 12500,
-    date: "Oct 12, 2024",
-    status: "pending",
-    timeLeft: "23:54:02",
-  },
-  {
-    id: "#AGR-77102",
-    name: "Merino Flock A2",
-    breed: "Ewes",
-    grade: "Batch 04",
-    image: "/cows/cow2.jpg",
-    units: 25,
-    totalPrice: 8750,
-    date: "Oct 08, 2024",
-    status: "confirmed",
-  },
-  {
-    id: "#AGR-76884",
-    name: "Golden Mare",
-    breed: "Quarter Horse",
-    grade: "Pedigree",
-    image: "/cows/cow3.jpg",
-    units: 1,
-    totalPrice: 22000,
-    date: "Sep 24, 2024",
-    status: "delivered",
-  },
-  {
-    id: "#AGR-76521",
-    name: "Deshi Black",
-    breed: "Local Breed",
-    grade: "Heritage",
-    image: "/cows/cow4.jpg",
-    units: 2,
-    totalPrice: 9000,
-    date: "Sep 18, 2024",
-    status: "delivered",
-  },
-  {
-    id: "#AGR-76432",
-    name: "Sahiwal Premium",
-    breed: "Dairy Cow",
-    grade: "Organic",
-    image: "/cows/cow5.jpg",
-    units: 3,
-    totalPrice: 15600,
-    date: "Sep 10, 2024",
-    status: "processing",
-  },
-];
+export const formatDateToDDMMYYYY = (dateString: string) => {
+  if (!dateString) return "";
 
-const stats = [
-  {
-    label: "Active Orders",
-    value: "12",
-    subtext: "4 pending confirmation",
-    icon: Box,
-    color: "emerald",
-    bgColor: "bg-emerald-100",
-    textColor: "text-emerald-700",
-  },
-  {
-    label: "Total Booked",
-    value: "৳84,200",
-    subtext: "Lifetime value",
-    icon: Wallet,
-    color: "emerald",
-    bgColor: "bg-emerald-100",
-    textColor: "text-emerald-700",
-  },
-  {
-    label: "Deliveries",
-    value: "08",
-    subtext: "Next: Oct 24, 2024",
-    icon: Truck,
-    color: "amber",
-    bgColor: "bg-emerald-100",
-    textColor: "text-emerald-700",
-  },
-];
+  const date = new Date(dateString);
 
-const statusConfig = {
-  pending: {
-    label: "Pending",
-    color: "bg-amber-100 text-amber-700 border-amber-200",
-    icon: Clock,
-    dot: "bg-amber-500",
-  },
-  confirmed: {
-    label: "Confirmed",
-    color: "bg-blue-100 text-blue-700 border-blue-200",
-    icon: CheckCircle2,
-    dot: "bg-blue-500",
-  },
-  processing: {
-    label: "Processing",
-    color: "bg-purple-100 text-purple-700 border-purple-200",
-    icon: Package,
-    dot: "bg-purple-500",
-  },
-  delivered: {
-    label: "Delivered",
-    color: "bg-emerald-100 text-emerald-700 border-emerald-200",
-    icon: Truck,
-    dot: "bg-emerald-500",
-  },
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // months are 0-based
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+
+type StatusType = "order" | "payment";
+
+export const getStatusBadge = (status: string, type: StatusType) => {
+  const base =
+    "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold transition-all";
+
+  const styles: Record<string, string> = {
+    // PAYMENT STATUS
+    paid: "bg-emerald-50 text-emerald-500",
+    unpaid: "bg-red-50 text-red-400",
+
+    // ORDER STATUS
+    pending: "bg-amber-50 text-amber-500",
+    approved: "bg-blue-50 text-blue-500",
+  };
+
+  const normalized = status?.toLowerCase();
+
+  return `${base} ${styles[normalized] || "bg-slate-100 text-slate-600"}`;
 };
 
 export default function OrderHistoryPage() {
@@ -183,9 +106,49 @@ export default function OrderHistoryPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [hoveredOrder, setHoveredOrder] = useState<string | null>(null);
+  const [apiOrders, setApiOrders] = useState<Order[]>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const { fetchOrders, fetchOrderById, loading, error } = useOrder();
 
-  const filteredOrders = orders.filter(
-    (order) => selectedFilter === "all" || order.status === selectedFilter,
+  useEffect(() => {
+    const loadOrder = async () => {
+      try {
+        const getOrders = await fetchOrders();
+        setApiOrders(getOrders.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    loadOrder();
+  }, [fetchOrders]);
+
+  const handleViewOrder = async (order: Order) => {
+    try {
+      setIsModalOpen(true); // open instantly for UX
+      setDetailsLoading(true);
+
+      const res = await fetchOrderById(order.id);
+
+      setSelectedOrder(res?.data?.[0] ?? null); // Get first order from array
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDetailsLoading(false);
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedOrder(null);
+  };
+
+  const filteredOrders = (apiOrders || []).filter(
+    (order) =>
+      selectedFilter === "all" ||
+      order.order_status.toLowerCase() === selectedFilter,
   );
 
   return (
@@ -208,7 +171,7 @@ export default function OrderHistoryPage() {
             <h1 className="text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">
               Order <span className="text-emerald-600">History</span>
             </h1>
-            <p className="text-lg text-slate-600 max-w-2xl">
+            <p className=" text-slate-600 max-w-2xl">
               Manage your digital livestock acquisitions. View real-time status
               updates and download historical documentation.
             </p>
@@ -276,7 +239,7 @@ export default function OrderHistoryPage() {
             </div>
 
             <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 overflow-hidden">
-              {["all", "pending", "confirmed", "delivered"].map((filter) => (
+              {["all", "pending", "approved"].map((filter) => (
                 <motion.button
                   key={filter}
                   whileTap={{ scale: 0.98 }}
@@ -300,24 +263,19 @@ export default function OrderHistoryPage() {
             className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden"
           >
             {/* Table Header */}
-            <div className="hidden lg:grid grid-cols-12 gap-4 p-6 bg-slate-50/50 border-b border-slate-100 text-xs font-bold text-slate-500 uppercase tracking-wider">
-              <div className="col-span-2">Order ID</div>
-              <div className="col-span-3">Animal Details</div>
-              <div className="col-span-1 text-center">Units</div>
-              <div className="col-span-2 text-right">Total Price</div>
-              <div className="col-span-2 text-center">Order Date</div>
-              <div className="col-span-1 text-center">Status</div>
-              <div className="col-span-1 text-right">Action</div>
+            <div className="hidden lg:grid grid-cols-6 gap-4 p-6 bg-slate-50/50 border-b border-slate-100 text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <div className="">Order Date</div>
+              <div className="">Order No</div>
+              <div className="text-center">Total Amount</div>
+              <div className="text-center">Order Status</div>
+              <div className="text-center">Payment Status</div>
+              <div className="text-center">Action</div>
             </div>
 
             {/* Table Body */}
             <div className="divide-y divide-slate-100">
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="popLayout">
                 {filteredOrders.map((order, i) => {
-                  const status =
-                    statusConfig[order.status as keyof typeof statusConfig];
-                  const StatusIcon = status.icon;
-
                   return (
                     <motion.div
                       key={order.id}
@@ -325,100 +283,60 @@ export default function OrderHistoryPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
                       transition={{ delay: i * 0.05 }}
-                      onHoverStart={() => setHoveredOrder(order.id)}
+                      onHoverStart={() => setHoveredOrder(order.mobile_number)}
                       onHoverEnd={() => setHoveredOrder(null)}
                       className={cn(
-                        "group grid grid-cols-1 lg:grid-cols-12 gap-4 p-6 items-center transition-all",
-                        hoveredOrder === order.id && "bg-slate-50/80",
+                        "group grid grid-cols-1 lg:grid-cols-6 gap-4 p-4 items-center *:transition-transform *:duration-300 *:ease-out hover:bg-emerald-50/40 *:group-hover:scale-105",
                       )}
                     >
+                      {/* Order Date */}
+                      <div className=" flex items-center gap-4">
+                        <h4 className="font-medium text-slate-800 group-hover:text-emerald-600 transition-colors">
+                          {formatDateToDDMMYYYY(order.order_date)}
+                        </h4>
+                      </div>
+
                       {/* Order ID */}
-                      <div className="lg:col-span-2 flex items-center gap-3">
-                        <span className="font-mono font-bold text-slate-900">
-                          {order.id}
-                        </span>
-                        {order.status === "pending" && order.timeLeft && (
-                          <div className="flex items-center gap-1 text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded-full">
-                            <Clock className="w-3 h-3" />
-                            {order.timeLeft}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Animal Details */}
-                      <div className="lg:col-span-3 flex items-center gap-4">
-                        <motion.div
-                          whileHover={{ scale: 1.05 }}
-                          className="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 relative shrink-0"
-                        >
-                          <Image
-                            src={order.image}
-                            alt={order.name}
-                            fill
-                            sizes="96px"
-                            className="object-cover"
-                          />
-                        </motion.div>
-                        <div>
-                          <h4 className="font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
-                            {order.name}
-                          </h4>
-                          <p className="text-sm text-slate-500">
-                            {order.breed} • {order.grade}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Units */}
-                      <div className="lg:col-span-1 text-center">
-                        <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 font-bold text-slate-900">
-                          {order.units}
-                        </span>
-                        <span className="lg:hidden ml-2 text-sm text-slate-500">
-                          Units
+                      <div className=" flex items-center gap-3">
+                        <span className="font-mono font- text-slate-800">
+                          {order.order_no}
                         </span>
                       </div>
 
-                      {/* Price */}
-                      <div className="lg:col-span-2 text-right">
-                        <div className="font-bold text-slate-900 text-lg">
-                          ৳{order.totalPrice.toLocaleString()}
-                        </div>
-                        <div className="text-xs text-slate-500">BDT</div>
+                      {/* Amount */}
+                      <div className="flex items-center justify-center ">
+                        <span className="font-bold text-slate-600 text-center group-hover:text-emerald-600">
+                          ৳ {order.total_amount}
+                        </span>
                       </div>
 
-                      {/* Date */}
-                      <div className="lg:col-span-2 text-center">
-                        <div className="flex items-center justify-center gap-2 text-slate-600">
-                          <Calendar className="w-4 h-4 text-slate-400" />
-                          {order.date}
-                        </div>
-                      </div>
-
-                      {/* Status */}
-                      <div className="lg:col-span-1 flex justify-center">
+                      {/* order status */}
+                      <div className="text-center text-sm">
                         <span
-                          className={cn(
-                            "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border",
-                            status.color,
+                          className={getStatusBadge(
+                            order.order_status,
+                            "order",
                           )}
                         >
-                          <span
-                            className={cn(
-                              "w-1.5 h-1.5 rounded-full",
-                              status.dot,
-                            )}
-                          />
-                          <StatusIcon className="w-3 h-3" />
-                          <span className="hidden sm:inline">
-                            {status.label}
-                          </span>
+                          {order.order_status}
+                        </span>
+                      </div>
+
+                      {/* payment status */}
+                      <div className="text-center text-sm">
+                        <span
+                          className={getStatusBadge(
+                            order.payment_status,
+                            "payment",
+                          )}
+                        >
+                          {order.payment_status}
                         </span>
                       </div>
 
                       {/* Action */}
-                      <div className="lg:col-span-1 flex justify-end">
-                        {order.status === "delivered" ? (
+                      <div className=" flex justify-center group cursor-pointer">
+                        {order.order_status === "APPROVED" ? (
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -428,13 +346,24 @@ export default function OrderHistoryPage() {
                             <span className="hidden sm:inline">Receipt</span>
                           </motion.button>
                         ) : (
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
-                          >
-                            <FileText className="w-4 h-4" />
-                          </motion.button>
+                          <Tooltip content="View order">
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleViewOrder(order)}
+                              className="group relative p-4 rounded-lg bg-slate-100 group-hover:bg-emerald-50 text-slate-600 transition-colors cursor-pointer"
+                            >
+                              {/* EyeClosed */}
+                              <span className="absolute inset-0 flex items-center justify-center transition-all duration-200 group-hover:opacity-0 group-hover:scale-75">
+                                <EyeClosed className="w-4 h-4" />
+                              </span>
+
+                              {/* Eye */}
+                              <span className="absolute inset-0 flex items-center justify-center opacity-0 scale-75 transition-all duration-200 group-hover:opacity-100 group-hover:scale-100">
+                                <Eye className="w-4 h-4 text-emerald-600" />
+                              </span>
+                            </motion.button>
+                          </Tooltip>
                         )}
                       </div>
                     </motion.div>
@@ -515,6 +444,16 @@ export default function OrderHistoryPage() {
             </div>
           </motion.div>
         </motion.div>
+
+        {/* Premium Modal for Order Details */}
+        <Modal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          title="Order Details"
+          size="full"
+        >
+          {selectedOrder && <OrderDetails selectedOrder={selectedOrder} />}
+        </Modal>
       </main>
     </div>
   );

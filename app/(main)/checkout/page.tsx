@@ -167,11 +167,11 @@ function CheckoutContent() {
       return;
     }
 
-    if (!paymentData?.paymentType) {
-      showToast("Please select a payment method");
-      setIsProcessing(false);
-      return;
-    }
+    // if (!paymentData?.paymentType) {
+    //   showToast("Please select a payment method");
+    //   setIsProcessing(false);
+    //   return;
+    // }
 
     if (!parsedPreloadedCow) return;
 
@@ -179,7 +179,6 @@ function CheckoutContent() {
       setIsProcessing(true);
 
       const payload = {
-        customer_id: 3,
         delivery_address: formData.address,
         item_details: [
           {
@@ -189,14 +188,14 @@ function CheckoutContent() {
             quantity: quantity,
           },
         ],
-        order_transaction_details: [
-          {
-            payment_type_id: paymentData.paymentType.payment_type_id,
-            reference_no: paymentData.referenceNo,
-            image_path: "xyz/avc.jpg",
-            amount: parsedPreloadedCow.booking_amount,
-          },
-        ],
+        // order_transaction_details: [
+        //   {
+        //     payment_type_id: paymentData.paymentType.payment_type_id,
+        //     reference_no: paymentData.referenceNo,
+        //     image_path: "xyz/avc.jpg",
+        //     amount: parsedPreloadedCow.booking_amount,
+        //   },
+        // ],
       };
 
       console.log("FINAL PAYLOAD:", payload);
@@ -414,7 +413,9 @@ function CheckoutContent() {
               </div>
 
               {/* Payment Section */}
-              <div className="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
+
+              {/* Code with original payment methods */}
+              {/* <div className="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
                     <Lock className="w-5 h-5 text-emerald-600" />
@@ -433,10 +434,84 @@ function CheckoutContent() {
                   value={paymentData}
                   onChange={setPaymentData}
                 />
+              </div> */}
+              <div className="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                    <AlertCircle className="w-5 h-5 text-amber-600" />
+                  </div>
+
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900">
+                      Booking & Payment Process
+                    </h2>
+                    <p className="text-sm text-slate-500">
+                      No payment required at checkout
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {/* Step 1 */}
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full text-emerald-700 flex items-center justify-center font-bold text-sm">
+                      1
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-900">
+                        Place Your Booking
+                      </h4>
+                      <p className="text-sm text-slate-500">
+                        We will receive your order and confirm livestock
+                        availability.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Step 2 */}
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full text-emerald-700 flex items-center justify-center font-bold text-sm">
+                      2
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-900">
+                        Confirmation Call
+                      </h4>
+                      <p className="text-sm text-slate-500">
+                        Our team will contact you to verify details and confirm
+                        booking.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Step 3 */}
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full text-emerald-700 flex items-center justify-center font-bold text-sm">
+                      3
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-900">
+                        Pay Booking Amount
+                      </h4>
+                      <p className="text-sm text-slate-500">
+                        After confirmation, you will complete payment using your
+                        preferred method.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer note */}
+                <div className="mt-6 p-4 bg-amber-50 border border-amber-100 rounded-2xl">
+                  <p className="text-sm text-amber-800">
+                    Your booking is only confirmed after successful verification
+                    and payment confirmation.
+                  </p>
+                </div>
               </div>
 
               {/* Security Note */}
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
@@ -448,7 +523,7 @@ function CheckoutContent() {
                   Your payment is protected with 256-bit SSL encryption. We
                   never store your full card details.
                 </p>
-              </motion.div>
+              </motion.div> */}
             </motion.div>
 
             {/* Right Column: Order Summary */}
@@ -558,7 +633,7 @@ function CheckoutContent() {
                         boxShadow: "0 20px 40px -10px rgba(16, 185, 129, 0.4)",
                       }}
                       whileTap={{ scale: 0.98 }}
-                      className="w-full mt-6 py-4 bg-linear-to-r from-emerald-600 to-emerald-500 text-white rounded-xl font-bold text-lg shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                      className="w-full mt-6 py-4 bg-linear-to-r from-emerald-600 to-emerald-500 text-white rounded-xl font-bold text-lg shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 cursor-pointer"
                     >
                       {isProcessing ? (
                         <>
@@ -574,10 +649,7 @@ function CheckoutContent() {
                           Processing...
                         </>
                       ) : (
-                        <>
-                          <Lock className="w-5 h-5" />
-                          Pay {bookingAmount.toLocaleString()} BDT
-                        </>
+                        <>Proccess Booking</>
                       )}
                     </motion.button>
 

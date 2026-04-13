@@ -16,11 +16,12 @@ export const AUTH_API = {
 
 // Order endpoints
 export const ORDER_API = {
-  CREATE_ORDER: "/v1/orders/create/",
-  GET_ORDERS: "/v1/orders/",
-  GET_ORDER_BY_ID: (id: string) => `/v1/orders/${id}/`,
-  UPDATE_ORDER: (id: string) => `/v1/orders/${id}/`,
-  CANCEL_ORDER: (id: string) => `/v1/orders/${id}/cancel/`,
+  CREATE_ORDER: "",
+  GET_ORDERS: "/invms/inventory-ecom-order-service/",
+  GET_ORDER_BY_ID: (id: number) =>
+    `/invms/inventory-ecom-order-service/?id=${id}`,
+  UPDATE_ORDER: (id: string) => ``,
+  CANCEL_ORDER: (id: string) => ``,
 } as const;
 
 // Product endpoints
@@ -33,10 +34,12 @@ export const PRODUCT_API = {
 
 // Payment type service endpoints
 export const PAYMENT_TYPE_API = {
-GET_PAYMENT_TYPES: "/invms/inventory-payment-type-service/"
+  GET_PAYMENT_TYPES: "/invms/inventory-payment-type-service/",
 } as const;
 
 // Type for combining all API routes
 // export type ApiRoutes = typeof AUTH_API | typeof ORDER_API | typeof PRODUCT_API;
-export type ApiRoutes = typeof AUTH_API |  typeof PRODUCT_API | typeof PAYMENT_TYPE_API;
-
+export type ApiRoutes =
+  | typeof AUTH_API
+  | typeof PRODUCT_API
+  | typeof PAYMENT_TYPE_API;

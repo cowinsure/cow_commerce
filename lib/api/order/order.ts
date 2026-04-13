@@ -5,22 +5,17 @@
 
 import apiClient from "@/lib/api/apiClient";
 import { ORDER_API } from "@/lib/api/routes";
-import {
-  CreateOrderRequest,
-  CreateOrderResponse,
-  GetOrdersResponse,
-  GetOrderByIdResponse,
-} from "@/lib/models/orderDTO";
+import { GetOrderByIdResponse, GetOrdersResponse } from "@/lib/models/orderDTO";
 
-export async function createOrderApi(
-  data: CreateOrderRequest,
-): Promise<CreateOrderResponse> {
-  const response = await apiClient.post<CreateOrderResponse>(
-    ORDER_API.CREATE_ORDER,
-    data,
-  );
-  return response.data;
-}
+// export async function createOrderApi(
+//   data: CreateOrderRequest,
+// ): Promise<CreateOrderResponse> {
+//   const response = await apiClient.post<CreateOrderResponse>(
+//     ORDER_API.CREATE_ORDER,
+//     data,
+//   );
+//   return response.data;
+// }
 
 export async function getOrdersApi(
   page: number = 1,
@@ -36,7 +31,7 @@ export async function getOrdersApi(
 }
 
 export async function getOrderByIdApi(
-  id: string,
+  id: number,
 ): Promise<GetOrderByIdResponse> {
   const response = await apiClient.get<GetOrderByIdResponse>(
     ORDER_API.GET_ORDER_BY_ID(id),
