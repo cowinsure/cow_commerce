@@ -7,23 +7,17 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
-  Clock,
-  CheckCircle2,
-  Truck,
-  Package,
-  FileText,
-  Calendar,
-  Wallet,
   Box,
   EyeClosed,
   Eye,
+  Banknote,
 } from "lucide-react";
-import Image from "next/image";
 import useOrder from "@/hooks/order/useOrder";
 import { Order } from "@/lib/models/orderDTO";
 import Tooltip from "@/components/ui/ToolTip";
 import { Modal } from "@/components/ui/Modal";
 import OrderDetails from "@/components/order/OrderDetails";
+import { PaymentModal } from "@/components/payment/PaymentModal";
 
 // Animation variants
 const containerVariants = {
@@ -50,23 +44,23 @@ const itemVariants = {
   },
 };
 
-const cardVariants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: (i: number) => ({
-    opacity: 1,
-    scale: 1,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.5,
-      ease: [0.22, 1, 0.36, 1] as const,
-    },
-  }),
-  hover: {
-    y: -4,
-    scale: 1.02,
-    transition: { duration: 0.3 },
-  },
-};
+// const cardVariants = {
+//   hidden: { opacity: 0, scale: 0.95 },
+//   visible: (i: number) => ({
+//     opacity: 1,
+//     scale: 1,
+//     transition: {
+//       delay: i * 0.1,
+//       duration: 0.5,
+//       ease: [0.22, 1, 0.36, 1] as const,
+//     },
+//   }),
+//   hover: {
+//     y: -4,
+//     scale: 1.02,
+//     transition: { duration: 0.3 },
+//   },
+// };
 
 export const formatDateToDDMMYYYY = (dateString: string) => {
   if (!dateString) return "";
@@ -110,7 +104,13 @@ export default function OrderHistoryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
-  const { fetchOrders, fetchOrderById, loading, error } = useOrder();
+
+  // Payment modal state
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [paymentOrder, setPaymentOrder] = useState<Order | null>(null);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+
+  const { fetchOrders, fetchOrderById } = useOrder();
 
   useEffect(() => {
     const loadOrder = async () => {
@@ -143,6 +143,27 @@ export default function OrderHistoryPage() {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedOrder(null);
+  };
+
+  // Payment modal handlers
+  const handleOpenPaymentModal = (order: Order) => {
+    setPaymentOrder(order);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleClosePaymentModal = () => {
+    setIsPaymentModalOpen(false);
+    setPaymentOrder(null);
+  };
+
+  const handlePaymentSuccess = async () => {
+    // Refresh orders after successful payment
+    try {
+      const getOrders = await fetchOrders();
+      setApiOrders(getOrders.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const filteredOrders = (apiOrders || []).filter(
@@ -263,12 +284,12 @@ export default function OrderHistoryPage() {
             className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden"
           >
             {/* Table Header */}
-            <div className="hidden lg:grid grid-cols-6 gap-4 p-6 bg-slate-50/50 border-b border-slate-100 text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <div className="hidden lg:grid grid-cols-5 gap-4 p-6 bg-slate-50/50 border-b border-slate-100 text-xs font-bold text-slate-500 uppercase tracking-wider">
               <div className="">Order Date</div>
               <div className="">Order No</div>
-              <div className="text-center">Total Amount</div>
+              <div className="text-center">Order Amount</div>
               <div className="text-center">Order Status</div>
-              <div className="text-center">Payment Status</div>
+              {/* <div className="text-center">Payment Status</div> */}
               <div className="text-center">Action</div>
             </div>
 
@@ -286,7 +307,7 @@ export default function OrderHistoryPage() {
                       onHoverStart={() => setHoveredOrder(order.mobile_number)}
                       onHoverEnd={() => setHoveredOrder(null)}
                       className={cn(
-                        "group grid grid-cols-1 lg:grid-cols-6 gap-4 p-4 items-center *:transition-transform *:duration-300 *:ease-out hover:bg-emerald-50/40 *:group-hover:scale-105",
+                        "group grid grid-cols-1 lg:grid-cols-5 gap-4 p-4 items-center *:transition-transform *:duration-300 *:ease-out hover:bg-emerald-50/40 *:group-hover:scale-105",
                       )}
                     >
                       {/* Order Date */}
@@ -323,7 +344,7 @@ export default function OrderHistoryPage() {
                       </div>
 
                       {/* payment status */}
-                      <div className="text-center text-sm">
+                      {/* <div className="text-center text-sm">
                         <span
                           className={getStatusBadge(
                             order.payment_status,
@@ -332,39 +353,56 @@ export default function OrderHistoryPage() {
                         >
                           {order.payment_status}
                         </span>
-                      </div>
+                      </div> */}
 
                       {/* Action */}
-                      <div className=" flex justify-center group cursor-pointer">
-                        {order.order_status === "APPROVED" ? (
+                      <div className="flex justify-center items-center gap-2">
+                        {/* Pay Now button for APPROVED + UNPAID orders */}
+
+                        <Tooltip content="Pay Now">
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-700 rounded-xl font-semibold text-sm transition-colors"
+                            onClick={() => handleOpenPaymentModal(order)}
+                            className="group relative p-2 rounded-lg bg-slate-100 group-hover:bg-emerald-50 text-slate-600 transition-colors cursor-pointer"
                           >
-                            <Download className="w-4 h-4" />
-                            <span className="hidden sm:inline">Receipt</span>
+                            <Banknote className="w-4 h-4" />
+                            {/* <span className="hidden sm:inline">Pay Now</span> */}
                           </motion.button>
-                        ) : (
-                          <Tooltip content="View order">
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              onClick={() => handleViewOrder(order)}
-                              className="group relative p-4 rounded-lg bg-slate-100 group-hover:bg-emerald-50 text-slate-600 transition-colors cursor-pointer"
-                            >
-                              {/* EyeClosed */}
-                              <span className="absolute inset-0 flex items-center justify-center transition-all duration-200 group-hover:opacity-0 group-hover:scale-75">
-                                <EyeClosed className="w-4 h-4" />
-                              </span>
+                        </Tooltip>
 
-                              {/* Eye */}
-                              <span className="absolute inset-0 flex items-center justify-center opacity-0 scale-75 transition-all duration-200 group-hover:opacity-100 group-hover:scale-100">
-                                <Eye className="w-4 h-4 text-emerald-600" />
-                              </span>
+                        {/* Receipt button for APPROVED + PAID orders */}
+                        {/* {order.order_status === "APPROVED" &&
+                          order.payment_status === "PAID" && (
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-700 rounded-xl font-semibold text-sm transition-colors"
+                            >
+                              <Download className="w-4 h-4" />
+                              <span className="hidden sm:inline">Receipt</span>
                             </motion.button>
-                          </Tooltip>
-                        )}
+                          )} */}
+
+                        {/* View button for PENDING orders */}
+                        <Tooltip content="View order">
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => handleViewOrder(order)}
+                            className="group relative p-4 rounded-lg bg-slate-100 group-hover:bg-emerald-50 text-slate-600 transition-colors cursor-pointer"
+                          >
+                            {/* EyeClosed */}
+                            <span className="absolute inset-0 flex items-center justify-center transition-all duration-200 group-hover:opacity-0 group-hover:scale-75">
+                              <EyeClosed className="w-4 h-4" />
+                            </span>
+
+                            {/* Eye */}
+                            <span className="absolute inset-0 flex items-center justify-center opacity-0 scale-75 transition-all duration-200 group-hover:opacity-100 group-hover:scale-100">
+                              <Eye className="w-4 h-4 text-emerald-600" />
+                            </span>
+                          </motion.button>
+                        </Tooltip>
                       </div>
                     </motion.div>
                   );
@@ -454,6 +492,15 @@ export default function OrderHistoryPage() {
         >
           {selectedOrder && <OrderDetails selectedOrder={selectedOrder} />}
         </Modal>
+
+        {/* Payment Modal */}
+        <PaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={handleClosePaymentModal}
+          order={paymentOrder}
+          onSuccess={handlePaymentSuccess}
+          externalLoading={paymentLoading}
+        />
       </main>
     </div>
   );

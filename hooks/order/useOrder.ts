@@ -5,7 +5,12 @@
  */
 
 import { useState, useCallback } from "react";
-import { getOrderByIdApi, getOrdersApi } from "@/lib/api/order/order";
+import {
+  getOrderByIdApi,
+  getOrdersApi,
+  processOrderApi,
+  ProcessOrderRequest,
+} from "@/lib/api/order/order";
 import { Order } from "@/lib/models/orderDTO";
 
 interface OrderState {
@@ -89,6 +94,33 @@ export function useOrder() {
     }
   }, []);
 
+  /**
+   * Submit payment for an order
+   * @param data - Process order request with payment details
+   * @returns Process order response
+   */
+  const submitPayment = useCallback(
+    async (data: ProcessOrderRequest) => {
+      setState((prev) => ({ ...prev, loading: true, error: null }));
+      try {
+        const response = await processOrderApi(data);
+        console.log(response);
+        setState((prev) => ({ ...prev, loading: false }));
+        return response;
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to submit payment";
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+          error: errorMessage,
+        }));
+        throw error;
+      }
+    },
+    [],
+  );
+
   const clearError = useCallback(() => {
     setState((prev) => ({ ...prev, error: null }));
   }, []);
@@ -102,6 +134,7 @@ export function useOrder() {
     // createOrder,
     fetchOrders,
     fetchOrderById,
+    submitPayment,
     clearError,
     clearCurrentOrder,
   };

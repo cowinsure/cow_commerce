@@ -10,6 +10,7 @@ interface PaymentOptionsProps {
     paymentType: PaymentType | null;
     referenceNo: string;
     imageFile: File | null;
+    imagePreview?: string;
   };
   onChange: (val: PaymentOptionsProps["value"]) => void;
   className?: string;
@@ -31,7 +32,9 @@ export function PaymentOptions({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    onChange({ ...value, imageFile: file });
+    // Create object URL for preview
+    const imagePreview = file ? URL.createObjectURL(file) : undefined;
+    onChange({ ...value, imageFile: file, imagePreview });
   };
 
   // HELPER FUNCTIONS
@@ -138,12 +141,12 @@ export function PaymentOptions({
               type="text"
               value={value.referenceNo}
               onChange={handleReferenceChange}
-              placeholder="Enter transaction reference number"
+              placeholder="Enter transaction reference"
               className="w-full px-4 py-3.5 bg-gray-50 border border-outline-variant/20 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all placeholder:text-on-surface-variant/50"
             />
           </div>
 
-          {/* Image Upload */}
+          {/* Image Upload with Preview */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-on-surface">
               Payment Proof
@@ -160,26 +163,38 @@ export function PaymentOptions({
 
               <div
                 className={cn(
-                  "flex items-center justify-center gap-3 px-4 py-4 rounded-xl border-2 border-dashed transition-all",
+                  "flex items-center gap-3 px-4 py-3 rounded-xl border-2 border-dashed transition-all",
                   value.imageFile
                     ? "border-primary bg-primary/5"
                     : "border-outline-variant/30 hover:border-primary hover:bg-surface-container",
                 )}
               >
                 {value.imageFile ? (
-                  <>
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Check className="w-5 h-5 text-primary" />
+                  <div className="flex justify-between items-center w-full">
+                    <div className="flex gap-2">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Check className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <p className="text-sm font-medium text-primary w-20 truncate">
+                          {value.imageFile.name}
+                        </p>
+                        <p className="text-xs text-on-surface-variant">
+                          Click to change file
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1 text-left">
-                      <p className="text-sm font-medium text-primary">
-                        {value.imageFile.name}
-                      </p>
-                      <p className="text-xs text-on-surface-variant">
-                        Click to change file
-                      </p>
-                    </div>
-                  </>
+                    {/* Image Preview - Shows on left side when file is selected */}
+                    {value.imagePreview && (
+                      <div className=" p-2 bg-gray-100 rounded-xl flex items-center justify-center">
+                        <img
+                          src={value.imagePreview}
+                          alt="Payment proof preview"
+                          className="w-30 h-32 object-contain rounded-lg border border-gray-400"
+                        />
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <>
                     <div className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center">

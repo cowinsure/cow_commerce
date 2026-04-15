@@ -20,6 +20,7 @@ export const ORDER_API = {
   GET_ORDERS: "/invms/inventory-ecom-order-service/",
   GET_ORDER_BY_ID: (id: number) =>
     `/invms/inventory-ecom-order-service/?id=${id}`,
+  PROCESS_ORDER: "/invms/inventory-ecom-process-order-service/",
   UPDATE_ORDER: (id: string) => ``,
   CANCEL_ORDER: (id: string) => ``,
 } as const;

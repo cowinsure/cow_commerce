@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  formatDateToDDMMYYYY,
-  getStatusBadge,
-} from "@/app/(main)/order-history/page";
+import { formatDateToDDMMYYYY } from "@/app/(main)/order-history/page";
 import { Order } from "@/lib/models/orderDTO";
 import {
   ChevronDown,
@@ -22,7 +19,6 @@ import {
   Banknote,
   Receipt,
   ShieldCheck,
-  Truck,
 } from "lucide-react";
 
 interface SelectedOrderProps {
@@ -50,7 +46,7 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
         icon: Clock,
         bg: "bg-amber-50",
         border: "border-amber-200",
-        text: "text-amber-700",
+        text: "text-amber-500",
         iconBg: "bg-amber-100",
       },
       APPROVED: {
@@ -58,7 +54,7 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
         icon: CheckCircle2,
         bg: "bg-emerald-50",
         border: "border-emerald-200",
-        text: "text-emerald-700",
+        text: "text-emerald-500",
         iconBg: "bg-emerald-100",
       },
       UNPAID: {
@@ -66,7 +62,7 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
         icon: AlertCircle,
         bg: "bg-rose-50",
         border: "border-rose-200",
-        text: "text-rose-700",
+        text: "text-rose-500",
         iconBg: "bg-rose-100",
       },
       PAID: {
@@ -74,7 +70,15 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
         icon: ShieldCheck,
         bg: "bg-emerald-50",
         border: "border-emerald-200",
-        text: "text-emerald-700",
+        text: "text-emerald-500",
+        iconBg: "bg-emerald-100",
+      },
+      VERIFIED: {
+        color: "emerald",
+        icon: ShieldCheck,
+        bg: "bg-emerald-50",
+        border: "border-emerald-200",
+        text: "text-emerald-500",
         iconBg: "bg-emerald-100",
       },
     };
@@ -117,26 +121,29 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
   ];
 
   const orderStatus = getStatusConfig(selectedOrder.order_status, "order");
-  const paymentStatus = getStatusConfig(selectedOrder.payment_status, "payment");
+  const paymentStatus = getStatusConfig(
+    selectedOrder.payment_status,
+    "payment",
+  );
   const OrderStatusIcon = orderStatus.icon;
   const PaymentStatusIcon = paymentStatus.icon;
 
   const paidAmount =
     selectedOrder.transaction_details?.reduce(
       (sum, txn) => sum + (txn.amount || 0),
-      0
+      0,
     ) || 0;
   const remainingAmount = selectedOrder.total_amount - paidAmount;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Hero Header Card */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 text-white shadow-2xl">
+      <div className="relative overflow-hidden bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 text-white shadow-2xl">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl" />
 
         <div className="relative z-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
             <div>
               <div className="flex items-center gap-2 text-slate-400 text-sm mb-1">
                 <Hash className="w-4 h-4" />
@@ -146,18 +153,30 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
                 {selectedOrder.order_no}
               </h1>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="grid grid-rows-2 items-center justify-center gap-3">
               <span
-                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold ${orderStatus.bg} ${orderStatus.text} border ${orderStatus.border}`}
+                className={`inline-flex items-center gap-1.5 px-4 py-2  text-sm font-semibold`}
               >
-                <OrderStatusIcon className="w-4 h-4" />
-                {selectedOrder.order_status}
+                <small className="font-headline text-gray-400">
+                  Delivery status:{" "}
+                </small>
+                <span className="flex items-center gap-1">
+                  <OrderStatusIcon className={`w-4 h-4 ${orderStatus.text}`} />
+                  {selectedOrder.order_status}
+                </span>
               </span>
               <span
-                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold ${paymentStatus.bg} ${paymentStatus.text} border ${paymentStatus.border}`}
+                className={`inline-flex items-center gap-1.5 px-4 py-2  text-sm font-semibold`}
               >
-                <PaymentStatusIcon className="w-4 h-4" />
-                {selectedOrder.payment_status}
+                <small className="font-headline text-gray-400">
+                  Payment status:{" "}
+                </small>
+                <span className="flex items-center gap-1">
+                  <PaymentStatusIcon
+                    className={`w-4 h-4 ${paymentStatus.text}`}
+                  />
+                  {selectedOrder.payment_status}
+                </span>
               </span>
             </div>
           </div>
@@ -167,10 +186,13 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
               <Calendar className="w-4 h-4 text-slate-400" />
               <span>
                 {formatDateToDDMMYYYY(selectedOrder.order_date)} at{" "}
-                {new Date(selectedOrder.order_date).toLocaleTimeString("en-US", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                {new Date(selectedOrder.order_date).toLocaleTimeString(
+                  "en-US",
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  },
+                )}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -188,18 +210,20 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
       </div>
 
       {/* Progress Timeline */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 overflow-hidden">
         <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-6">
           Order Progress
         </h3>
         <div className="relative">
           {/* Connecting Line */}
-          <div className="absolute top-5 left-0 right-0 h-0.5 bg-slate-200 hidden md:block">
+          <div className="absolute top-5 -left-8 right-0 h-0.5 bg-slate-200 hidden md:block">
             <div
               className="h-full bg-emerald-500 transition-all duration-700 ease-out"
               style={{
                 width: `${
-                  (steps.filter((s) => s.completed).length / (steps.length - 1)) * 100
+                  (steps.filter((s) => s.completed).length /
+                    (steps.length - 1)) *
+                  100
                 }%`,
               }}
             />
@@ -208,12 +232,10 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {steps.map((step, index) => {
               const StepIcon = step.icon;
-              const isLast = index === steps.length - 1;
+              //   const isLast = index === steps.length - 1;
               const isActive = step.completed;
               const isCurrent =
-                !step.completed &&
-                steps[index - 1]?.completed &&
-                index > 0;
+                !step.completed && steps[index - 1]?.completed && index > 0;
 
               return (
                 <div
@@ -227,8 +249,8 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
                       isActive
                         ? "bg-emerald-500 text-white shadow-lg shadow-emerald-200 scale-110"
                         : isCurrent
-                        ? "bg-amber-500 text-white ring-4 ring-amber-100 animate-pulse"
-                        : "bg-slate-100 text-slate-400 border-2 border-slate-200"
+                          ? "bg-amber-500 text-white ring-4 ring-amber-100 animate-pulse"
+                          : "bg-slate-100 text-slate-400 border-2 border-slate-200"
                     }`}
                   >
                     <StepIcon className="w-5 h-5" />
@@ -258,10 +280,10 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
       </div>
 
       {/* Status Alerts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {selectedOrder.order_status === "PENDING" && (
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
               <Clock className="w-5 h-5 text-amber-600" />
             </div>
             <div>
@@ -279,7 +301,7 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
         {selectedOrder.order_status === "APPROVED" &&
           selectedOrder.payment_status === "UNPAID" && (
             <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center shrink-0">
                 <CreditCard className="w-5 h-5 text-rose-600" />
               </div>
               <div>
@@ -297,7 +319,7 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
         {selectedOrder.order_status === "APPROVED" &&
           selectedOrder.payment_status === "PAID" && (
             <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                 <CheckCircle2 className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
@@ -305,14 +327,14 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
                   Order Confirmed
                 </h4>
                 <p className="text-sm text-emerald-700 leading-relaxed">
-                  Your order is fully confirmed and paid. We will contact you for
-                  delivery arrangements.
+                  Your order is fully confirmed and paid. We will contact you
+                  for delivery arrangements.
                 </p>
               </div>
             </div>
           )}
 
-        {/* Quick Actions */}
+
         <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center">
@@ -326,13 +348,13 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
                 {selectedOrder.order_status === "PENDING"
                   ? "Wait for confirmation call"
                   : selectedOrder.payment_status === "UNPAID"
-                  ? "Complete payment"
-                  : "No action needed"}
+                    ? "Complete payment"
+                    : "No action needed"}
               </p>
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Order Items Section */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -361,7 +383,7 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
         {openSections.items && (
           <div className="border-t border-slate-100">
             <div className="p-5 space-y-4">
-              {selectedOrder.item_details?.map((item, index) => (
+              {selectedOrder.item_details?.map((item) => (
                 <div
                   key={item.id}
                   className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100 hover:border-indigo-200 hover:shadow-sm transition-all"
@@ -426,7 +448,7 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
               {selectedOrder.transaction_details?.map((txn) => {
                 const txnStatus = getStatusConfig(
                   txn.payment_verification_status,
-                  "payment"
+                  "payment",
                 );
                 const TxnIcon = txnStatus.icon;
                 return (
@@ -493,7 +515,7 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
       </div>
 
       {/* Financial Summary */}
-      <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200 p-6">
+      {/* <div className="bg-linear-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200 p-6">
         <h3 className="text-sm font-semibold text-emerald-900 uppercase tracking-wider mb-4">
           Payment Summary
         </h3>
@@ -528,7 +550,7 @@ const OrderDetails = ({ selectedOrder }: SelectedOrderProps) => {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
 
       {/* Remarks */}
       {selectedOrder.remarks && (
