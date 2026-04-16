@@ -1,8 +1,7 @@
-/* eslint-disable react-hooks/purity */
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/theme/theme.config";
 import {
@@ -14,7 +13,6 @@ import {
   Clock,
   ShieldCheck,
   Beef,
-  TrendingUp,
   CheckCircle2,
 } from "lucide-react";
 import Link from "next/link";
@@ -25,16 +23,16 @@ const slides = [
   {
     image:
       "/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM.jpeg", // Live cattle (heritage breed)
-    tag: "Heritage Angus",
+    tag: "Breed Options",
     title: "Book Your",
     subtitle: "Share",
     description:
       "Join others in funding a premium grass-fed cow. Choose your portion—full unit or fractional shares. Processing begins only when 100% booked.",
-    price: "From $180/quarter share",
+    price: "With Just 10% Payment",
     progress: 75, // Percentage booked
     unitsAvailable: "3 of 12 units left",
     icon: Users,
-    cta: "Join This Cow",
+    cta: "Marketplace",
     secondaryCta: "How It Works",
     badge: "Almost Funded",
     deadline: "7 days left",
@@ -47,11 +45,11 @@ const slides = [
     subtitle: "Cost",
     description:
       "Premium beef shouldn't require premium prices. Pool together with neighbors, family, or your community. Transparent pricing, no hidden fees.",
-    price: "Save 40% vs retail",
+    price: "Save Your Bank",
     progress: 45,
     unitsAvailable: "7 of 12 units left",
     icon: Target,
-    cta: "Start a Group",
+    cta: "Marketplace",
     secondaryCta: "Browse Cows",
     badge: "New Listing",
     deadline: "21 days left",
@@ -68,17 +66,17 @@ const slides = [
     progress: 100,
     unitsAvailable: "Fully Booked",
     icon: CheckCircle2,
-    cta: "Join Waitlist",
+    cta: "Marketplace",
     secondaryCta: "See Process",
-    badge: "Sold Out",
+    // badge: "Sold Out",
     deadline: "Processing starts tomorrow",
   },
 ];
 
 const trustSignals = [
-  { icon: ShieldCheck, label: "USDA Inspected" },
-  { icon: Clock, label: "14-Day Dry Age" },
-  { icon: Beef, label: "Heritage Breeds" },
+  { icon: ShieldCheck, label: "Vet Inspected" },
+  { icon: Clock, label: "On Time Delivery" },
+  { icon: Beef, label: "Fresh Meat" },
 ];
 
 export function HomeHero({ className }: { className?: string }) {
@@ -295,11 +293,11 @@ export function HomeHero({ className }: { className?: string }) {
                   transition={{ delay: 0.8, duration: 0.6 }}
                   className="flex flex-wrap gap-4 mb-10"
                 >
-                  <Link href="/cows">
+                  <Link href="/marketplace">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="group relative px-8 py-4 bg-emerald-500 text-stone-950 rounded-full font-bold text-lg overflow-hidden transition-all hover:shadow-2xl hover:shadow-emerald-500/30"
+                      className="group relative px-8 py-4 bg-emerald-500 text-stone-950 rounded-full font-bold text- overflow-hidden transition-all hover:shadow-2xl hover:shadow-emerald-500/30"
                     >
                       <span className="relative z-10 flex items-center gap-2">
                         {currentSlide.cta}
@@ -319,7 +317,7 @@ export function HomeHero({ className }: { className?: string }) {
                     </motion.button>
                   </Link>
 
-                  <motion.button
+                  {/* <motion.button
                     onClick={() => {
                       document
                         .getElementById("how-it-works")
@@ -330,7 +328,7 @@ export function HomeHero({ className }: { className?: string }) {
                     className="px-8 py-4 bg-transparent border-2 border-stone-400/50 text-stone-200 rounded-full font-bold text-lg hover:bg-stone-400/10 hover:border-stone-300 transition-all backdrop-blur-sm"
                   >
                     {currentSlide.secondaryCta}
-                  </motion.button>
+                  </motion.button> */}
                 </motion.div>
 
                 {/* Trust Signals */}
