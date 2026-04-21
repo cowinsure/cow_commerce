@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/theme/theme.config";
-import { MarketInsights } from "./MarketInsights";
+import { useBreed } from "@/hooks/breed/useBreed";
 import {
   SlidersHorizontal,
   Check,
@@ -27,12 +27,6 @@ export interface FilterState {
   minPrice?: number;
   maxPrice?: number;
 }
-
-const breedOptions = [
-  { id: "angus", name: "Angus Onyx", checked: true },
-  { id: "wagyu", name: "Wagyu Heritage", checked: false },
-  { id: "hereford", name: "Hereford Prime", checked: false },
-];
 
 // Animation variants
 const containerVariants = {
@@ -64,7 +58,24 @@ export function FilterSidebar({
   className,
   onFilterChange,
 }: FilterSidebarProps) {
-  const [breeds, setBreeds] = useState(breedOptions.map((b) => ({ ...b })));
+  // Use breed hook to fetch breeds from API
+  const { breeds: breedData, loading: breedsLoading, fetchBreeds } = useBreed();
+  
+  // Track selected breed ID in state (single selection - radio-like behavior)
+  const [selectedBreedId, setSelectedBreedId] = useState<number | null>(null);
+  
+  // Fetch breeds on mount
+  useEffect(() => {
+    fetchBreeds();
+  }, [fetchBreeds]);
+  
+  // Compute breeds with checked state from API data and selected ID
+  const breeds = breedData.map((b) => ({
+    id: b.id,
+    name: b.name,
+    checked: selectedBreedId === b.id,
+  }));
+  
   const [selectedWeight, setSelectedWeight] = useState("600-800");
   // Actual filter values for API
   const [priceRange, setPriceRange] = useState<[number | "", number | ""]>(["", ""]);
@@ -100,7 +111,8 @@ export function FilterSidebar({
       const finalMaxPrice = Math.max(minPrice, maxPrice);
 
       onFilterChange?.({
-        breeds: breeds.filter((b) => b.checked).map((b) => b.id),
+        // Convert selected breed ID to string for API filtering (single selection)
+        breeds: selectedBreedId !== null ? [String(selectedBreedId)] : [],
         weightClass: selectedWeight,
         minWeight: finalMinWeight,
         maxWeight: finalMaxWeight,
@@ -115,19 +127,17 @@ export function FilterSidebar({
         clearTimeout(debounceTimer.current);
       }
     };
-  }, [breeds, selectedWeight, weightRange, priceRange, onFilterChange]);
+  }, [selectedBreedId, selectedWeight, weightRange, priceRange, onFilterChange]);
 
   // Calculate active filters count
   const activeFiltersCount =
-    breeds.filter((b) => b.checked).length +
+    (selectedBreedId !== null ? 1 : 0) +
     (selectedWeight !== "all" ? 1 : 0) +
     (priceRange[0] !== "" || priceRange[1] !== "" ? 1 : 0);
 
-  const toggleBreed = (id: string) => {
-    const updated = breeds.map((b) =>
-      b.id === id ? { ...b, checked: !b.checked } : b,
-    );
-    setBreeds(updated);
+  const toggleBreed = (id: number) => {
+    // Single selection: if clicking already selected breed, uncheck it; otherwise select only this one
+    setSelectedBreedId((prev) => (prev === id ? null : id));
     // No need to call debounce - useEffect handles it
   };
 
@@ -188,7 +198,8 @@ export function FilterSidebar({
   };
 
   const resetFilters = () => {
-    setBreeds(breedOptions.map((b) => ({ ...b, checked: false })));
+    // Reset all breeds to unchecked
+    setSelectedBreedId(null);
     setSelectedWeight("400-600");
     setPriceRange(["", ""]);
     setWeightRange(["", ""]);
@@ -269,44 +280,50 @@ export function FilterSidebar({
                   className="overflow-hidden"
                 >
                   <div className="space-y-2">
-                    {breeds.map((breed) => (
-                      <motion.label
-                        key={breed.id}
-                        whileHover={{ x: 2 }}
-                        className="flex items-center gap-3 p-2 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors group"
-                      >
-                        <div
-                          className={cn(
-                            "w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all duration-200",
-                            breed.checked
-                              ? "bg-emerald-500 border-emerald-500"
-                              : "border-slate-300 group-hover:border-emerald-400",
-                          )}
-                          onClick={() => toggleBreed(breed.id)}
+                    {breedsLoading ? (
+                      <div className="text-sm text-slate-400 py-2">Loading breeds...</div>
+                    ) : breeds.length === 0 ? (
+                      <div className="text-sm text-slate-400 py-2">No breeds available</div>
+                    ) : (
+                      breeds.map((breed) => (
+                        <motion.label
+                          key={breed.id}
+                          whileHover={{ x: 2 }}
+                          className="flex items-center gap-3 p-2 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors group"
                         >
-                          {breed.checked && (
-                            <Check
-                              className="w-3 h-3 text-white"
-                              strokeWidth={3}
-                            />
-                          )}
-                        </div>
-                        <input
-                          type="checkbox"
-                          className="hidden"
-                          checked={breed.checked}
-                          onChange={() => toggleBreed(breed.id)}
-                        />
-                        <span
-                          className={cn(
-                            "text-sm font-medium transition-colors",
-                            breed.checked ? "text-slate-900" : "text-slate-600",
-                          )}
-                        >
-                          {breed.name}
-                        </span>
-                      </motion.label>
-                    ))}
+                          <div
+                            className={cn(
+                              "w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all duration-200",
+                              breed.checked
+                                ? "bg-emerald-500 border-emerald-500"
+                                : "border-slate-300 group-hover:border-emerald-400",
+                            )}
+                            onClick={() => toggleBreed(breed.id)}
+                          >
+                            {breed.checked && (
+                              <Check
+                                className="w-3 h-3 text-white"
+                                strokeWidth={3}
+                              />
+                            )}
+                          </div>
+                          <input
+                            type="checkbox"
+                            className="hidden"
+                            checked={breed.checked}
+                            onChange={() => toggleBreed(breed.id)}
+                          />
+                          <span
+                            className={cn(
+                              "text-sm font-medium transition-colors",
+                              breed.checked ? "text-slate-900" : "text-slate-600",
+                            )}
+                          >
+                            {breed.name}
+                          </span>
+                        </motion.label>
+                      ))
+                    )}
                   </div>
                 </motion.div>
               )}

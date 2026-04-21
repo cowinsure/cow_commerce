@@ -25,9 +25,9 @@ export default function HomePage() {
           <ProductGrid cows={products} />
         </section>
         <HowItWorks />
-        <BestSellingCategories />
+        {/* <BestSellingCategories /> */}
         <CowBodyDiagram />
-        <QualityHealthSection />
+        {/* <QualityHealthSection /> */}
       </main>
     </div>
   );

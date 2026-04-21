@@ -431,7 +431,7 @@ export default function OrderHistoryPage() {
           </motion.div>
 
           {/* Pagination */}
-          <motion.div
+          {/* <motion.div
             variants={itemVariants}
             className="flex items-center justify-between mt-8"
           >
@@ -480,7 +480,7 @@ export default function OrderHistoryPage() {
                 <ChevronRight className="w-5 h-5" />
               </motion.button>
             </div>
-          </motion.div>
+          </motion.div> */}
         </motion.div>
 
         {/* Premium Modal for Order Details */}

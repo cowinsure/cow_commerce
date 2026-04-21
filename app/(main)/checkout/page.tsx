@@ -188,14 +188,7 @@ function CheckoutContent() {
             quantity: quantity,
           },
         ],
-        // order_transaction_details: [
-        //   {
-        //     payment_type_id: paymentData.paymentType.payment_type_id,
-        //     reference_no: paymentData.referenceNo,
-        //     image_path: "xyz/avc.jpg",
-        //     amount: parsedPreloadedCow.booking_amount,
-        //   },
-        // ],
+        order_transaction_details: [],
       };
 
       console.log("FINAL PAYLOAD:", payload);

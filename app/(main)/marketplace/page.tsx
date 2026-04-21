@@ -17,7 +17,7 @@ const MarketPlacePage = () => {
       maxWeight: newFilters.maxWeight,
       minPrice: newFilters.minPrice,
       maxPrice: newFilters.maxPrice,
-      breedIds: newFilters.breeds,
+      breeds: newFilters.breeds,
     });
   }, [fetchProducts]);
 

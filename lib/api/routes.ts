@@ -38,6 +38,11 @@ export const PAYMENT_TYPE_API = {
   GET_PAYMENT_TYPES: "/invms/inventory-payment-type-service/",
 } as const;
 
+// Breed service endpoints
+export const BREED_API = {
+  GET_BREEDS: "/lms/breed-service/",
+} as const;
+
 // Type for combining all API routes
 // export type ApiRoutes = typeof AUTH_API | typeof ORDER_API | typeof PRODUCT_API;
 export type ApiRoutes =

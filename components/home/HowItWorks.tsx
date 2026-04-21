@@ -18,7 +18,7 @@ const steps = [
     title: "Choose a Cow",
     description:
       "Browse available cows and check unit availability in real-time. View breed details, weight estimates, and farm origins.",
-    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM.jpeg",
+    image: "/howItWorksSection/Img1.png",
     icon: Beef,
     color: "emerald",
   },
@@ -26,7 +26,7 @@ const steps = [
     title: "Book Your Share",
     description:
       "Select full or partial units based on your needs and budget. Secure your portion with a simple deposit.",
-    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.20 PM.jpeg",
+   image: "/howItWorksSection/Img2.png",
     icon: Target,
     color: "green",
   },
@@ -34,7 +34,7 @@ const steps = [
     title: "Collective Booking",
     description:
       "Other buyers join until all units of the cow are fully reserved. Track progress in real-time as the community grows.",
-    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM (1).jpeg",
+     image: "/howItWorksSection/Img3.png",
     icon: Users,
     color: "teal",
   },
@@ -42,7 +42,7 @@ const steps = [
     title: "100% Completion",
     description:
       "Processing only begins once the cow is completely booked. No waste, no uncertainty, guaranteed full utilization.",
-    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.31 PM.jpeg",
+     image: "/howItWorksSection/Img4.png",
     icon: CheckCircle2,
     color: "emerald",
   },
@@ -50,7 +50,7 @@ const steps = [
     title: "Processing & Delivery",
     description:
       "Your portion is prepared fresh by certified butchers and delivered to your door or ready for farm pickup.",
-    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.20 PM.jpeg",
+    image: "/howItWorksSection/Img5.png",
     icon: Truck,
     color: "green",
   },

@@ -424,7 +424,6 @@ export default function CowDetailsPage() {
                           <div className="flex gap-2">
                             {/* Circular Share Menu */}
                             <CircularShareMenu
-                              shareUrl={`https://yoursite.com/cows/${cow.id}`}
                               shareTitle={`Check out ${cow.name} - Premium ${cow.breed}`}
                             />
                           </div>
@@ -626,7 +625,7 @@ export default function CowDetailsPage() {
                   </motion.div>
 
                   {/* Quick Stats Cards */}
-                  <motion.div
+                  {/* <motion.div
                     variants={staggerContainer}
                     initial="hidden"
                     animate="visible"
@@ -661,7 +660,7 @@ export default function CowDetailsPage() {
                         </p>
                       </motion.div>
                     ))}
-                  </motion.div>
+                  </motion.div> */}
                 </div>
               </motion.div>
             </div>
@@ -914,7 +913,7 @@ export default function CowDetailsPage() {
                     </div>
 
                     {/* Quick Stats Row */}
-                    <div className="grid grid-cols-3 gap-3">
+                    {/* <div className="grid grid-cols-3 gap-3">
                       {[
                         { label: "Daily Feed", value: "12kg", icon: Leaf },
                         { label: "Water Intake", value: "40L", icon: Droplets },
@@ -937,7 +936,7 @@ export default function CowDetailsPage() {
                           </p>
                         </motion.div>
                       ))}
-                    </div>
+                    </div> */}
                   </motion.div>
 
                   {/* Right: Video Player */}

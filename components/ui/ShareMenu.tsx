@@ -13,7 +13,6 @@ interface CircularShareMenuProps {
 }
 
 export function CircularShareMenu({
-  shareUrl = typeof window !== "undefined" ? window.location.href : "",
   shareTitle = "Check out this premium cow!",
   className,
 }: CircularShareMenuProps) {
@@ -27,8 +26,18 @@ export function CircularShareMenu({
       shadow: "shadow-green-500/30",
       label: "",
       action: () => {
-        const text = encodeURIComponent(`${shareTitle} ${shareUrl}`);
-        window.open(`https://wa.me/?text=${text}`, "_blank");
+        const phoneNumber = "8801913672072"; // 👈 your WhatsApp number (no +, no 0)
+
+        const url =
+          window.location.origin +
+          window.location.pathname +
+          window.location.search;
+
+        const message = `${shareTitle}\n\n${url}`;
+
+        const text = encodeURIComponent(message);
+
+        window.open(`https://wa.me/${phoneNumber}?text=${text}`, "_blank");
       },
     },
     {
@@ -38,7 +47,7 @@ export function CircularShareMenu({
       shadow: "shadow-blue-600/30",
       label: "",
       action: () => {
-        const url = encodeURIComponent(shareUrl);
+        const url = encodeURIComponent(window.location.href);
         window.open(
           `https://www.facebook.com/sharer/sharer.php?u=${url}`,
           "_blank",
@@ -47,18 +56,22 @@ export function CircularShareMenu({
     },
   ];
 
-  // Calculate positions for circular arrangement
-  const radius = 60; // Distance from center
-  const angleStep = 60; // Degrees between items (60° apart for 2 items)
-  const startAngle = -30; // Start from top-right area
+  const radius = 60;
+  const angleStep = 60;
+  const startAngle = -30;
 
   return (
+    // KEY FIX: Use a fixed-size container that encompasses the expanded menu
+    // This way onMouseLeave only fires when exiting the entire zone, not gaps between buttons
     <div
-      className={cn("relative", className)}
+      className={cn(
+        "relative flex items-center justify-center",
+        "w-[100px]", // Large enough for radius 60 + button sizes
+        className,
+      )}
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      {/* Share Options - Circular Formation */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -70,24 +83,9 @@ export function CircularShareMenu({
               return (
                 <motion.button
                   key={option.id}
-                  initial={{
-                    opacity: 0,
-                    scale: 0,
-                    x: 0,
-                    y: 0,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    scale: 1,
-                    x,
-                    y,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    scale: 0,
-                    x: 0,
-                    y: 0,
-                  }}
+                  initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                  animate={{ opacity: 1, scale: 1, x, y }}
+                  exit={{ opacity: 0, scale: 0, x: 0, y: 0 }}
                   transition={{
                     type: "spring",
                     stiffness: 300,
@@ -96,20 +94,22 @@ export function CircularShareMenu({
                   }}
                   whileHover={{ scale: 1.15 }}
                   whileTap={{ scale: 0.9 }}
-                  onClick={option.action}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent bubbling issues
+                    option.action();
+                  }}
                   className={cn(
                     "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
                     "w-11 h-11 rounded-full flex items-center justify-center",
-                    "text-white shadow-lg",
+                    "text-white shadow-lg cursor-pointer",
                     option.color,
                     option.shadow,
-                    "z-20 cursor-pointer",
+                    "z-20",
                   )}
                   title={option.label}
                 >
                   <option.icon className="w-5 h-5" fill="currentColor" />
 
-                  {/* Label tooltip */}
                   <motion.span
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -122,7 +122,6 @@ export function CircularShareMenu({
               );
             })}
 
-            {/* Connecting lines/arc (optional visual flair) */}
             <motion.div
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 0.1, scale: 1 }}
@@ -133,7 +132,7 @@ export function CircularShareMenu({
         )}
       </AnimatePresence>
 
-      {/* Main Share Button */}
+      {/* Main button centered in the container */}
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
@@ -155,7 +154,6 @@ export function CircularShareMenu({
           )}
         />
 
-        {/* Pulse ring when open */}
         {isOpen && (
           <motion.div
             initial={{ scale: 1, opacity: 0.5 }}
@@ -169,7 +167,7 @@ export function CircularShareMenu({
   );
 }
 
-// Compact version with just the essential animation
+// Compact version - same fix applied
 export function SimpleCircularShare({
   shareUrl,
   shareTitle,
@@ -191,9 +189,11 @@ export function SimpleCircularShare({
   ];
 
   return (
+    // KEY FIX: Fixed container size that covers the expanded area
     <div
       className={cn(
-        "relative flex items-center justify-center w-12 h-12",
+        "relative flex items-center justify-center",
+        "w-[140px] h-[140px]", // Covers radius 50 + padding
         className,
       )}
       onMouseEnter={() => setIsOpen(true)}
