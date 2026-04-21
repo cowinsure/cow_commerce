@@ -8,25 +8,25 @@ import { ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react";
 
 const slides = [
   {
-    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM.jpeg",
-    tag: "Curated Listings",
-    title: "Prime Cattle Selection",
+    image: "/marketplaceImages/Cow1.jpg",
+    tag: "Local Breed",
+    title: "Deshi Cattle",
     description:
-      "Experience the next generation of livestock procurement. Precision-bred assets for the discerning digital producer.",
+      "Hardy and well-adapted to local environments. Known for resilience, low maintenance, and traditional farming value.",
   },
   {
-    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.20 PM.jpeg",
-    tag: "Premium Stock",
-    title: "Angus Excellence",
+    image: "/marketplaceImages/Cow1.jpg",
+    tag: "Premium Breed",
+    title: "Sahiwal Excellence",
     description:
-      "Discover award-winning bloodlines with full genetic documentation and verified health records.",
+      "One of the best dairy breeds. High milk yield, heat tolerance, and excellent disease resistance.",
   },
   {
-    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.31 PM.jpeg",
-    tag: "Verified Quality",
-    title: "Heritage Breeds",
+    image: "/marketplaceImages/Cow2.jpg",
+    tag: "High Yield",
+    title: "Fizian Breed",
     description:
-      "Rare and heritage breed cattle raised on sustainable pastures with complete traceability.",
+      "Globally recognized for superior milk production. Ideal for commercial dairy farming with proper care.",
   },
 ];
 
@@ -126,7 +126,7 @@ export function HeroSection({ className }: { className?: string }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
-              className="absolute inset-0 bg-gradient-to-r from-primary-container/95 via-primary-container/70 to-transparent"
+              className="absolute inset-0 bg-gradient-to-r from-primary/95 to-transparent"
             />
             {/* Subtle vignette */}
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />

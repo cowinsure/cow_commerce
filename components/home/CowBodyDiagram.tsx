@@ -10,6 +10,19 @@ import SectionMiniHeading from "../ui/SectionMiniHeading";
 // Accurate beef cut data based on standard butcher charts
 const bodyParts = [
   {
+    id: "neck",
+    name: "Neck",
+    subtitle: "Chuck / Neck Section",
+    description:
+      "A hardworking muscle area with rich connective tissue. Less tender but deeply flavorful, becoming soft and juicy when cooked slowly.",
+    meatQuality: "Good",
+    marbling: "Low to Moderate",
+    culinary: ["Chuck Roast", "Minced Beef", "Stew Cuts"],
+    bestMethod: "Slow Cooking/Braising",
+    position: { top: "30%", left: "22%" },
+    cuts: ["Neck Bones", "Chuck Roast", "Shoulder Steak", "Ground Beef"],
+  },
+  {
     id: "chuck",
     name: "Chuck",
     subtitle: "Shoulder Section",
@@ -19,7 +32,7 @@ const bodyParts = [
     marbling: "Moderate",
     culinary: ["Pot Roast", "Stews", "Ground Beef"],
     bestMethod: "Slow Cooking",
-    position: { top: "28%", left: "22%" },
+    position: { top: "28%", left: "32%" },
     cuts: ["Chuck Roast", "Flat Iron", "Denver Steak"],
   },
   {
@@ -32,7 +45,7 @@ const bodyParts = [
     marbling: "High",
     culinary: ["Ribeye", "Prime Rib", "Back Ribs"],
     bestMethod: "Grilling/Roasting",
-    position: { top: "32%", left: "42%" },
+    position: { top: "25%", left: "48%" },
     cuts: ["Ribeye Steak", "Standing Rib Roast", "Rib Tips"],
   },
   {
@@ -58,7 +71,7 @@ const bodyParts = [
     marbling: "High",
     culinary: ["Short Ribs", "Skirt Steak", "Hanger Steak"],
     bestMethod: "Braising/Grilling",
-    position: { top: "55%", left: "45%" },
+    position: { top: "45%", left: "45%" },
     cuts: ["Inside Skirt", "Outside Skirt", "Short Ribs"],
   },
   {
@@ -84,7 +97,7 @@ const bodyParts = [
     marbling: "Moderate",
     culinary: ["Top Sirloin", "Tri-Tip", "Coulotte"],
     bestMethod: "Grilling/Roasting",
-    position: { top: "35%", left: "72%" },
+    position: { top: "18%", left: "68%" },
     cuts: ["Top Sirloin Steak", "Tri-Tip Roast", "Ball Tip"],
   },
   {
@@ -97,7 +110,7 @@ const bodyParts = [
     marbling: "Low",
     culinary: ["London Broil", "Roast Beef", "Steak Tartare"],
     bestMethod: "Roasting/Braising",
-    position: { top: "32%", left: "88%" },
+    position: { top: "35%", left: "72%" },
     cuts: ["Top Round", "Bottom Round", "Eye of Round"],
   },
   {
@@ -110,7 +123,7 @@ const bodyParts = [
     marbling: "Low",
     culinary: ["Flank Steak", "Fajitas", "Stir Fry"],
     bestMethod: "Grilling (Quick)",
-    position: { top: "58%", left: "62%" },
+    position: { top: "46%", left: "58%" },
     cuts: ["Flank Steak", "Bavette", "Inside Skirt"],
   },
   {
@@ -123,7 +136,7 @@ const bodyParts = [
     marbling: "Low",
     culinary: ["Osso Buco", "Soup Bones", "Stocks"],
     bestMethod: "Braising/Simmering",
-    position: { top: "75%", left: "25%" },
+    position: { top: "49%", left: "36%" },
     cuts: ["Fore Shank", "Hind Shank", "Cross-Cut Shanks"],
   },
 ];

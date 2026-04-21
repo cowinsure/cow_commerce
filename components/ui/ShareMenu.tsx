@@ -26,7 +26,7 @@ export function CircularShareMenu({
       shadow: "shadow-green-500/30",
       label: "",
       action: () => {
-        const phoneNumber = "8801913672072"; // 👈 your WhatsApp number (no +, no 0)
+        const phoneNumber = "8801999467873"; // 👈 your WhatsApp number (no +, no 0)
 
         const url =
           window.location.origin +
