@@ -16,9 +16,11 @@ export function CowImageGallery({ cow, className }: CowImageGalleryProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
     null,
   );
+  const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({});
 
   // Get base URL from environment
   const baseImageUrl = process.env.NEXT_PUBLIC_API_BASE_IMAGE_URL || "";
+  const fallbackImage = "/placeholder/no-image.jpg";
 
   // Helper to prepend base URL to image path
   const getImageUrl = (path: string) => {
@@ -129,11 +131,15 @@ export function CowImageGallery({ cow, className }: CowImageGalleryProps) {
           >
             {/* Image */}
             <Image
-              src={img.url}
+              src={imgErrors[index] ? fallbackImage : img.url}
               alt={img.label}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
+              className={cn(
+                "object-cover transition-transform duration-500 group-hover:scale-110",
+                imgErrors[index] && "scale-50",
+              )}
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              onError={() => setImgErrors((prev) => ({ ...prev, [index]: true }))}
             />
 
             {/* Hover Overlay */}

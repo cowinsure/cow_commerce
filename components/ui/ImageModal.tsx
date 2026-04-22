@@ -21,11 +21,14 @@ export function ImageModal({
   onClose,
 }: ImageModalProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [imgError, setImgError] = useState(false);
+  const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({});
 
   // Reset index when modal opens
   useEffect(() => {
     if (isOpen) {
       setCurrentIndex(initialIndex);
+      setImgError(false);
     }
   }, [isOpen, initialIndex]);
 
@@ -132,12 +135,13 @@ export function ImageModal({
           {/* Image */}
           <div className="relative w-[90vw] h-[70vh] max-w-5xl">
             <Image
-              src={images[currentIndex]}
+              src={imgError ? "/placeholder/no-image.jpg" : images[currentIndex]}
               alt={`Image ${currentIndex + 1}`}
               fill
-              className="object-contain"
+              className={cn("object-contain bg-gray-300", imgError && "scale-50 hover:scale-50")}
               priority
               sizes="90vw"
+              onError={() => setImgError(true)}
             />
           </div>
 
@@ -197,11 +201,12 @@ export function ImageModal({
                   )}
                 >
                   <Image
-                    src={img}
+                    src={imgErrors[idx] ? "/placeholder/no-image.jpg" : img}
                     alt={`Thumbnail ${idx + 1}`}
                     fill
-                    className="object-cover"
+                    className={cn("object-cover", imgErrors[idx] && "scale-50")}
                     sizes="64px"
+                    onError={() => setImgErrors((prev) => ({ ...prev, [idx]: true }))}
                   />
                 </button>
               ))}

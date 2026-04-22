@@ -13,9 +13,11 @@ interface CowGalleryProps {
 export function CowGallery({ cow, className }: CowGalleryProps) {
   const [activeImage, setActiveImage] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   // Get base URL from environment
   const baseImageUrl = process.env.NEXT_PUBLIC_API_BASE_IMAGE_URL || "";
+  const fallbackImage = "/placeholder/no-image.jpg";
 
   // Helper to prepend base URL to image path
   const getImageUrl = (path: string) => {
@@ -65,12 +67,14 @@ export function CowGallery({ cow, className }: CowGalleryProps) {
               className={cn(
                 "w-full h-full object-cover transition-transform duration-300",
                 isZoomed ? "scale-125" : "hover:scale-105",
+                imgError && "scale-50 hover:scale-50",
               )}
               fill
               sizes="(max-width: 1024px) 100vw, 58vw"
-              src={images[activeImage] || mainImage}
+              src={imgError ? fallbackImage : (images[activeImage] || mainImage)}
               priority
               style={{ position: "absolute" }}
+              onError={() => setImgError(true)}
             />
           </div>
 

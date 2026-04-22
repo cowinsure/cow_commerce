@@ -2,12 +2,20 @@
 
 import Image, { type ImageProps } from "next/image";
 import { cn } from "@/lib/theme/theme.config";
+import React from "react";
 
 /**
  * Get the base URL for images from environment variables
  */
 const getBaseImageUrl = (): string => {
   return process.env.NEXT_PUBLIC_API_BASE_IMAGE_URL || "";
+};
+
+/**
+ * Get the default fallback image path
+ */
+const getFallbackImage = (): string => {
+  return "/placeholder/no-image.jpg";
 };
 
 /**
@@ -41,6 +49,8 @@ interface ImageWithUrlProps {
   src: string | null | undefined;
   /** Fallback image to show when src is empty */
   fallback?: string;
+  /** Use default placeholder on error */
+  useDefaultOnError?: boolean;
   /** Alt text for the image */
   alt: string;
   /** Additional className */
@@ -79,18 +89,28 @@ interface ImageWithUrlProps {
 export function ImageWithUrl({
   src,
   fallback,
+  useDefaultOnError = true,
   alt,
   className,
   ...props
 }: ImageWithUrlProps) {
+  const [imgError, setImgError] = React.useState(false);
   const imageSrc = getImageUrl(src);
-  const displaySrc = imageSrc || fallback || "/placeholder.png";
+  const displaySrc = imageSrc || fallback || getFallbackImage();
+
+  const handleError = () => {
+    setImgError(true);
+  };
+
+  const finalSrc = imgError && useDefaultOnError ? getFallbackImage() : displaySrc;
+  const isFallback = imgError && useDefaultOnError;
 
   return (
     <Image
-      src={displaySrc}
+      src={finalSrc}
       alt={alt || "Image"}
-      className={cn("bg-emerald-50", className)}
+      className={cn("bg-emerald-50", className, isFallback && "scale-25 hover:scale-50")}
+      onError={useDefaultOnError ? handleError : undefined}
       {...props}
     />
   );

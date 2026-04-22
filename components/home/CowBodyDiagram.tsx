@@ -148,6 +148,8 @@ interface CowBodyDiagramProps {
 export function CowBodyDiagram({ className }: CowBodyDiagramProps) {
   const [activePart, setActivePart] = useState<string | null>(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
+  const fallbackImage = "/placeholder/no-image.jpg";
 
   const activePartData = bodyParts.find((p) => p.id === activePart);
 
@@ -191,14 +193,16 @@ export function CowBodyDiagram({ className }: CowBodyDiagramProps) {
             <div className="absolute inset-0 p-8 sm:p-12">
               <Image
                 alt="Beef Cuts Diagram"
-                src="/cow-body.png" // RECOMMEND: Replace with butcher diagram
+                src={imgError ? fallbackImage : "/cow-body.png"}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className={cn(
                   "object-contain transition-opacity duration-500",
                   isImageLoaded ? "opacity-100" : "opacity-0",
+                  imgError && "scale-50",
                 )}
                 onLoad={() => setIsImageLoaded(true)}
+                onError={() => setImgError(true)}
                 priority
               />
 
