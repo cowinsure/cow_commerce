@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Share2, MessageCircle } from "lucide-react";
+import { Share2, MessageCircle, Link } from "lucide-react";
 import { cn } from "@/lib/theme/theme.config";
 import { FaFacebook } from "react-icons/fa6";
+import { useToast } from "./Toast";
 
 interface CircularShareMenuProps {
   shareUrl?: string;
@@ -17,6 +18,7 @@ export function CircularShareMenu({
   className,
 }: CircularShareMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { showToast } = useToast();
 
   const shareOptions = [
     {
@@ -40,18 +42,40 @@ export function CircularShareMenu({
         window.open(`https://wa.me/${phoneNumber}?text=${text}`, "_blank");
       },
     },
+    // {
+    //   id: "facebook",
+    //   icon: FaFacebook,
+    //   color: "bg-blue-600 hover:bg-blue-700",
+    //   shadow: "shadow-blue-600/30",
+    //   label: "",
+    //   action: () => {
+    //     const url = encodeURIComponent(window.location.href);
+    //     window.open(
+    //       `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+    //       "_blank",
+    //     );
+    //   },
+    // },
     {
-      id: "facebook",
-      icon: FaFacebook,
-      color: "bg-blue-600 hover:bg-blue-700",
-      shadow: "shadow-blue-600/30",
-      label: "",
-      action: () => {
-        const url = encodeURIComponent(window.location.href);
-        window.open(
-          `https://www.facebook.com/sharer/sharer.php?u=${url}`,
-          "_blank",
-        );
+      id: "copy",
+      icon: Link,
+      color: "bg-slate-700 hover:bg-slate-800",
+      shadow: "shadow-slate-700/30",
+      // label: "Copy",
+      action: async () => {
+        try {
+          const url =
+            window.location.origin +
+            window.location.pathname +
+            window.location.search;
+
+          await navigator.clipboard.writeText(url);
+
+          // Optional: simple feedback
+          showToast("Link copied to clipboard!", "success");
+        } catch (err) {
+          console.error("Failed to copy:", err);
+        }
       },
     },
   ];
@@ -108,7 +132,7 @@ export function CircularShareMenu({
                   )}
                   title={option.label}
                 >
-                  <option.icon className="w-5 h-5" fill="currentColor" />
+                  <option.icon className="w-5 h-5" />
 
                   <motion.span
                     initial={{ opacity: 0, y: 5 }}

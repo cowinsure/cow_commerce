@@ -24,7 +24,7 @@ export function CowVideoPlayer({ videoUrl, cowName, className }: CowVideoPlayerP
 
   // Get video URL helper
   const getVideoUrl = (path: string) => {
-    if (!path || ["None", "null", "undefined", ""].includes(path)) return null;
+    if (!path || ["null", "undefined", ""].includes(path)) return null;
     if (path.startsWith("http")) return path;
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_IMAGE_URL || "";
     return `${baseUrl.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;

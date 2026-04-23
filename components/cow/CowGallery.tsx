@@ -26,8 +26,6 @@ export function CowGallery({ cow, className }: CowGalleryProps) {
     return `${baseImageUrl}${path}`;
   };
 
-  // Map CowDetails to component-compatible format
-  const cowName = cow.name || `${cow.breed} #${cow.id}`;
   const images = [
     getImageUrl(cow.left_side_image),
     getImageUrl(cow.right_side_image),
@@ -37,20 +35,6 @@ export function CowGallery({ cow, className }: CowGalleryProps) {
     images[activeImage] ||
     getImageUrl(cow.left_side_image) ||
     "/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM (1).jpeg";
-  const tag = cow.vet_certificate ? "Premium" : "Standard";
-  const tagColor = cow.vet_certificate ? "primary-fixed" : "primary";
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      await navigator.share({
-        title: cowName,
-        text: `Check out this ${cow.breed} - ${cowName}`,
-        url: window.location.href,
-      });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-    }
-  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)}>
@@ -71,7 +55,7 @@ export function CowGallery({ cow, className }: CowGalleryProps) {
               )}
               fill
               sizes="(max-width: 1024px) 100vw, 58vw"
-              src={imgError ? fallbackImage : (images[activeImage] || mainImage)}
+              src={imgError ? fallbackImage : images[activeImage] || mainImage}
               priority
               style={{ position: "absolute" }}
               onError={() => setImgError(true)}

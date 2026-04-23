@@ -6,6 +6,7 @@ import Image from "next/image";
 import { cn } from "@/lib/theme/theme.config";
 import type { CowDetails } from "@/lib/models/productDTO";
 import { ImageModal } from "@/components/ui/ImageModal";
+import { useCowImages } from "@/hooks/useCowImages";
 
 interface CowImageGalleryProps {
   cow: CowDetails;
@@ -16,59 +17,7 @@ export function CowImageGallery({ cow, className }: CowImageGalleryProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
     null,
   );
-  const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({});
-
-  // Get base URL from environment
-  const baseImageUrl = process.env.NEXT_PUBLIC_API_BASE_IMAGE_URL || "";
-  const fallbackImage = "/placeholder/no-image.jpg";
-
-  // Helper to prepend base URL to image path
-  const getImageUrl = (path: string) => {
-    if (!path || path === "null" || path === "undefined") return "";
-    if (path.startsWith("http") || path.startsWith("/")) return path;
-    return `${baseImageUrl}${path}`;
-  };
-
-  // Check if path is valid image
-  const isValidImage = (path: string) => {
-    if (!path) return false;
-    const invalidValues = ["None", "null", "undefined", ""];
-    return !invalidValues.includes(path);
-  };
-
-  // Extract all images from cow details
-  const images = [
-    {
-      url: getImageUrl(cow.left_side_image),
-      label: "Left Side",
-      key: "left_side_image",
-    },
-    {
-      url: getImageUrl(cow.right_side_image),
-      label: "Right Side",
-      key: "right_side_image",
-    },
-    {
-      url: getImageUrl(cow.image_with_owner),
-      label: "With Owner",
-      key: "image_with_owner",
-    },
-    {
-      url: getImageUrl(cow.vet_certificate),
-      label: "Vet Certificate",
-      key: "vet_certificate",
-    },
-    {
-      url: getImageUrl(cow.challan_paper),
-      label: "Challan Paper",
-      key: "challan_paper",
-    },
-    {
-      url: getImageUrl(cow.chairman_certificate),
-      label: "Chairman Certificate",
-      key: "chairman_certificate",
-    },
-  ].filter((img) => isValidImage(img.url));
+  const { images } = useCowImages(cow);
 
   // Animation variants
   const containerVariants = {
@@ -108,7 +57,7 @@ export function CowImageGallery({ cow, className }: CowImageGalleryProps) {
   return (
     <>
       <h2 className="text-4xl font-black text-slate-900 leading-tight mb-8">
-        Cattle 
+        Cattle
         <span className="text-emerald-600"> Gallery</span>
       </h2>
       <motion.div
@@ -131,15 +80,11 @@ export function CowImageGallery({ cow, className }: CowImageGalleryProps) {
           >
             {/* Image */}
             <Image
-              src={imgErrors[index] ? fallbackImage : img.url}
+              src={img.url}
               alt={img.label}
               fill
-              className={cn(
-                "object-cover transition-transform duration-500 group-hover:scale-110",
-                imgErrors[index] && "scale-50",
-              )}
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              onError={() => setImgErrors((prev) => ({ ...prev, [index]: true }))}
             />
 
             {/* Hover Overlay */}

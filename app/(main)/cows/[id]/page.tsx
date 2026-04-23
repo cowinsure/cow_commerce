@@ -316,16 +316,17 @@ export default function CowDetailsPage() {
                   {cowDetails[0] ? (
                     <CowGallery cow={cowDetails[0]} />
                   ) : (
-                    <div className="relative aspect-4/3">
-                      <ImageWithUrl
-                        alt={cow.name}
-                        src={cow.image}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        className="object-cover"
-                        priority
-                      />
-                    </div>
+                    // <div className="relative aspect-4/3">
+                    //   <ImageWithUrl
+                    //     alt={cow.name}
+                    //     src={cow.image}
+                    //     fill
+                    //     sizes="(max-width: 768px) 100vw, 50vw"
+                    //     className="object-cover"
+                    //     priority
+                    //   />
+                    // </div>
+                    ""
                   )}
 
                   {/* Floating Badge */}
@@ -432,7 +433,7 @@ export default function CowDetailsPage() {
                     </div>
 
                     {/* Price Display */}
-                    <div className="relative z-10 mb-8 p-6 bg-linear-to-br from-emerald-50 to-emerald-100/50 rounded-2xl border border-emerald-100 flex ">
+                    <div className="relative z-0 mb-8 p-6 bg-linear-to-br from-emerald-50 to-emerald-100/50 rounded-2xl border border-emerald-100 flex ">
                       <div className="flex items-baseline gap-1 text-emerald-700 mb-1">
                         <FaBangladeshiTakaSign className="text-2xl" />
                         <AnimatedPrice
@@ -1010,7 +1011,7 @@ export default function CowDetailsPage() {
         </section>
 
         {/* Breed Advantages */}
-        <section className="relative z-20 bg-white py-20">
+        <section className="relative z-0 bg-white py-20">
           <BreedAdvantages breed={cow.breed as "Sahiwal" | "Deshi"} />
         </section>
 
