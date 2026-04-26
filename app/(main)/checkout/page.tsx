@@ -324,7 +324,7 @@ function CheckoutContent() {
           className="relative z-10 px-4 sm:px-8 max-w-screen-2xl mx-auto"
         >
           {/* Breadcrumb & Back */}
-          <motion.div variants={itemVariants} className="mb-8">
+          {/* <motion.div variants={itemVariants} className="mb-8">
             <Link href={`/cows/${cowId}`}>
               <motion.button
                 whileHover={{ x: -4 }}
@@ -334,7 +334,7 @@ function CheckoutContent() {
                 Back to Cow Details
               </motion.button>
             </Link>
-          </motion.div>
+          </motion.div> */}
 
           {/* Page Header */}
           <motion.div

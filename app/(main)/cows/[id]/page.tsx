@@ -163,6 +163,12 @@ export default function CowDetailsPage() {
   const bookedUnits =
     (preloadedCow?.unit_qty ?? 0) - (preloadedCow?.available_qty ?? 0);
   const progressPercent = totalUnits > 0 ? (bookedUnits / totalUnits) * 100 : 0;
+  // Visual progress including selected quantity for UX feedback
+  const visualBookedUnits = bookedUnits + quantity;
+  const visualProgressPercent =
+    totalUnits > 0
+      ? (Math.min(visualBookedUnits, totalUnits) / totalUnits) * 100
+      : 0;
   // const isAlmostFull = progressPercent >= 75;
   const isFull = progressPercent >= 100;
 
@@ -455,23 +461,29 @@ export default function CowDetailsPage() {
                           {preloadedCow?.available_qty ?? 0} of {totalUnits}{" "}
                           units available
                         </span>
-                        {progressPercent >= 75 && (
+                        {visualProgressPercent >= 75 &&
+                          visualProgressPercent <= 95 && (
+                            <span className="text-amber-600 font-bold text-[10px] uppercase tracking-wider">
+                              Almost Full
+                            </span>
+                          )}
+                        {visualProgressPercent == 100 && (
                           <span className="text-amber-600 font-bold text-[10px] uppercase tracking-wider">
-                            Almost Full
+                            Fully Booked
                           </span>
                         )}
                       </div>
                       <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
-                          animate={{ width: `${progressPercent}%` }}
+                          animate={{ width: `${visualProgressPercent}%` }}
                           transition={{ duration: 0.8, delay: 0.2 }}
                           className={cn(
                             "h-full rounded-full transition-all",
-                            progressPercent >= 90
+                            visualProgressPercent >= 90
                               ? "bg-amber-500"
-                              : progressPercent >= 50
-                                ? "bg-gray-500"
+                              : visualProgressPercent >= 50
+                                ? "bg-teal-700"
                                 : "bg-teal-400",
                           )}
                         />
@@ -626,42 +638,42 @@ export default function CowDetailsPage() {
                   </motion.div>
 
                   {/* Quick Stats Cards */}
-                  {/* <motion.div
+                  <motion.div
                     variants={staggerContainer}
                     initial="hidden"
                     animate="visible"
-                    className="grid grid-cols-4 gap-3"
+                    className="bg-white/60 backdrop-blur-md rounded-2xl p-4 border border-white/50 shadow-lg"
                   >
+                    <h1 className="font-semibold mb-2">Notes:</h1>
                     {[
                       {
-                        icon: Leaf,
-                        label: "Organic Feed",
-                        value: "100% Natural",
+                        value:
+                          "This service is strictly available within Dhaka City only",
                       },
                       {
-                        icon: Droplets,
-                        label: "Water Source",
-                        value: "Purified",
+                        value:
+                          "Delivery start when the completion is 100% only",
                       },
-                      { icon: Sun, label: "Sunlight", value: "12 hrs/day" },
-                      { icon: MapPin, label: "Location", value: "InsureCow" },
+                      {
+                        value:
+                          "Deliveries are available only for Eid day - 1 & 2",
+                      },
+                      {
+                        value:
+                          "Customers must provide accurate and complete contact and delivery information to ensure successful fulfillment",
+                      },
                     ].map((stat, i) => (
                       <motion.div
-                        key={stat.label}
+                        key={i}
                         variants={glassPanel}
-                        whileHover={{ y: -4, scale: 1.02 }}
-                        className="bg-white/60 backdrop-blur-md rounded-2xl p-4 border border-white/50 shadow-lg"
+                        className="mb-1 "
                       >
-                        <stat.icon className="w-5 h-5 text-emerald-600 mb-2" />
-                        <p className="text-xs text-slate-500 mb-1">
-                          {stat.label}
-                        </p>
-                        <p className="text-sm font-bold text-slate-900">
-                          {stat.value}
+                        <p className="text-sm font- text-slate-500">
+                          • {stat.value}
                         </p>
                       </motion.div>
                     ))}
-                  </motion.div> */}
+                  </motion.div>
                 </div>
               </motion.div>
             </div>
