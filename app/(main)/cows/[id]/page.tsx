@@ -644,7 +644,13 @@ export default function CowDetailsPage() {
                     animate="visible"
                     className="bg-white/60 backdrop-blur-md rounded-2xl p-4 border border-white/50 shadow-lg"
                   >
-                    <h1 className="font-semibold mb-2">Notes:</h1>
+                    <h1 className="font-semibold mb-2 flex items-center gap-1">
+                      <span>
+                        {" "}
+                        <AlertCircle className="w-5 h-5 text-amber-600" />
+                      </span>{" "}
+                      Notes:
+                    </h1>
                     {[
                       {
                         value:

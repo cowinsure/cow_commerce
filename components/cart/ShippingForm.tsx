@@ -10,12 +10,14 @@ interface ShippingFormData {
 interface ShippingFormProps {
   formData: ShippingFormData;
   setFormData: React.Dispatch<React.SetStateAction<ShippingFormData>>;
+  disabled?: boolean;
   className?: string;
 }
 
 export function ShippingForm({
   formData,
   setFormData,
+  disabled = false,
   className,
 }: ShippingFormProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,8 +59,9 @@ export function ShippingForm({
             label="Enter You complete address"
             value={formData.address || ""}
             onChange={handleChange}
-            placeholder="House no, Block/Road, Area"
+            placeholder={disabled ? "Select a delivery method first" : "House no, Block/Road, Area"}
             className="h-25"
+            disabled={disabled}
           />
         </div>
       </div>

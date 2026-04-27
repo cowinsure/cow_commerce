@@ -261,7 +261,11 @@ function TableBlock({
 }
 
 // ─── Main Page ───────────────────────────────────────────
-export default function TermsPage() {
+export default function TermsPage({
+  hideNavigation = false,
+}: {
+  hideNavigation?: boolean;
+}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
 
@@ -322,7 +326,7 @@ export default function TermsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
-      <ScrollProgress />
+      {/* <ScrollProgress /> */}
       <BackToTop />
 
       {/* ─── Hero ───────────────────────────────────────── */}
@@ -382,90 +386,94 @@ export default function TermsPage() {
       </header>
 
       {/* ─── Sticky Nav ─────────────────────────────────── */}
-      <nav className="sticky top-1 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
-        <div className="max-w-5xl mx-auto px-6">
-          <div className="flex items-center justify-between h-14">
-            <div className="hidden md:flex items-center gap-1 overflow-x-auto">
-              {sections.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => scrollToSection(s.id)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                    activeSection === s.id
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                  }`}
-                >
-                  {s.title.split(" ").slice(0, 3).join(" ")}...
-                </button>
-              ))}
-            </div>
-            <button
-              className="md:hidden p-2 text-gray-600"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
-            </button>
-          </div>
-        </div>
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="md:hidden border-t border-gray-200 bg-white overflow-hidden"
-            >
-              <div className="px-6 py-3 space-y-1">
+      {!hideNavigation && (
+        <nav className="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
+          <div className="max-w-screen-2xl mx-auto px-6">
+            <div className="flex items-center justify-between h-14">
+              <div className="hidden md:flex items-center gap-1 overflow-x-auto">
                 {sections.map((s) => (
                   <button
                     key={s.id}
                     onClick={() => scrollToSection(s.id)}
-                    className={`block w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                       activeSection === s.id
-                        ? "bg-emerald-50 text-emerald-800"
-                        : "text-gray-600 hover:bg-gray-50"
+                        ? "bg-emerald-100 text-emerald-800"
+                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                     }`}
                   >
-                    {s.title}
+                    {s.title.split(" ").slice(0, 3).join(" ")}...
                   </button>
                 ))}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
+              <button
+                className="md:hidden p-2 text-gray-600"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? (
+                  <X className="w-5 h-5" />
+                ) : (
+                  <Menu className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+          </div>
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="md:hidden border-t border-gray-200 bg-white overflow-hidden"
+              >
+                <div className="px-6 py-3 space-y-1">
+                  {sections.map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => scrollToSection(s.id)}
+                      className={`block w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                        activeSection === s.id
+                          ? "bg-emerald-50 text-emerald-800"
+                          : "text-gray-600 hover:bg-gray-50"
+                      }`}
+                    >
+                      {s.title}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </nav>
+      )}
 
       {/* ─── Main Content ───────────────────────────────── */}
-      <main className="max-w-5xl mx-auto px-6 py-12 space-y-16">
+      <main className="max-w-screen-2xl mx-auto px-6 py-12 space-y-16">
         {/* Quick Info Cards */}
-        <motion.section
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={containerVariants}
-          className="grid grid-cols-1 md:grid-cols-3 gap-4"
-        >
-          <InfoCard
-            icon={<MapPin className="w-5 h-5" />}
-            title="Service Area"
-            text="Strictly available within Dhaka City & Dhaka Metropolitan limits only."
-          />
-          <InfoCard
-            icon={<Thermometer className="w-5 h-5" />}
-            title="Cold Chain"
-            text="Meat maintained at 0°C to 4°C throughout processing and delivery."
-          />
-          <InfoCard
-            icon={<Ban className="w-5 h-5" />}
-            title="Non-Refundable"
-            text="All bookings are strictly non-cancellable and non-refundable once confirmed."
-          />
-        </motion.section>
+        {!hideNavigation && (
+          <motion.section
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={containerVariants}
+            className="grid grid-cols-1 md:grid-cols-3 gap-4"
+          >
+            <InfoCard
+              icon={<MapPin className="w-5 h-5" />}
+              title="Service Area"
+              text="Strictly available within Dhaka City & Dhaka Metropolitan limits only."
+            />
+            <InfoCard
+              icon={<Thermometer className="w-5 h-5" />}
+              title="Cold Chain"
+              text="Meat maintained at 0°C to 4°C throughout processing and delivery."
+            />
+            <InfoCard
+              icon={<Ban className="w-5 h-5" />}
+              title="Non-Refundable"
+              text="All bookings are strictly non-cancellable and non-refundable once confirmed."
+            />
+          </motion.section>
+        )}
 
         {/* Sections */}
         <motion.div
@@ -507,14 +515,6 @@ export default function TermsPage() {
           </p>
         </motion.div>
       </main>
-
-      {/* ─── Footer ─────────────────────────────────────── */}
-      <footer className="bg-white border-t border-gray-200 py-8">
-        <div className="max-w-5xl mx-auto px-6 text-center text-gray-500 text-sm">
-          <p>© 2026 InsureCow. All rights reserved.</p>
-          <p className="mt-1">Terms & Conditions for Qurbani Services</p>
-        </div>
-      </footer>
     </div>
   );
 }

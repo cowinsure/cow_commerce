@@ -14,6 +14,7 @@ const navLinks = [
   { name: "Marketplace", href: "/marketplace" },
   { name: "Order History", href: "/order-history" },
   { name: "About", href: "/about-us" },
+  { name: "Our Terms", href: "/terms" },
 ];
 
 export function Navbar({ className }: { className?: string }) {

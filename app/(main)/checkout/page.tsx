@@ -4,11 +4,11 @@ import { useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { ShippingForm } from "@/components/cart/ShippingForm";
-import { PaymentOptions } from "@/components/cart/PaymentOptions";
 import { TrustBadges } from "@/components/cart/TrustBadges";
+import { Modal } from "@/components/ui/Modal";
+import TermsPage from "@/components/ui/TermsPage";
 import {
   ShieldCheck,
-  Lock,
   ArrowLeft,
   CheckCircle2,
   Truck,
@@ -16,15 +16,13 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { LivestockItem } from "@/lib/models/productDTO";
 import { FaBangladeshiTakaSign } from "react-icons/fa6";
 import { ImageWithUrl } from "@/hooks/useImage";
-import { RxCross2 } from "react-icons/rx";
-import { usePaymentTypes } from "@/hooks/payments/usePaymentTypes";
-import { PaymentType } from "@/lib/models/paymentTypeDTO";
 import useApi from "@/hooks/useApi";
 import { useToast } from "@/components/ui/Toast";
+import { useDeliveryTypes } from "@/hooks/deliveryTypes/useDeliveryTypes";
+import { DeliveryType } from "@/lib/models/deliveryTypeDTO";
 
 // Animation variants
 const containerVariants = {
@@ -109,12 +107,11 @@ function CheckoutLoadingState() {
 
 function CheckoutContent() {
   const { post } = useApi();
+  const { allDeliveryTypes } = useDeliveryTypes();
   const { showToast } = useToast();
   const searchParams = useSearchParams();
-  const cowId = searchParams.get("cowId");
   const quantityParam = searchParams.get("quantity");
   const quantity = quantityParam ? parseInt(quantityParam, 10) : 1;
-  const { paymentTypes } = usePaymentTypes("ISSUE");
 
   //Base64 string data from params
   const preloadedCowData = searchParams.get("data");
@@ -132,24 +129,13 @@ function CheckoutContent() {
   const [formData, setFormData] = useState({
     address: "",
   });
-  const [paymentData, setPaymentData] = useState({
-    paymentType: null as PaymentType | null,
-    referenceNo: "",
-    imageFile: null as File | null,
-  });
+  const [selectedDeliveryMethod, setSelectedDeliveryMethod] =
+    useState<DeliveryType | null>(null);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
-  const cartItem = parsedPreloadedCow
-    ? {
-        id: parsedPreloadedCow.livestock_id,
-        name: parsedPreloadedCow.breed,
-        breed: parsedPreloadedCow.breed,
-        image: "/cowImg/fallback.jpg",
-        tag: parsedPreloadedCow.livestock_id ? "Premium" : "Standard",
-        price: parsedPreloadedCow.unit_price,
-      }
-    : null;
 
   const totalPrice = parsedPreloadedCow
     ? parsedPreloadedCow.unit_price * quantity
@@ -167,11 +153,11 @@ function CheckoutContent() {
       return;
     }
 
-    // if (!paymentData?.paymentType) {
-    //   showToast("Please select a payment method");
-    //   setIsProcessing(false);
-    //   return;
-    // }
+    if (!acceptTerms) {
+      showToast("Please accept the Terms & Conditions");
+      setIsProcessing(false);
+      return;
+    }
 
     if (!parsedPreloadedCow) return;
 
@@ -188,7 +174,15 @@ function CheckoutContent() {
             quantity: quantity,
           },
         ],
+        shipping_method_id: selectedDeliveryMethod?.id,
         order_transaction_details: [],
+        charges: [
+          {
+            charge_type: "Delivery",
+            amount:
+              selectedDeliveryMethod?.delivery_charges?.[0]?.charge_amount,
+          },
+        ],
       };
 
       console.log("FINAL PAYLOAD:", payload);
@@ -197,7 +191,6 @@ function CheckoutContent() {
       if (res.status === "success") {
         setShowSuccess(true);
       }
-      console.log(res);
     } catch (err) {
       console.error(err);
     } finally {
@@ -308,6 +301,8 @@ function CheckoutContent() {
     );
   }
 
+  console.log(selectedDeliveryMethod);
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <main className="grow pt-24 pb-24 overflow-hidden">
@@ -402,7 +397,105 @@ function CheckoutContent() {
                     </p>
                   </div>
                 </div>
-                <ShippingForm formData={formData} setFormData={setFormData} />
+                {/* Delivery Method Selection */}
+                <div className="space-y-4 mb-6">
+                  <label className="block text-sm font-semibold text-slate-700 mb-3">
+                    Select Delivery Option{" "}
+                    <span className="text-gray-400 font-normal">
+                      (Inside dhaka only)
+                    </span>
+                  </label>
+                  <div className="grid grid-cols-1 gap-3">
+                    {allDeliveryTypes
+                      ?.filter((method) => method.is_active)
+                      .map((method) => {
+                        const charge = method.delivery_charges?.[0];
+                        const isSelected =
+                          selectedDeliveryMethod?.id === method.id;
+                        return (
+                          <motion.button
+                            key={method.id}
+                            type="button"
+                            onClick={() => setSelectedDeliveryMethod(method)}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className={`w-full p-2 rounded-xl border-2 transition-all duration-300 ${
+                              isSelected
+                                ? "border-emerald-500 bg-emerald-50/50 shadow-lg shadow-emerald-500/10"
+                                : "border-slate-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/30"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <motion.div
+                                  animate={{
+                                    scale: isSelected ? 1 : 0,
+                                    opacity: isSelected ? 1 : 0,
+                                  }}
+                                  className="w-4 h-4 rounded-full border-2 border-emerald-500 bg-emerald-500"
+                                />
+                                <div className="text-left">
+                                  <p className="font-semibold text-slate-900">
+                                    {method.method_name}
+                                  </p>
+                                  {/* <p className="text-xs text-slate-500">
+                                      {method.description || "Delivery service"}
+                                    </p> */}
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <span className="text-lg font-bold text-emerald-600">
+                                  <span className="text-xs font-medium text-slate-400">
+                                    ৳{" "}
+                                  </span>
+                                  {charge?.charge_amount?.toLocaleString() || 0}
+                                </span>
+                                <p className="text-xs text-slate-400">
+                                  delivery fee
+                                </p>
+                              </div>
+                            </div>
+                          </motion.button>
+                        );
+                      })}
+                  </div>
+                  {selectedDeliveryMethod && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      className="flex items-center gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-100"
+                    >
+                      <Truck className="w-4 h-4 text-emerald-600" />
+                      <p className="text-sm text-emerald-700">
+                        Selected:{" "}
+                        <span className="font-semibold">
+                          {
+                            allDeliveryTypes.find(
+                              (m) => m.id === selectedDeliveryMethod?.id,
+                            )?.method_name
+                          }
+                        </span>
+                        <span className="text-slate-400 ml-2">
+                          (৳
+                          {allDeliveryTypes
+                            .find((m) => m.id === selectedDeliveryMethod?.id)
+                            ?.delivery_charges?.[0]?.charge_amount?.toLocaleString() ||
+                            0}
+                          )
+                        </span>
+                      </p>
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* Delivery Address */}
+                <ShippingForm
+                  formData={formData}
+                  setFormData={setFormData}
+                  disabled={!selectedDeliveryMethod}
+                />
               </div>
 
               {/* Payment Section */}
@@ -502,21 +595,6 @@ function CheckoutContent() {
                   </p>
                 </div>
               </div>
-
-              {/* Security Note */}
-              {/* <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className="flex items-center gap-4 p-4 bg-emerald-50 rounded-2xl border border-emerald-100"
-              >
-                <ShieldCheck className="w-6 h-6 text-emerald-600 shrink-0" />
-                <p className="text-sm text-emerald-800">
-                  <span className="font-semibold">Bank-grade security:</span>{" "}
-                  Your payment is protected with 256-bit SSL encryption. We
-                  never store your full card details.
-                </p>
-              </motion.div> */}
             </motion.div>
 
             {/* Right Column: Order Summary */}
@@ -598,8 +676,8 @@ function CheckoutContent() {
                       </div>
 
                       {/* Total */}
-                      <div className="pt-4 border-t border-slate-200 flex justify-between items-end">
-                        <div>
+                      <div className="pt-4 border-t border-slate-200 ">
+                        <div className="flex items-center justify-between">
                           <span className="block text-xs font-bold uppercase tracking-wider text-slate-500">
                             Total Booking
                           </span>
@@ -608,19 +686,62 @@ function CheckoutContent() {
                             {totalPrice.toLocaleString()}
                           </span>
                         </div>
-                        <div className="text-right">
+                        {/* <div className="text-right">
                           <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded">
                             <ShieldCheck className="w-3 h-3" />
                             SECURED
                           </span>
-                        </div>
+                        </div> */}
                       </div>
+                    </div>
+
+                    {/* Terms & Conditions Checkbox */}
+                    <div className="mb-6">
+                      <label className="flex items-start gap-3 rounded-2xl bg-white hover:border-emerald-300 hover:bg-emerald-50/30 transition-all cursor-pointer group">
+                        <div className="relative shrink-0 mt-0.5">
+                          <input
+                            type="checkbox"
+                            checked={acceptTerms}
+                            onChange={(e) => setAcceptTerms(e.target.checked)}
+                            className="sr-only"
+                          />
+                          <div
+                            className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all duration-200 ${
+                              acceptTerms
+                                ? "bg-emerald-600 border-emerald-600"
+                                : "bg-white border-slate-300 group-hover:border-emerald-400"
+                            }`}
+                          >
+                            <CheckCircle2
+                              className={`w-4 h-4 transition-all duration-200 ${acceptTerms ? "text-white opacity-100 scale-100" : "text-transparent opacity-0 scale-50"}`}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm text-slate-700 leading-relaxed">
+                            I agree to the{" "}
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setShowTermsModal(true);
+                              }}
+                              className="text-emerald-600 hover:text-emerald-700 font-semibold underline underline-offset-2 transition-colors"
+                            >
+                              Terms & Conditions
+                            </button>{" "}
+                            and acknowledge that my booking is subject to
+                            verification and confirmation.
+                          </p>
+                        </div>
+                      </label>
                     </div>
 
                     {/* Checkout Button */}
                     <motion.button
                       onClick={handleCheckout}
-                      disabled={isProcessing}
+                      disabled={isProcessing || !acceptTerms}
                       whileHover={{
                         scale: 1.02,
                         boxShadow: "0 20px 40px -10px rgba(16, 185, 129, 0.4)",
@@ -645,11 +766,6 @@ function CheckoutContent() {
                         <>Proccess Booking</>
                       )}
                     </motion.button>
-
-                    <p className="text-center text-xs text-slate-400 mt-4">
-                      By completing this purchase, you agree to our Terms of
-                      Service
-                    </p>
                   </div>
                 </div>
 
@@ -680,6 +796,15 @@ function CheckoutContent() {
           </div>
         </motion.div>
       </main>
+      {/* Terms & Conditions Modal */}
+      <Modal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+        title="Terms & Conditions"
+        size="full"
+      >
+        <TermsPage hideNavigation={true} />
+      </Modal>
     </div>
   );
 }

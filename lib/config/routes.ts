@@ -32,6 +32,7 @@ export const routeConfig: RouteConfig = {
     "/about-us",
     "/marketplace",
     "/cows/*", // Individual cow details
+    "/terms", // Individual cow details
   ],
 
   // Routes requiring authentication

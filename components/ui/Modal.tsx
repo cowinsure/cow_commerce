@@ -137,7 +137,6 @@ export function Modal({
           transition={{ duration: 0.2 }}
           className={cn(
             "fixed inset-0 z-50 flex items-center justify-center p-4",
-            showBackdrop && "bg-black/60 backdrop-blur-sm",
           )}
           onClick={handleBackdropClick}
         >
@@ -148,7 +147,7 @@ export function Modal({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className={cn(
-                "absolute inset-0 bg-black/60 backdrop-blur-sm",
+                "absolute inset-0 bg-black/30 backdrop-blur-xs",
                 backdropClassName,
               )}
             />

@@ -7,6 +7,7 @@ import { BestSellingCategories } from "@/components/home/BestSellingCategories";
 import { ProductGrid } from "@/components/home/ProductGrid";
 import { HomeHero } from "@/components/home/HomeHero";
 import HowItWorks from "@/components/home/HowItWorks";
+import FAQAccordion from "@/components/home/FAQAccordion";
 import useProduct from "@/hooks/product/useProduct";
 
 export default function HomePage() {
@@ -27,6 +28,7 @@ export default function HomePage() {
         <HowItWorks />
         {/* <BestSellingCategories /> */}
         <CowBodyDiagram />
+        <FAQAccordion />
         {/* <QualityHealthSection /> */}
       </main>
     </div>
