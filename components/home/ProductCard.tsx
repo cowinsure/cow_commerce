@@ -16,6 +16,7 @@ import Link from "next/link";
 
 import { LivestockItem } from "@/lib/models/productDTO";
 import { ImageWithUrl } from "@/hooks/useImage";
+import { useLocalization } from "@/context/LocalizationContext";
 
 interface ProductCardProps {
   cow: LivestockItem;
@@ -31,6 +32,7 @@ export function ProductCard({
   index = 0,
 }: ProductCardProps) {
   const isListView = viewMode === "list";
+  const { t } = useLocalization();
 
   // Calculate booking progress
   const totalUnits = cow.unit_qty; // Assuming 12 units per cow
@@ -137,7 +139,7 @@ export function ProductCard({
             <div className="flex items-center justify-between text-xs mb-1.5">
               <span className="text-gray-700/60 font-medium flex items-center gap-1">
                 <Users className="w-3.5 h-3.5" />
-                {cow.available_qty ?? 0} of {totalUnits} units available
+                {cow.available_qty ?? 0} of {totalUnits} {t("units_available")}
               </span>
               {progressPercent >= 75 && (
                 <span className="text-amber-600 font-bold text-[10px] uppercase tracking-wider">
@@ -176,7 +178,7 @@ export function ProductCard({
             </div>
             <div>
               <p className="text-[10px] text-gray-500/60 font-bold uppercase tracking-wider">
-                Weight
+                {t("weight")}
               </p>
               <p className="text-sm font-semibold">{cow.weight_kg} kg</p>
             </div>
@@ -188,7 +190,7 @@ export function ProductCard({
             </div>
             <div>
               <p className="text-[10px] text-gray-500/60 font-bold uppercase tracking-wider">
-                Age
+                {t("age")}
               </p>
               <p className="text-sm font-semibold">...</p>
             </div>
@@ -200,7 +202,7 @@ export function ProductCard({
             </div>
             <div>
               <p className="text-[10px] text-gray-500/60 font-bold uppercase tracking-wider">
-                Available
+                {t("available")}
               </p>
               <p className="text-sm font-semibold">
                 {cow.available_qty ?? 0} Units
@@ -214,7 +216,7 @@ export function ProductCard({
             </div>
             <div>
               <p className="text-[10px] text-gray-500/60 font-bold uppercase tracking-wider">
-                Certified by
+                {t("certified_by")}
               </p>
               <p className="text-sm font-semibold truncate">Vet</p>
             </div>

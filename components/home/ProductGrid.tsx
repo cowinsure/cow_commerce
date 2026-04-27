@@ -5,6 +5,7 @@ import { cn } from "@/lib/theme/theme.config";
 import { ProductCard } from "./ProductCard";
 import { usePathname } from "next/navigation";
 import { LivestockItem } from "@/lib/models/productDTO";
+import { useLocalization } from "@/context/LocalizationContext";
 
 interface ProductGridProps {
   cows: LivestockItem[];
@@ -16,6 +17,7 @@ export function ProductGrid({ cows, className, loading }: ProductGridProps) {
   const [visibleCount, setVisibleCount] = useState(6);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const pathname = usePathname();
+  const { t } = useLocalization();
 
   const isHome = pathname === "/";
 
@@ -40,7 +42,7 @@ export function ProductGrid({ cows, className, loading }: ProductGridProps) {
       <div className="flex justify-between items-end mb-8">
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight">
-            Available Assets
+            {t("available_assets")}
           </h2>
           <p className="text-on-surface-variant font-medium">
             Showing {visibleCows.length} of {cows.length} elite specimens
@@ -86,15 +88,31 @@ export function ProductGrid({ cows, className, loading }: ProductGridProps) {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-          <p className="mt-4 text-sm font-medium text-outline">Loading premium assets...</p>
+          <p className="mt-4 text-sm font-medium text-outline">
+            Loading premium assets...
+          </p>
         </div>
       ) : visibleCows.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20">
-          <svg className="w-16 h-16 text-outline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-16 h-16 text-outline"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
-          <p className="mt-4 text-lg font-bold text-on-surface">No Assets Found</p>
-          <p className="mt-2 text-sm text-outline">Try adjusting your filters to find more results</p>
+          <p className="mt-4 text-lg font-bold text-on-surface">
+            No Assets Found
+          </p>
+          <p className="mt-2 text-sm text-outline">
+            Try adjusting your filters to find more results
+          </p>
         </div>
       ) : (
         <div

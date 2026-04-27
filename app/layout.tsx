@@ -4,6 +4,7 @@ import { ToastProvider } from "@/components/ui/Toast";
 import "./globals.css";
 import { Navbar } from "@/components/home/Navbar";
 import Footer from "@/components/home/Footer";
+import { LocalizationProvider } from "@/context/LocalizationContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,9 +42,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar />
-        <ToastProvider>{children}</ToastProvider>
-        <Footer />
+        <LocalizationProvider>
+          <Navbar />
+          <ToastProvider>{children}</ToastProvider>
+          <Footer />
+        </LocalizationProvider>
       </body>
     </html>
   );

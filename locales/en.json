@@ -1,0 +1,19 @@
+{
+  "navbar.home": "Home",
+  "navbar.marketplace": "Marketplace",
+  "navbar.order_history": "Order History",
+  "navbar.about": "About",
+  "navbar.our_terms": "Our Terms",
+  "navbar.profile": "Profile",
+  "navbar.login": "Login",
+  "navbar.logout": "Logout",
+  "available_assets": "Available Assets",
+  "weight": "Weight",
+  "age": "Age",
+  "available": "Available",
+  "certified_by": "Certified by",
+  "per_unit": "per unit",
+  "book_units": "Book Units",
+  "units_available": "units available",
+  "almost_full": "Almost Full"
+}

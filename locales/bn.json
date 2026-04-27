@@ -1,0 +1,19 @@
+{
+  "navbar.home": "হোম",
+  "navbar.marketplace": "মার্কেটপ্লেস",
+  "navbar.order_history": "অর্ডার ইতিহাস",
+  "navbar.about": "আমাদের সম্পর্কে",
+  "navbar.our_terms": "আমাদের শর্তাবলী",
+  "navbar.profile": "প্রোফাইল",
+  "navbar.login": "লগইন",
+  "navbar.logout": "লগআউট",
+  "available_assets": "উপলব্ধ সম্পদ",
+  "weight": "ওজন",
+  "age": "বয়স",
+  "available": "উপলব্ধ",
+  "certified_by": "সার্টিফায়েড",
+  "per_unit": "প্রতি ইউনিট",
+  "book_units": "ইউনিট বুক করুন",
+  "units_available": "টির মধ্যে উপলব্ধ",
+  "almost_full": "প্রায় শেষ"
+}

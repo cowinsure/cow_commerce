@@ -8,13 +8,15 @@ import { useAuth } from "@/hooks/auth/useAuth";
 import { Menu, X, User, LogOut, Sprout } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { shouldShowNavLink } from "@/lib/config/protected-routes";
+import ToggleLan from "@/components/ui/ToggleLan";
+import { useLocalization } from "@/context/LocalizationContext";
 
 const navLinks = [
-  { name: "Home", href: "/" },
-  { name: "Marketplace", href: "/marketplace" },
-  { name: "Order History", href: "/order-history" },
-  { name: "About", href: "/about-us" },
-  { name: "Our Terms", href: "/terms" },
+  { key: "navbar.home", href: "/" },
+  { key: "navbar.marketplace", href: "/marketplace" },
+  { key: "navbar.order_history", href: "/order-history" },
+  { key: "navbar.about", href: "/about-us" },
+  { key: "navbar.our_terms", href: "/terms" },
 ];
 
 export function Navbar({ className }: { className?: string }) {
@@ -22,6 +24,7 @@ export function Navbar({ className }: { className?: string }) {
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
+  const {t} = useLocalization()
 
   const { isAuthenticated, loading, logout } = useAuth();
 
@@ -115,7 +118,7 @@ export function Navbar({ className }: { className?: string }) {
         <div className="flex justify-between items-center w-full px-4 sm:px-8 py-4 max-w-screen-2xl mx-auto">
           <div className="flex items-center gap-10">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group">
+<Link href="/" className="flex items-center gap-2 group">
               <motion.div
                 whileHover={{ rotate: [0, -10, 10, 0] }}
                 transition={{ duration: 0.5 }}
@@ -133,7 +136,7 @@ export function Navbar({ className }: { className?: string }) {
                 .filter((link) => shouldShowNavLink(link.href, isAuthenticated))
                 .map((link) => (
                   <Link
-                    key={link.name}
+                    key={link.key}
                     href={link.href}
                     className={cn(
                       "pb-1 transition-all duration-200 hover:scale-105",
@@ -142,7 +145,7 @@ export function Navbar({ className }: { className?: string }) {
                         : "text-zinc-600 hover:text-emerald-800",
                     )}
                   >
-                    {link.name}
+                    {t(`${link.key}`)}
                   </Link>
                 ))}
             </div>
@@ -177,7 +180,7 @@ export function Navbar({ className }: { className?: string }) {
                       transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                       className="absolute right-0 mt-2 w-48 py-2 bg-white  rounded-2xl shadow-xl shadow-emerald-900/10 border border-emerald-100 /30 overflow-hidden"
                     >
-                      <Link
+<Link
                         href="/profile"
                         className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700  hover:bg-emerald-50 transition-colors duration-200"
                       >
@@ -186,7 +189,7 @@ export function Navbar({ className }: { className?: string }) {
                       </Link>
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600  hover:bg-red-50 transition-colors duration-200"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600  hover:bg-red-50 transition-all duration-200"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Logout</span>
@@ -197,14 +200,19 @@ export function Navbar({ className }: { className?: string }) {
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                <Link
-                  href="/auth?login=true"
-                  className="px-5 py-2 bg-emerald-700 text-white rounded-full font-semibold text-sm hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-600/20 active:scale-95 transition-all duration-200"
-                >
-                  Login
-                </Link>
+<Link
+                        href="/auth?login=true"
+                        className="px-5 py-2 bg-emerald-700 text-white rounded-full font-semibold text-sm hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-600/20 active:scale-95 transition-all duration-200"
+                      >
+                        <span>Login</span>
+                      </Link>
               </div>
             )}
+
+            {/* Language Toggle */}
+            <div className="flex items-center gap-2">
+              <ToggleLan />
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -276,7 +284,7 @@ export function Navbar({ className }: { className?: string }) {
                     )
                     .map((link, index) => (
                       <motion.div
-                        key={link.name}
+                        key={link.key}
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1 }}
@@ -291,7 +299,7 @@ export function Navbar({ className }: { className?: string }) {
                               : "text-zinc-700 hover:bg-zinc-50 ",
                           )}
                         >
-                          {link.name}
+                          {link.key}
                         </Link>
                       </motion.div>
                     ))}
@@ -306,16 +314,16 @@ export function Navbar({ className }: { className?: string }) {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
                       >
-                        <Link
-                          href="/profile"
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="flex items-center gap-3 py-3 px-4 rounded-xl text-zinc-700  hover:bg-zinc-50 transition-all duration-200"
-                        >
-                          <User className="w-5 h-5" />
-                          <span className="font-medium">Profile</span>
-                        </Link>
+<Link
+                        href="/profile"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 py-3 px-4 rounded-xl text-zinc-700  hover:bg-zinc-50 transition-all duration-200"
+                      >
+                        <User className="w-5 h-5" />
+                        <span className="font-medium">Profile</span>
+                      </Link>
                       </motion.div>
-                      <motion.button
+<motion.button
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
@@ -333,13 +341,13 @@ export function Navbar({ className }: { className?: string }) {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
                       >
-                        <Link
-                          href="/auth?login=true"
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="block py-3 px-4 rounded-xl text-center font-semibold bg-emerald-600  text-white hover:bg-emerald-700 transition-all duration-200"
-                        >
-                          Login
-                        </Link>
+<Link
+                      href="/auth?login=true"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block py-3 px-4 rounded-xl text-center font-semibold bg-emerald-600  text-white hover:bg-emerald-700 transition-all duration-200"
+                    >
+                      <span>Login</span>
+                    </Link>
                       </motion.div>
                     </>
                   )}
