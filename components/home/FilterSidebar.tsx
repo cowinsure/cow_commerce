@@ -60,26 +60,32 @@ export function FilterSidebar({
 }: FilterSidebarProps) {
   // Use breed hook to fetch breeds from API
   const { breeds: breedData, loading: breedsLoading, fetchBreeds } = useBreed();
-  
+
   // Track selected breed ID in state (single selection - radio-like behavior)
   const [selectedBreedId, setSelectedBreedId] = useState<number | null>(null);
-  
+
   // Fetch breeds on mount
   useEffect(() => {
     fetchBreeds();
   }, [fetchBreeds]);
-  
+
   // Compute breeds with checked state from API data and selected ID
   const breeds = breedData.map((b) => ({
     id: b.id,
     name: b.name,
     checked: selectedBreedId === b.id,
   }));
-  
+
   const [selectedWeight, setSelectedWeight] = useState("600-800");
   // Actual filter values for API
-  const [priceRange, setPriceRange] = useState<[number | "", number | ""]>(["", ""]);
-  const [weightRange, setWeightRange] = useState<[number | "", number | ""]>(["", ""]);
+  const [priceRange, setPriceRange] = useState<[number | "", number | ""]>([
+    "",
+    "",
+  ]);
+  const [weightRange, setWeightRange] = useState<[number | "", number | ""]>([
+    "",
+    "",
+  ]);
   const [expandedSections, setExpandedSections] = useState({
     breed: true,
     price: true,
@@ -127,7 +133,13 @@ export function FilterSidebar({
         clearTimeout(debounceTimer.current);
       }
     };
-  }, [selectedBreedId, selectedWeight, weightRange, priceRange, onFilterChange]);
+  }, [
+    selectedBreedId,
+    selectedWeight,
+    weightRange,
+    priceRange,
+    onFilterChange,
+  ]);
 
   // Calculate active filters count
   const activeFiltersCount =
@@ -281,9 +293,13 @@ export function FilterSidebar({
                 >
                   <div className="space-y-2">
                     {breedsLoading ? (
-                      <div className="text-sm text-slate-400 py-2">Loading breeds...</div>
+                      <div className="text-sm text-slate-400 py-2">
+                        Loading breeds...
+                      </div>
                     ) : breeds.length === 0 ? (
-                      <div className="text-sm text-slate-400 py-2">No breeds available</div>
+                      <div className="text-sm text-slate-400 py-2">
+                        No breeds available
+                      </div>
                     ) : (
                       breeds.map((breed) => (
                         <motion.label
@@ -316,7 +332,9 @@ export function FilterSidebar({
                           <span
                             className={cn(
                               "text-sm font-medium transition-colors",
-                              breed.checked ? "text-slate-900" : "text-slate-600",
+                              breed.checked
+                                ? "text-slate-900"
+                                : "text-slate-600",
                             )}
                           >
                             {breed.name}

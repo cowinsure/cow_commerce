@@ -50,7 +50,7 @@ export function ProductGrid({ cows, className, loading }: ProductGridProps) {
         </div>
 
         {/* View Toggle */}
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <button
             onClick={() => setViewMode("grid")}
             className={cn(
@@ -81,7 +81,7 @@ export function ProductGrid({ cows, className, loading }: ProductGridProps) {
               />
             </svg>
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Product Grid */}
@@ -89,7 +89,7 @@ export function ProductGrid({ cows, className, loading }: ProductGridProps) {
         <div className="flex flex-col items-center justify-center py-20">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           <p className="mt-4 text-sm font-medium text-outline">
-            Loading premium assets...
+            Loading assets...
           </p>
         </div>
       ) : visibleCows.length === 0 ? (

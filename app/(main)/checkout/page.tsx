@@ -23,6 +23,7 @@ import useApi from "@/hooks/useApi";
 import { useToast } from "@/components/ui/Toast";
 import { useDeliveryTypes } from "@/hooks/deliveryTypes/useDeliveryTypes";
 import { DeliveryType } from "@/lib/models/deliveryTypeDTO";
+import { useLocalization } from "@/context/LocalizationContext";
 
 // Animation variants
 const containerVariants = {
@@ -109,6 +110,7 @@ function CheckoutContent() {
   const { post } = useApi();
   const { allDeliveryTypes } = useDeliveryTypes();
   const { showToast } = useToast();
+  const { t } = useLocalization();
   const searchParams = useSearchParams();
   const quantityParam = searchParams.get("quantity");
   const quantity = quantityParam ? parseInt(quantityParam, 10) : 1;
@@ -148,13 +150,13 @@ function CheckoutContent() {
   const handleCheckout = async () => {
     setIsProcessing(true);
     if (!formData.address) {
-      showToast("Please enter delivery address");
+      showToast(t("checkout_toast_enter_address"));
       setIsProcessing(false);
       return;
     }
 
     if (!acceptTerms) {
-      showToast("Please accept the Terms & Conditions");
+      showToast(t("checkout_toast_accept_terms"));
       setIsProcessing(false);
       return;
     }
@@ -185,7 +187,7 @@ function CheckoutContent() {
         ],
       };
 
-      console.log("FINAL PAYLOAD:", payload);
+      // console.log("FINAL PAYLOAD:", payload);
 
       const res = await post("/invms/inventory-ecom-order-service/", payload);
       if (res.status === "success") {
@@ -212,10 +214,10 @@ function CheckoutContent() {
               <AlertCircle className="w-12 h-12 text-emerald-600" />
             </div>
             <h1 className="text-3xl font-bold text-slate-900 mb-4">
-              No Item Selected
+              {t("checkout_empty_title")}
             </h1>
             <p className="text-slate-600 mb-8 max-w-md mx-auto">
-              Please select a cow from the marketplace to proceed with checkout.
+              {t("checkout_empty_description")}
             </p>
             <Link href="/">
               <motion.button
@@ -224,7 +226,7 @@ function CheckoutContent() {
                 className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold shadow-lg shadow-emerald-500/25 hover:bg-emerald-500 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Back to Marketplace
+                {t("checkout_back_to_marketplace")}
               </motion.button>
             </Link>
           </motion.div>
@@ -252,14 +254,14 @@ function CheckoutContent() {
               <CheckCircle2 className="w-12 h-12 text-emerald-600" />
             </motion.div>
             <h1 className="text-3xl font-black text-slate-900 mb-4">
-              Booking Confirmed!
+              {t("checkout_success_title")}
             </h1>
             <p className="text-slate-600 mb-8">
-              Your booking for{" "}
+              {t("checkout_success_description_before")}{" "}
               <span className="font-semibold text-emerald-600">
                 {parsedPreloadedCow.breed}
               </span>{" "}
-              has been secured. You will receive a confirmation email shortly.
+              {t("checkout_success_description_after")}
             </p>
             {/* <div className="bg-white rounded-2xl p-6 shadow-lg mb-8 text-left">
               <div className="flex items-center gap-4 mb-4">
@@ -292,7 +294,7 @@ function CheckoutContent() {
                 whileTap={{ scale: 0.98 }}
                 className="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/25 hover:bg-emerald-500 transition-colors"
               >
-                Return to Marketplace
+                {t("checkout_return_to_marketplace")}
               </motion.button>
             </Link>
           </motion.div>
@@ -301,10 +303,10 @@ function CheckoutContent() {
     );
   }
 
-  console.log(selectedDeliveryMethod);
+  // console.log(selectedDeliveryMethod);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="min-h-screen flex flex-col bg-slate-50 mt-10">
       <main className="grow pt-24 pb-24 overflow-hidden">
         {/* Background Elements */}
         <div className="fixed inset-0 pointer-events-none">
@@ -341,7 +343,10 @@ function CheckoutContent() {
               Secure Checkout
             </div> */}
             <h1 className="text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-              Complete Your <span className="text-emerald-600">Booking</span>
+              {t("checkout_header_complete")}{" "}
+              <span className="text-emerald-600">
+                {t("checkout_header_booking")}
+              </span>
             </h1>
             {/* <p className="text-lg text-slate-600 max-w-2xl">
               Secure your share of premium livestock. All transactions are
@@ -390,19 +395,19 @@ function CheckoutContent() {
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-slate-900">
-                      Shipping Details
+                      {t("checkout_shipping_title")}
                     </h2>
                     <p className="text-sm text-slate-500">
-                      Where should we deliver?
+                      {t("checkout_shipping_subtitle")}
                     </p>
                   </div>
                 </div>
                 {/* Delivery Method Selection */}
                 <div className="space-y-4 mb-6">
                   <label className="block text-sm font-semibold text-slate-700 mb-3">
-                    Select Delivery Option{" "}
+                    {t("checkout_select_delivery_option")}{" "}
                     <span className="text-gray-400 font-normal">
-                      (Inside dhaka only)
+                      ({t("checkout_inside_dhaka_only")})
                     </span>
                   </label>
                   <div className="grid grid-cols-1 gap-3">
@@ -446,14 +451,14 @@ function CheckoutContent() {
                                 </div>
                               </div>
                               <div className="text-right">
-                                <span className="text-lg font-bold text-emerald-600">
-                                  <span className="text-xs font-medium text-slate-400">
-                                    ৳{" "}
+                                <span className="text-lg font-bold text-emerald-600 flex items-center gap-1">
+                                  <span className="text-xs font-medium text-green-600">
+                                    <FaBangladeshiTakaSign size={17} />{" "}
                                   </span>
                                   {charge?.charge_amount?.toLocaleString() || 0}
                                 </span>
                                 <p className="text-xs text-slate-400">
-                                  delivery fee
+                                  {t("checkout_delivery_fee")}
                                 </p>
                               </div>
                             </div>
@@ -468,8 +473,8 @@ function CheckoutContent() {
                       className="flex items-center gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-100"
                     >
                       <Truck className="w-4 h-4 text-emerald-600" />
-                      <p className="text-sm text-emerald-700">
-                        Selected:{" "}
+                      <p className="text-sm text-emerald-700 flex items-center">
+                        {t("checkout_selected")}: {" "}
                         <span className="font-semibold">
                           {
                             allDeliveryTypes.find(
@@ -477,8 +482,8 @@ function CheckoutContent() {
                             )?.method_name
                           }
                         </span>
-                        <span className="text-slate-400 ml-2">
-                          (৳
+                        <span className="text-slate-400 ml-2 flex items-center">
+                          ( <FaBangladeshiTakaSign size={14} />
                           {allDeliveryTypes
                             .find((m) => m.id === selectedDeliveryMethod?.id)
                             ?.delivery_charges?.[0]?.charge_amount?.toLocaleString() ||
@@ -529,10 +534,10 @@ function CheckoutContent() {
 
                   <div>
                     <h2 className="text-xl font-bold text-slate-900">
-                      Booking & Payment Process
+                      {t("checkout_process_title")}
                     </h2>
                     <p className="text-sm text-slate-500">
-                      No payment required at checkout
+                      {t("checkout_process_subtitle")}
                     </p>
                   </div>
                 </div>
@@ -545,11 +550,10 @@ function CheckoutContent() {
                     </div>
                     <div>
                       <h4 className="font-semibold text-slate-900">
-                        Place Your Booking
+                        {t("checkout_step1_title")}
                       </h4>
                       <p className="text-sm text-slate-500">
-                        We will receive your order and confirm livestock
-                        availability.
+                        {t("checkout_step1_description")}
                       </p>
                     </div>
                   </div>
@@ -561,11 +565,10 @@ function CheckoutContent() {
                     </div>
                     <div>
                       <h4 className="font-semibold text-slate-900">
-                        Confirmation Call
+                        {t("checkout_step2_title")}
                       </h4>
                       <p className="text-sm text-slate-500">
-                        Our team will contact you to verify details and confirm
-                        booking.
+                        {t("checkout_step2_description")}
                       </p>
                     </div>
                   </div>
@@ -577,11 +580,10 @@ function CheckoutContent() {
                     </div>
                     <div>
                       <h4 className="font-semibold text-slate-900">
-                        Pay Booking Amount
+                        {t("checkout_step3_title")}
                       </h4>
                       <p className="text-sm text-slate-500">
-                        After confirmation, you will complete payment using your
-                        preferred method.
+                        {t("checkout_step3_description")}
                       </p>
                     </div>
                   </div>
@@ -590,8 +592,7 @@ function CheckoutContent() {
                 {/* Footer note */}
                 <div className="mt-6 p-4 bg-amber-50 border border-amber-100 rounded-2xl">
                   <p className="text-sm text-amber-800">
-                    Your booking is only confirmed after successful verification
-                    and payment confirmation.
+                    {t("checkout_process_note")}
                   </p>
                 </div>
               </div>
@@ -608,10 +609,10 @@ function CheckoutContent() {
                   <div className="relative z-10">
                     <div className="flex items-center justify-between mb-6">
                       <h3 className="text-xl font-bold text-slate-900">
-                        Order Summary
+                        {t("checkout_summary_title")}
                       </h3>
                       <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">
-                        1 Item
+                        {t("checkout_summary_item_count", { count: 1 })}
                       </span>
                     </div>
 
@@ -624,7 +625,7 @@ function CheckoutContent() {
                               ? parsedPreloadedCow?.image_with_owner
                               : "/cowImg/fallback.jpg"
                           }
-                          alt={parsedPreloadedCow?.breed || "Cow"}
+                          alt={parsedPreloadedCow?.breed || t("checkout_cow")}
                           fill
                           sizes="80px"
                           className="object-cover"
@@ -632,18 +633,21 @@ function CheckoutContent() {
                       </div>
                       <div className="flex-1">
                         <h4 className="font-bold text-slate-900 mb-1">
-                          {parsedPreloadedCow?.breed || "Premium Cow"}
+                          {parsedPreloadedCow?.breed ||
+                            t("checkout_premium_cow")}
                           {/* {parsedPreloadedCow?.livestock_id} */}
                         </h4>
                         <p className="text-sm text-slate-500 mb-2">
-                          {parsedPreloadedCow?.breed} Breed
+                          {t("checkout_breed_label", {
+                            breed: parsedPreloadedCow?.breed || "",
+                          })}
                         </p>
                         <div className="flex items-center gap-2">
                           <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-xs font-semibold">
-                            Premium
+                            {t("checkout_premium")}
                           </span>
                           <span className="text-xs text-slate-400">
-                            × {quantity} unit{quantity > 1 ? "s" : ""}
+                            {`× ${quantity} ${quantity > 1 ? t("checkout_units") : t("checkout_unit")}`}
                           </span>
                         </div>
                       </div>
@@ -652,7 +656,9 @@ function CheckoutContent() {
                     {/* Financial Details */}
                     <div className="space-y-4 mb-8">
                       <div className="flex justify-between items-center text-">
-                        <span className="text-slate-500">Quantity</span>
+                        <span className="text-slate-500">
+                          {t("checkout_quantity")}
+                        </span>
                         <span className="font-medium text-slate-900 flex items-end">
                           <span className="font-bold text-gray-500">
                             <X className="w-3" />
@@ -661,14 +667,18 @@ function CheckoutContent() {
                         </span>
                       </div>
                       <div className="flex justify-between items-center text-">
-                        <span className="text-slate-500">Unit Price</span>
+                        <span className="text-slate-500">
+                          {t("checkout_unit_price")}
+                        </span>
                         <span className="font-medium text-slate-900 flex items-center gap-1">
                           <FaBangladeshiTakaSign className="w-3 h-3 text-gray-500" />
                           {totalPrice.toLocaleString()}
                         </span>
                       </div>
                       <div className="flex justify-between items-center text-">
-                        <span className="text-slate-500">Booking Amount</span>
+                        <span className="text-slate-500">
+                          {t("checkout_booking_amount")}
+                        </span>
                         <span className="font-medium text-slate-900 flex items-center gap-1">
                           <FaBangladeshiTakaSign className="w-3 h-3 text-gray-500" />
                           {bookingAmount.toLocaleString()}
@@ -679,7 +689,7 @@ function CheckoutContent() {
                       <div className="pt-4 border-t border-slate-200 ">
                         <div className="flex items-center justify-between">
                           <span className="block text-xs font-bold uppercase tracking-wider text-slate-500">
-                            Total Booking
+                            {t("checkout_total_booking")}
                           </span>
                           <span className=" text-3xl font-extrabold text-emerald-600 flex items-center gap-1">
                             <FaBangladeshiTakaSign className="w-5 h-5" />
@@ -719,7 +729,7 @@ function CheckoutContent() {
                         </div>
                         <div className="flex-1">
                           <p className="text-sm text-slate-700 leading-relaxed">
-                            I agree to the{" "}
+                            {t("checkout_terms_prefix")}{" "}
                             <button
                               type="button"
                               onClick={(e) => {
@@ -729,10 +739,9 @@ function CheckoutContent() {
                               }}
                               className="text-emerald-600 hover:text-emerald-700 font-semibold underline underline-offset-2 transition-colors"
                             >
-                              Terms & Conditions
+                              {t("checkout_terms_link")}
                             </button>{" "}
-                            and acknowledge that my booking is subject to
-                            verification and confirmation.
+                            {t("checkout_terms_suffix")}
                           </p>
                         </div>
                       </label>
@@ -760,10 +769,10 @@ function CheckoutContent() {
                             }}
                             className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
                           />
-                          Processing...
+                          {t("checkout_processing")}
                         </>
                       ) : (
-                        <>Proccess Booking</>
+                        <>{t("checkout_process_booking")}</>
                       )}
                     </motion.button>
                   </div>
@@ -800,7 +809,7 @@ function CheckoutContent() {
       <Modal
         isOpen={showTermsModal}
         onClose={() => setShowTermsModal(false)}
-        title="Terms & Conditions"
+        title={t("checkout_terms_link")}
         size="full"
       >
         <TermsPage hideNavigation={true} />

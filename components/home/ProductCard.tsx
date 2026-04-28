@@ -139,7 +139,10 @@ export function ProductCard({
             <div className="flex items-center justify-between text-xs mb-1.5">
               <span className="text-gray-700/60 font-medium flex items-center gap-1">
                 <Users className="w-3.5 h-3.5" />
-                {cow.available_qty ?? 0} of {totalUnits} {t("units_available")}
+                {t("units_available", {
+                  available: cow.available_qty ?? 0,
+                  total: totalUnits,
+                })}
               </span>
               {progressPercent >= 75 && (
                 <span className="text-amber-600 font-bold text-[10px] uppercase tracking-wider">

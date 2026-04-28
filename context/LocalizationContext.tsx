@@ -1,6 +1,6 @@
 // core/context/LocalizationContext.tsx
 "use client";
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 
 // Import your translation files
 import en from "../locales/en.json";
@@ -13,7 +13,10 @@ type TranslationKey = string;
 interface LocalizationContextProps {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (key: TranslationKey) => string;
+  t: (
+    key: TranslationKey,
+    variables?: Record<string, string | number>,
+  ) => string;
 }
 
 const LocalizationContext = createContext<LocalizationContextProps | undefined>(
@@ -21,12 +24,41 @@ const LocalizationContext = createContext<LocalizationContextProps | undefined>(
 );
 
 export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
-  const [locale, setLocaleState] = useState<Locale>("en");
+  // Initialize from localStorage or default to 'en' using lazy initialization
+  const [locale, setLocaleState] = useState<Locale>(() => {
+    if (typeof window !== "undefined") {
+      const savedLocale = localStorage.getItem("locale") as Locale | null;
+      if (savedLocale && (savedLocale === "en" || savedLocale === "bn")) {
+        return savedLocale;
+      }
+    }
+    return "en";
+  });
 
-   const t = (key: TranslationKey): string => {
-     const dict = locale === "en" ? en : bn;
-     return dict[key as keyof typeof dict] || key;
-   };
+  // Save locale to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("locale", locale);
+  }, [locale]);
+
+  // Memoize the translation function to maintain stable reference
+  const t = useCallback(
+    (
+      key: TranslationKey,
+      variables?: Record<string, string | number>,
+    ): string => {
+      const dict = locale === "en" ? en : bn;
+      let text = dict[key as keyof typeof dict] || key;
+
+      if (variables) {
+        Object.entries(variables).forEach(([variable, value]) => {
+          text = text.replace(new RegExp(`{${variable}}`, "g"), String(value));
+        });
+      }
+
+      return text;
+    },
+    [locale],
+  );
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);

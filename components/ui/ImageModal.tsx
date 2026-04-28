@@ -78,7 +78,7 @@ export function ImageModal({
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
-  console.log(images[currentIndex]);
+  // console.log(images[currentIndex]);
 
   return (
     <AnimatePresence>

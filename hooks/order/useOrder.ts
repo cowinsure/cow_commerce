@@ -104,7 +104,7 @@ export function useOrder() {
       setState((prev) => ({ ...prev, loading: true, error: null }));
       try {
         const response = await processOrderApi(data);
-        console.log(response);
+        // console.log(response);
         setState((prev) => ({ ...prev, loading: false }));
         return response;
       } catch (error: unknown) {

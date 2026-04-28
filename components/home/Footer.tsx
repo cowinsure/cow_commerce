@@ -1,7 +1,9 @@
+"use client";
 import React from "react";
 // import Image from 'next/image';
 // import google from '../../public/googleplay.svg';
 // import apple from '../../public/appstore.png';
+import { useLocalization } from "@/context/LocalizationContext";
 import { CiLinkedin } from "react-icons/ci";
 import { FaFacebookSquare } from "react-icons/fa";
 // import { FaXTwitter } from "react-icons/fa6";
@@ -9,21 +11,18 @@ import { FaFacebookSquare } from "react-icons/fa";
 // import { FaSquareInstagram } from "react-icons/fa6";
 
 const Footer = () => {
+  const { t } = useLocalization();
+
   return (
     <footer className="bg-emerald-900 text-gray-800 py-10 px-6 md:px-16">
       <div className="grid grid-cols-2 lg:flex-row max-w-screen-2xl mx-auto">
         {/* Left Section - Company Info */}
         <div>
           <h2 className="text-2xl font-bold text-green-400 flex items-center">
-            InsureCow
+            {t("footer_brand")}
           </h2>
-          <p className="mt-3 text-gray-200">
-            Bangladesh Office: House 117, Road 5, Block B, Niketon, Dhaka,
-            Bangladesh
-          </p>
-          <p className="mt-3 text-gray-200">
-            Singapore Office: 192 Waterloo St. #05-03 Skyline, Singapore 187966
-          </p>
+          <p className="mt-3 text-gray-200">{t("footer_bangladesh_office")}</p>
+          <p className="mt-3 text-gray-200">{t("footer_singapore_office")}</p>
 
           {/* Social Icons */}
           <div className="flex gap-3 mt-4">
@@ -57,7 +56,7 @@ const Footer = () => {
               <p className="text-gray-200">+8801999INSURE</p>
             </div>
             <div>
-              <p className="text-gray-200">Helpline </p>
+              <p className="text-gray-200">{t("footer_helpline")}</p>
               <p className="text-gray-200">+8801999467873</p>
             </div>
           </div>
@@ -66,17 +65,17 @@ const Footer = () => {
         {/* Middle Section - About */}
         <div className="flex justify-start flex-col items-center">
           <h3 className="text-xl font-semibold text-green-400">
-            About Company
+            {t("footer_about_company")}
           </h3>
           <ul className="mt-3 space-y-2 text-gray-200">
             <li>
-              <a href="/service">Services</a>
+              <a href="/service">{t("footer_services")}</a>
             </li>
             <li>
-              <a href="/impact">Impact</a>
+              <a href="/impact">{t("footer_impact")}</a>
             </li>
             <li>
-              <a href="/about_us">About Us</a>
+              <a href="/about_us">{t("footer_about_us")}</a>
             </li>
             <li>
               {/* <a href="#" className="flex items-center gap-2">
@@ -104,13 +103,13 @@ const Footer = () => {
 
       {/* Footer Bottom Section */}
       <div className="border-t mt-10 pt-5 text-center text-gray-400 text-sm">
-        <p>Copyright © 2026 InsureCow | All Rights Reserved</p>
+        <p>{t("footer_copyright")}</p>
         <div className="flex justify-center gap-4 mt-2">
           <a href="#" className="hover:underline">
-            Privacy Policy
+            {t("footer_privacy_policy")}
           </a>
           <a href="#" className="hover:underline">
-            Terms of Use
+            {t("footer_terms_of_use")}
           </a>
         </div>
       </div>

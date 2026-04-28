@@ -80,6 +80,7 @@ import { CowImageGallery } from "@/components/cow/CowImageGallery";
 import { CowVideoPlayer } from "@/components/cow/CowVideoPlayer";
 import { ImageWithUrl } from "@/hooks/useImage";
 import { BreedAdvantages } from "@/components/ui/BreedContent";
+import { useLocalization } from "@/context/LocalizationContext";
 
 // Animation variants
 const fadeInUp = {
@@ -126,6 +127,16 @@ export default function CowDetailsPage() {
   const { cowDetails, fetchCowDetails, loading } = useProduct();
   const cowId = params.id as string;
   const numericCowId = parseInt(cowId, 10);
+  const { t } = useLocalization();
+  const notes = useMemo(
+    () => [
+      t("cowDetails_notes_dhakaOnly"),
+      t("cowDetails_notes_deliveryStart"),
+      t("cowDetails_notes_eidDelivery"),
+      t("cowDetails_notes_accurateInfo"),
+    ],
+    [t],
+  );
 
   // Get preloaded cow data from URL query parameter
   const preloadedCowData = searchParams.get("data");
@@ -149,9 +160,6 @@ export default function CowDetailsPage() {
   const cow = cowDetails?.[0] ? mapCowDetailsToAdapter(cowDetails[0]) : null;
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("details");
-
-  // const heroY = useTransform(scrollYProgress, [0, 0.5], [0, -100]);
-  // const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 1]);
 
   // Use price from adapter for calculations
   const totalPrice = useMemo(() => {
@@ -449,7 +457,7 @@ export default function CowDetailsPage() {
                         />
                       </div>
                       <small className="text-emerald-600/80 font-medium flex items-center mt-3 ml-1">
-                        /per unit
+                        /{t("per_unit")}
                       </small>
                     </div>
 
@@ -458,8 +466,10 @@ export default function CowDetailsPage() {
                       <div className="flex items-center justify-between text-xs mb-1.5">
                         <span className="text-gray-700/60 font-medium flex items-center gap-1">
                           <Users className="w-3.5 h-3.5" />
-                          {preloadedCow?.available_qty ?? 0} of {totalUnits}{" "}
-                          units available
+                          {t("units_available", {
+                            available: preloadedCow?.available_qty ?? 0,
+                            total: totalUnits,
+                          })}
                         </span>
                         {visualProgressPercent >= 75 &&
                           visualProgressPercent <= 95 && (
@@ -493,7 +503,7 @@ export default function CowDetailsPage() {
                     {/* Quantity Selector */}
                     <div className="relative z-10 mb-4">
                       <label className="text-sm font-semibold text-slate-700 mb-3 block">
-                        Select Units to Book
+                        {t("select_units_to_book")}
                       </label>
                       <div className="flex items-center gap-4">
                         <div className="flex items-center bg-slate-100 rounded-xl p-1">
@@ -573,7 +583,9 @@ export default function CowDetailsPage() {
                     {/* Total & CTA */}
                     <div className="relative z-10 space-y-4">
                       <div className="flex items-center justify-between border-slate-900 rounded-xl text-gray-500">
-                        <span className="font-medium">Total Unit Price</span>
+                        <span className="font-medium">
+                          {t("total_unit_price")}
+                        </span>
                         <div className="flex items-center gap-1 text-2xl font-bold">
                           <FaBangladeshiTakaSign />
                           {totalPrice.toLocaleString()}
@@ -606,11 +618,13 @@ export default function CowDetailsPage() {
                           ) : (
                             <span className="flex items-center justify-between w-full px-4">
                               <span className="flex items-center gap-2">
-                                Book Now
+                                {t("book_now")}
                                 <ArrowRight className="w-5 h-5" />
                               </span>
                               <span className="flex items-center gap-2">
-                                <p className="font-semibold text-sm">For</p>
+                                <p className="font-semibold text-sm">
+                                  {t("for")}
+                                </p>
                                 <div className="flex items-center gap-0.5">
                                   {/* <FaBangladeshiTakaSign />{" "} */}
                                   {preloadedCow?.booking_amount.toLocaleString()}
@@ -649,33 +663,16 @@ export default function CowDetailsPage() {
                         {" "}
                         <AlertCircle className="w-5 h-5 text-amber-600" />
                       </span>{" "}
-                      Notes:
+                      {t("notes")}:
                     </h1>
-                    {[
-                      {
-                        value:
-                          "This service is strictly available within Dhaka City only",
-                      },
-                      {
-                        value:
-                          "Delivery start when the completion is 100% only",
-                      },
-                      {
-                        value:
-                          "Deliveries are available only for Eid day - 1 & 2",
-                      },
-                      {
-                        value:
-                          "Customers must provide accurate and complete contact and delivery information to ensure successful fulfillment",
-                      },
-                    ].map((stat, i) => (
+                    {notes.map((stat, i) => (
                       <motion.div
                         key={i}
                         variants={glassPanel}
-                        className="mb-1 "
+                        className="mb-2 "
                       >
-                        <p className="text-sm font- text-slate-500">
-                          • {stat.value}
+                        <p className="text-sm font- text-slate-500 tracking-normal">
+                          • {stat}
                         </p>
                       </motion.div>
                     ))}
@@ -761,7 +758,7 @@ export default function CowDetailsPage() {
                               <Calendar className="w-5 h-5 text-gray-600" />
                             </div>
                             <span className="font-medium text-slate-600">
-                              Age
+                              {t("age")}
                             </span>
                           </div>
                           <span className="font-bold text-slate-900">
@@ -782,7 +779,7 @@ export default function CowDetailsPage() {
                               <Weight className="w-5 h-5 text-gray-600" />
                             </div>
                             <span className="font-medium text-slate-600">
-                              Weight
+                              {t("weight")}
                             </span>
                           </div>
                           <span className="font-bold text-slate-900">
@@ -803,7 +800,7 @@ export default function CowDetailsPage() {
                               <Ruler className="w-5 h-5 text-gray-600" />
                             </div>
                             <span className="font-medium text-slate-600">
-                              Height
+                              {t("height")}
                             </span>
                           </div>
                           <span className="font-bold text-slate-900">
@@ -824,7 +821,7 @@ export default function CowDetailsPage() {
                               <Palette className="w-5 h-5 text-gray-600" />
                             </div>
                             <span className="font-medium text-slate-600">
-                              Color
+                              {t("color")}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
@@ -847,7 +844,7 @@ export default function CowDetailsPage() {
                               <Activity className="w-5 h-5 text-gray-600" />
                             </div>
                             <span className="font-medium text-slate-600">
-                              Gender
+                              {t("gender")}
                             </span>
                           </div>
                           <span
@@ -875,7 +872,7 @@ export default function CowDetailsPage() {
                               <Syringe className="w-5 h-5 text-gray-600" />
                             </div>
                             <span className="font-medium text-slate-600">
-                              Vaccination
+                              {t("vaccination")}
                             </span>
                           </div>
                           <span
@@ -906,7 +903,7 @@ export default function CowDetailsPage() {
                             </div>
                             <div className="flex flex-col">
                               <span className="font-medium text-slate-600">
-                                Deworming
+                                {t("deworming")}
                               </span>
                               {cowDetails[0].last_deworming_date && (
                                 <span className="text-xs text-slate-400">

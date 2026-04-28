@@ -6,6 +6,6 @@ export async function getPaymentTypes(): Promise<MasterPaymentTypesResponse> {
   const response = await apiClient.get<MasterPaymentTypesResponse>(
     PAYMENT_TYPE_API.GET_PAYMENT_TYPES,
   );
-  console.log(response);
+  // console.log(response);
   return response.data;
 }

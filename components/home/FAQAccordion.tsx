@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronDown,
@@ -12,7 +12,8 @@ import {
   Package,
   Clock,
 } from "lucide-react";
-import { faqData, FAQItems } from "@/data/faqData";
+import { useFAQData, FAQItems } from "@/data/faqData";
+import { useLocalization } from "@/context/LocalizationContext";
 
 const categoryIcons: Record<string, React.ReactNode> = {
   "Delivery & Service Area": <Truck className="w-4 h-4" />,
@@ -44,7 +45,7 @@ function FAQItem({
   isOpen,
   onClick,
 }: {
-  item: FAQItems;
+  item: FAQItems & { categoryKey: string };
   isOpen: boolean;
   onClick: () => void;
 }) {
@@ -95,21 +96,25 @@ function FAQItem({
 
 export default function FAQAccordion() {
   const [openId, setOpenId] = useState<string | null>(null);
+  const { t } = useLocalization();
+  const faqData = useFAQData();
 
   const handleToggle = (id: string) => {
     setOpenId(openId === id ? null : id);
   };
 
-  // Group FAQs by category
-  const groupedFAQs = faqData.reduce(
-    (acc, item) => {
-      const category = item.category || "General";
-      if (!acc[category]) acc[category] = [];
-      acc[category].push(item);
-      return acc;
-    },
-    {} as Record<string, FAQItems[]>,
-  );
+  // Group FAQs by category (memoized for performance)
+  const groupedFAQs = useMemo(() => {
+    return faqData.reduce(
+      (acc, item) => {
+        const category = item.category || "General";
+        if (!acc[category]) acc[category] = [];
+        acc[category].push(item);
+        return acc;
+      },
+      {} as Record<string, (FAQItems & { categoryKey: string })[]>,
+    );
+  }, [faqData]);
 
   return (
     <section className="max-w-screen-2xl mx-auto px-6 py-20">
@@ -122,15 +127,14 @@ export default function FAQAccordion() {
       >
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-semibold mb-4">
           <HelpCircle className="w-4 h-4" />
-          <span>Frequently Asked Questions</span>
+          <span>{t("faq_section_title")}</span>
         </div>
         <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Common Questions About{" "}
-          <span className="text-emerald-600">Qurbani Services</span>
+          {t("faq_section_heading")}{" "}
+          <span className="text-emerald-600">{t("faq_section_brand")}</span>
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          Find answers to the most common questions about our Qurbani services,
-          payment, delivery, and policies.
+          {t("faq_section_description")}
         </p>
       </motion.div>
 
@@ -142,29 +146,37 @@ export default function FAQAccordion() {
         viewport={{ once: true, margin: "-100px" }}
         className="space-y-8"
       >
-        {Object.entries(groupedFAQs).map(([category, items]) => (
-          <div key={category} className="space-y-3">
-            {/* Category Title */}
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-2 h-2 rounded-full bg-emerald-500" />
-              <h3 className="text-lg font-semibold text-gray-800">
-                {category}
-              </h3>
-            </div>
+        {Object.entries(groupedFAQs).map(([category, items]) => {
+          const categoryKey = items[0]?.categoryKey;
+          const CategoryIcon = categoryKey
+            ? categoryIcons[categoryKey] || <HelpCircle className="w-4 h-4" />
+            : <HelpCircle className="w-4 h-4" />;
 
-            {/* FAQ Items */}
-            <div className="space-y-3">
-              {items.map((item) => (
-                <FAQItem
-                  key={item.id}
-                  item={item}
-                  isOpen={openId === item.id}
-                  onClick={() => handleToggle(item.id)}
-                />
-              ))}
+          return (
+            <div key={category} className="space-y-3">
+              {/* Category Title */}
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {category}
+                </h3>
+                <span className="ml-2 text-emerald-600">{CategoryIcon}</span>
+              </div>
+
+              {/* FAQ Items */}
+              <div className="space-y-3">
+                {items.map((item) => (
+                  <FAQItem
+                    key={item.id}
+                    item={item}
+                    isOpen={openId === item.id}
+                    onClick={() => handleToggle(item.id)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </motion.div>
 
       {/* Contact CTA */}
@@ -177,16 +189,14 @@ export default function FAQAccordion() {
       >
         <div className="bg-emerald-50 rounded-2xl p-8 border border-emerald-100">
           <h3 className="text-xl font-bold text-gray-900 mb-2">
-            Still have questions?
+            {t("faq_cta_title")}
           </h3>
-          <p className="text-gray-600 mb-4">
-            Our support team is here to help you with any other inquiries.
-          </p>
+          <p className="text-gray-600 mb-4">{t("faq_cta_description")}</p>
           <a
             href="/contact"
             className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-500/25"
           >
-            Contact Support
+            {t("faq_cta_button")}
           </a>
         </div>
       </motion.div>

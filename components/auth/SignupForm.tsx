@@ -86,7 +86,7 @@ export function SignupForm({ className }: { className?: string }) {
             passwordResponse.message || "Registration successful",
             "success",
           );
-          console.log("Signup successful:", passwordResponse);
+          // console.log("Signup successful:", passwordResponse);
         } else {
           showToast(passwordResponse.message || "Registration failed", "error");
         }

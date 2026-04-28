@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocalization } from "@/context/LocalizationContext";
 import { cn } from "@/lib/theme/theme.config";
 import { motion, Variants } from "framer-motion";
 import {
@@ -27,41 +28,50 @@ interface BreedAdvantagesProps {
   className?: string;
 }
 
-export const breedContentMap: Record<BreedCategory, BreedContent> = {
-  Sahiwal: {
-    title: "Premium Tender Beef",
-    pros: [
-      "Soft and tender meat texture",
-      "Balanced fat for juicy flavor",
-      "Ideal for slow cooking and curries",
-      "Consistent quality due to controlled breeding",
-    ],
-    taste: "Rich, juicy, slightly fatty",
-    bestDishes: [
-      "Kacchi Biryani",
-      "Beef Rezala",
-      "Beef Kala Bhuna",
-      "Beef Tehari",
-    ],
-  },
+function getBreedLabel(breed: BreedCategory, t: (key: string) => string) {
+  return breed === "Sahiwal"
+    ? t("breedContent.breed.sahiwal")
+    : t("breedContent.breed.deshi");
+}
 
-  Deshi: {
-    title: "Authentic Traditional Beef",
-    pros: [
-      "Deep, strong beef flavor",
-      "Leaner and more fibrous meat",
-      "Naturally raised (often grass-fed)",
-      "Preferred for traditional recipes",
-    ],
-    taste: "Strong, earthy, less fatty",
-    bestDishes: [
-      "Bhuna Mangsho",
-      "Beef Curry (Deshi style)",
-      "Shutki-style dry beef",
-      "Beef Vuna Khichuri",
-    ],
-  },
-};
+function getBreedContentMap(
+  t: (key: string, variables?: Record<string, string | number>) => string,
+): Record<BreedCategory, BreedContent> {
+  return {
+    Sahiwal: {
+      title: t("breedContent.sahiwal.title"),
+      pros: [
+        t("breedContent.sahiwal.pro1"),
+        t("breedContent.sahiwal.pro2"),
+        t("breedContent.sahiwal.pro3"),
+        t("breedContent.sahiwal.pro4"),
+      ],
+      taste: t("breedContent.sahiwal.taste"),
+      bestDishes: [
+        t("breedContent.sahiwal.dish1"),
+        t("breedContent.sahiwal.dish2"),
+        t("breedContent.sahiwal.dish3"),
+        t("breedContent.sahiwal.dish4"),
+      ],
+    },
+    Deshi: {
+      title: t("breedContent.deshi.title"),
+      pros: [
+        t("breedContent.deshi.pro1"),
+        t("breedContent.deshi.pro2"),
+        t("breedContent.deshi.pro3"),
+        t("breedContent.deshi.pro4"),
+      ],
+      taste: t("breedContent.deshi.taste"),
+      bestDishes: [
+        t("breedContent.deshi.dish1"),
+        t("breedContent.deshi.dish2"),
+        t("breedContent.deshi.dish3"),
+        t("breedContent.deshi.dish4"),
+      ],
+    },
+  };
+}
 
 // Animation variants
 const containerVariants = {
@@ -99,19 +109,32 @@ const cardVariants: Variants = {
       ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
     },
   }),
-  hover: {
-    y: -4,
-    scale: 1.02,
-    transition: { duration: 0.3 },
-  },
+  // hover: {
+  //   y: -4,
+  //   scale: 1.02,
+  //   transition: { duration: 0.3 },
+  // },
 };
 
 export function BreedAdvantages({ breed, className }: BreedAdvantagesProps) {
-  const content = breedContentMap[breed];
+  const { t } = useLocalization();
+  const breedLabel = getBreedLabel(breed, t);
+  const content = getBreedContentMap(t)[breed];
 
   if (!content) return null;
 
   const isSahiwal = breed === "Sahiwal";
+  const tasteTags = isSahiwal
+    ? [
+        t("breedContent.sahiwal.tag1"),
+        t("breedContent.sahiwal.tag2"),
+        t("breedContent.sahiwal.tag3"),
+      ]
+    : [
+        t("breedContent.deshi.tag1"),
+        t("breedContent.deshi.tag2"),
+        t("breedContent.deshi.tag3"),
+      ];
 
   return (
     <motion.div
@@ -157,15 +180,14 @@ export function BreedAdvantages({ breed, className }: BreedAdvantagesProps) {
                   : "bg-emerald-100 text-emerald-700",
               )}
             >
-              {breed} Breed
+              {t("breedContent.badge", { breed: breedLabel })}
             </span>
           </div>
           <h3 className="text-2xl lg:text-3xl font-black text-slate-900 mb-2">
             {content.title}
           </h3>
           <p className="text-slate-600">
-            Discover why {breed} beef is prized by chefs and home cooks across
-            Bangladesh
+            {t("breedContent.description", { breed: breedLabel })}
           </p>
         </motion.div>
 
@@ -185,7 +207,9 @@ export function BreedAdvantages({ breed, className }: BreedAdvantagesProps) {
                   isSahiwal ? "text-emerald-600" : "text-emerald-600",
                 )}
               />
-              <h4 className="font-bold text-slate-900">Key Advantages</h4>
+              <h4 className="font-bold text-slate-900">
+                {t("breedContent.keyAdvantages")}
+              </h4>
             </div>
             <ul className="space-y-3">
               {content.pros.map((pro, index) => (
@@ -233,35 +257,18 @@ export function BreedAdvantages({ breed, className }: BreedAdvantagesProps) {
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-4">
                 <Droplets className="w-5 h-5 text-white/80" />
-                <h4 className="font-bold">Taste Profile</h4>
+                <h4 className="font-bold">{t("breedContent.tasteProfile")}</h4>
               </div>
               <p className="text-2xl font-black mb-2">{content.taste}</p>
               <div className="flex items-center gap-2 mt-4">
-                {isSahiwal ? (
-                  <>
-                    <span className="px-2 py-1 bg-emerald-500/20 rounded text-xs font-medium text-emerald-300">
-                      Tender
-                    </span>
-                    <span className="px-2 py-1 bg-emerald-500/20 rounded text-xs font-medium text-emerald-300">
-                      Juicy
-                    </span>
-                    <span className="px-2 py-1 bg-emerald-500/20 rounded text-xs font-medium text-emerald-300">
-                      Rich
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <span className="px-2 py-1 bg-emerald-500/20 rounded text-xs font-medium text-emerald-300">
-                      Earthy
-                    </span>
-                    <span className="px-2 py-1 bg-emerald-500/20 rounded text-xs font-medium text-emerald-300">
-                      Lean
-                    </span>
-                    <span className="px-2 py-1 bg-emerald-500/20 rounded text-xs font-medium text-emerald-300">
-                      Bold
-                    </span>
-                  </>
-                )}
+                {tasteTags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2 py-1 bg-emerald-500/20 rounded text-xs font-medium text-emerald-300"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
           </motion.div>
@@ -291,10 +298,10 @@ export function BreedAdvantages({ breed, className }: BreedAdvantagesProps) {
               </div>
               <div>
                 <h4 className="font-bold text-slate-900">
-                  Perfect For These Dishes
+                  {t("breedContent.perfectDishes")}
                 </h4>
                 <p className="text-xs text-slate-500">
-                  Chef-recommended preparations
+                  {t("breedContent.chefRecommended")}
                 </p>
               </div>
             </div>
@@ -372,7 +379,8 @@ export function CompactBreedAdvantages({
   breed,
   className,
 }: BreedAdvantagesProps) {
-  const content = breedContentMap[breed];
+  const { t } = useLocalization();
+  const content = getBreedContentMap(t)[breed];
   if (!content) return null;
 
   const isSahiwal = breed === "Sahiwal";
@@ -423,7 +431,7 @@ export function CompactBreedAdvantages({
             : "bg-emerald-50 text-emerald-700",
         )}
       >
-        Best for: {content.bestDishes[0]}
+        {t("breedContent.bestFor")}: {content.bestDishes[0]}
       </div>
     </motion.div>
   );
