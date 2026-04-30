@@ -14,13 +14,18 @@ const Footer = () => {
   const { t } = useLocalization();
 
   return (
-    <footer className="bg-emerald-900 text-gray-800 py-10 px-6 md:px-16">
+    <footer className="bg-emerald-950 text-gray-800 py-10 px-6 md:px-16">
       <div className="grid grid-cols-2 lg:flex-row max-w-screen-2xl mx-auto">
         {/* Left Section - Company Info */}
-        <div>
-          <h2 className="text-2xl font-bold text-green-400 flex items-center">
-            {t("footer_brand")}
-          </h2>
+        <div className="">
+          <div className="flex items-center gap-2 ">
+            <img src="/logo2.png" alt="" className="w-12" />
+            <h2 className="text-2xl font-bold text-green-400 flex items-center ">
+              <span className="text-4xl font-extrabold tracking-tighter text-emerald-400 font-serif">
+                Fresh<span className="text-amber-400">Buy</span>
+              </span>
+            </h2>
+          </div>
           <p className="mt-3 text-gray-200">{t("footer_bangladesh_office")}</p>
           <p className="mt-3 text-gray-200">{t("footer_singapore_office")}</p>
 

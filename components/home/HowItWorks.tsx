@@ -26,7 +26,7 @@ const steps = [
     title: "Book Your Share",
     description:
       "Select full or partial units based on your needs and budget. Secure your portion with a simple deposit.",
-   image: "/howItWorksSection/Img2.png",
+    image: "/howItWorksSection/Img2.png",
     icon: Target,
     color: "green",
   },
@@ -34,7 +34,7 @@ const steps = [
     title: "Collective Booking",
     description:
       "Other buyers join until all units of the cow are fully reserved. Track progress in real-time as the community grows.",
-     image: "/howItWorksSection/Img3.png",
+    image: "/howItWorksSection/Img3.png",
     icon: Users,
     color: "teal",
   },
@@ -42,7 +42,7 @@ const steps = [
     title: "100% Completion",
     description:
       "Processing only begins once the cow is completely booked. No waste, no uncertainty, guaranteed full utilization.",
-     image: "/howItWorksSection/Img4.png",
+    image: "/howItWorksSection/Img4.png",
     icon: CheckCircle2,
     color: "emerald",
   },

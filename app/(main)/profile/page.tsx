@@ -6,24 +6,17 @@ import { useAuth } from "@/hooks/auth/useAuth";
 import { cn } from "@/lib/theme/theme.config";
 import {
   User as UserIcon,
-  Mail,
   Phone,
   MapPin,
   Edit3,
   Shield,
-  Bell,
-  CreditCard,
-  Settings,
-  LogOut,
   ChevronRight,
-  Sprout,
 } from "lucide-react";
 import Link from "next/link";
-import { User } from "@/lib/models/authDTO";
 
 export default function ProfilePage() {
-  const { user, logout } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const [loading] = useState(false);
 
   // Mock user data for display (in real app, this would come from API)
   const userData = user || {
@@ -84,6 +77,8 @@ export default function ProfilePage() {
     );
   }
 
+  console.log(userData);
+
   return (
     <div className=" bg-emerald-50/50 mt-10">
       {/* Background Pattern */}
@@ -130,17 +125,17 @@ export default function ProfilePage() {
                 <h2 className="text-xl font-bold text-emerald-900 mb-1">
                   User Account
                 </h2>
-                <p className="text-sm text-zinc-500">
+                {/* <p className="text-sm text-zinc-500">
                   {userData.role === "user" ? "Customer" : userData.role}
-                </p>
+                </p> */}
               </div>
 
               {/* User Details */}
               <div className="space-y-4 mb-6">
-                <div className="flex items-center gap-3 text-sm">
+                {/* <div className="flex items-center gap-3 text-sm">
                   <Mail className="w-4 h-4 text-emerald-600" />
                   <span className="text-zinc-600">user@example.com</span>
-                </div>
+                </div> */}
                 <div className="flex items-center gap-3 text-sm">
                   <Phone className="w-4 h-4 text-emerald-600" />
                   <span className="text-zinc-600">+1 234 567 8900</span>
@@ -153,17 +148,17 @@ export default function ProfilePage() {
 
               {/* Account Type Badge */}
               <div className="flex flex-wrap gap-2 mb-6">
-                {userData.is_superuser && (
+                {/* {userData.is_superuser && (
                   <span className="px-3 py-1 bg-purple-100/30 text-purple-700 text-xs font-medium rounded-full">
                     Super Admin
                   </span>
-                )}
-                {userData.is_insurecow_agent && (
+                )} */}
+                {/* {userData.is_insurecow_agent && (
                   <span className="px-3 py-1 bg-emerald-100/30 text-emerald-700 text-xs font-medium rounded-full">
                     InsureCow Agent
                   </span>
-                )}
-                {userData.is_insurance_agent && (
+                )} */}
+                {/* {userData.is_insurance_agent && (
                   <span className="px-3 py-1 bg-blue-100/30 text-blue-700 text-xs font-medium rounded-full">
                     Insurance Agent
                   </span>
@@ -172,7 +167,7 @@ export default function ProfilePage() {
                   <span className="px-3 py-1 bg-orange-100/30 text-orange-700 text-xs font-medium rounded-full">
                     Enterprise Agent
                   </span>
-                )}
+                )} */}
                 {!userData.is_superuser &&
                   !userData.is_insurecow_agent &&
                   !userData.is_insurance_agent &&
@@ -184,10 +179,10 @@ export default function ProfilePage() {
               </div>
 
               {/* Edit Profile Button */}
-              <button className="w-full py-3 px-4 bg-emerald-50/20 text-emerald-700 rounded-xl font-medium text-sm hover:bg-emerald-100-900/40 transition-colors flex items-center justify-center gap-2">
+              {/* <button className="w-full py-3 px-4 bg-emerald-50/20 text-emerald-700 rounded-xl font-medium text-sm hover:bg-emerald-100-900/40 transition-colors flex items-center justify-center gap-2">
                 <Edit3 className="w-4 h-4" />
                 Edit Profile
-              </button>
+              </button> */}
             </div>
           </motion.div>
 
@@ -226,7 +221,7 @@ export default function ProfilePage() {
                           "transition-colors duration-200",
                         )}
                       >
-                        <div className="w-12 h-12 bg-emerald-100/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <div className="w-12 h-12 bg-emerald-100/30 rounded-xl flex items-center justify-center shrink-0">
                           <IconComponent className="w-5 h-5 text-emerald-600" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -237,7 +232,7 @@ export default function ProfilePage() {
                             {item.description}
                           </p>
                         </div>
-                        <ChevronRight className="w-5 h-5 text-zinc-400 flex-shrink-0" />
+                        <ChevronRight className="w-5 h-5 text-zinc-400 shrink-0" />
                       </Link>
                     </motion.div>
                   );

@@ -48,6 +48,9 @@
   "8_answer": "All processed meat is handled, stored, and transported in compliance with food safety standards, maintained at 0°C to 4°C throughout processing and delivery using insulated, food-grade packaging.",
   "9_category": "Policies & Terms",
   "9_question": "Who owns the hide (skin) of the animal?",
+  "terms_hero_title": "INSURECOW QURBANI 2026",
+  "terms_hero_subtitle": "Please read these terms carefully before booking. All policies are designed to ensure transparency, food safety, and a seamless Qurbani experience.",
+  "terms_hero_badge": "Official Terms & Conditions",
   "9_answer": "Unless otherwise agreed in writing, the hide remains the sole property of InsureCow after slaughter. The hide value is used internally for operational economics and pricing structure.",
   "10_category": "Policies & Terms",
   "10_question": "Can I request special cuts or custom processing?",
@@ -148,7 +151,6 @@
   "checkout_terms_suffix": "and acknowledge that my booking is subject to verification and confirmation.",
   "checkout_processing": "Processing...",
   "checkout_process_booking": "Process Booking",
-  "footer_brand": "InsureCow",
   "footer_bangladesh_office": "Bangladesh Office: House 117, Road 5, Block B, Niketon, Dhaka, Bangladesh",
   "footer_singapore_office": "Singapore Office: 192 Waterloo St. #05-03 Skyline, Singapore 187966",
   "footer_helpline": "Helpline",
@@ -156,7 +158,7 @@
   "footer_services": "Services",
   "footer_impact": "Impact",
   "footer_about_us": "About Us",
-  "footer_copyright": "Copyright © 2026 InsureCow | All Rights Reserved",
+  "footer_copyright": "Copyright © 2026 FreshBuy | All Rights Reserved",
   "footer_privacy_policy": "Privacy Policy",
   "footer_terms_of_use": "Terms of Use"
 }

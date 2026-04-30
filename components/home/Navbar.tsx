@@ -24,7 +24,7 @@ export function Navbar({ className }: { className?: string }) {
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
-  const {t} = useLocalization()
+  const { t } = useLocalization();
 
   const { isAuthenticated, loading, logout } = useAuth();
 
@@ -110,23 +110,23 @@ export function Navbar({ className }: { className?: string }) {
         className={cn(
           "fixed top-0 w-full z-50 transition-all duration-300",
           scrolled
-            ? "bg-emerald-50 backdrop-blur-xl shadow-lg shadow-emerald-900/5"
-            : "bg-emerald-50 backdrop-blur-xl",
+            ? "bg-emerald-950 backdrop-blur-xl shadow-lg shadow-emerald-900/5"
+            : "bg-emerald-950 backdrop-blur-xl",
           className,
         )}
       >
         <div className="flex justify-between items-center w-full px-4 sm:px-8 py-4 max-w-screen-2xl mx-auto">
           <div className="flex items-center gap-10">
             {/* Logo */}
-<Link href="/" className="flex items-center gap-2 group">
+            <Link href="/" className="flex items-center gap-2 group">
               <motion.div
                 whileHover={{ rotate: [0, -10, 10, 0] }}
                 transition={{ duration: 0.5 }}
               >
-                <Sprout className="w-6 h-6 text-emerald-600" />
+                <img src="/logo2.png" alt="" className="w-9 "/>
               </motion.div>
-              <span className="text-xl font-bold tracking-tighter text-emerald-900">
-                The Digital Agrarian
+              <span className="text-2xl font-bold tracking-tighter text-emerald-400 font-serif">
+                Fresh<span className="text-amber-400">Buy</span>
               </span>
             </Link>
 
@@ -141,8 +141,8 @@ export function Navbar({ className }: { className?: string }) {
                     className={cn(
                       "pb-1 transition-all duration-200 hover:scale-105",
                       pathname === link.href
-                        ? "text-emerald-900 border-b-2 border-emerald-900"
-                        : "text-zinc-600 hover:text-emerald-800",
+                        ? "text-emerald-400 text-lg border-b-2 border-emerald-900 font-bold"
+                        : "text-zinc-100 hover:text-emerald-800",
                     )}
                   >
                     {t(`${link.key}`)}
@@ -180,7 +180,7 @@ export function Navbar({ className }: { className?: string }) {
                       transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                       className="absolute right-0 mt-2 w-48 py-2 bg-white  rounded-2xl shadow-xl shadow-emerald-900/10 border border-emerald-100 /30 overflow-hidden"
                     >
-<Link
+                      <Link
                         href="/profile"
                         className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700  hover:bg-emerald-50 transition-colors duration-200"
                       >
@@ -200,12 +200,12 @@ export function Navbar({ className }: { className?: string }) {
               </div>
             ) : (
               <div className="flex items-center gap-3">
-<Link
-                        href="/auth?login=true"
-                        className="px-5 py-2 bg-emerald-700 text-white rounded-full font-semibold text-sm hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-600/20 active:scale-95 transition-all duration-200"
-                      >
-                        <span>Login</span>
-                      </Link>
+                <Link
+                  href="/auth?login=true"
+                  className="px-5 py-2 bg-emerald-700 text-white rounded-full font-semibold text-sm hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-600/20 active:scale-95 transition-all duration-200"
+                >
+                  <span>Login</span>
+                </Link>
               </div>
             )}
 
@@ -314,16 +314,16 @@ export function Navbar({ className }: { className?: string }) {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
                       >
-<Link
-                        href="/profile"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-3 py-3 px-4 rounded-xl text-zinc-700  hover:bg-zinc-50 transition-all duration-200"
-                      >
-                        <User className="w-5 h-5" />
-                        <span className="font-medium">Profile</span>
-                      </Link>
+                        <Link
+                          href="/profile"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center gap-3 py-3 px-4 rounded-xl text-zinc-700  hover:bg-zinc-50 transition-all duration-200"
+                        >
+                          <User className="w-5 h-5" />
+                          <span className="font-medium">Profile</span>
+                        </Link>
                       </motion.div>
-<motion.button
+                      <motion.button
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
@@ -341,13 +341,13 @@ export function Navbar({ className }: { className?: string }) {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
                       >
-<Link
-                      href="/auth?login=true"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block py-3 px-4 rounded-xl text-center font-semibold bg-emerald-600  text-white hover:bg-emerald-700 transition-all duration-200"
-                    >
-                      <span>Login</span>
-                    </Link>
+                        <Link
+                          href="/auth?login=true"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="block py-3 px-4 rounded-xl text-center font-semibold bg-emerald-600  text-white hover:bg-emerald-700 transition-all duration-200"
+                        >
+                          <span>Login</span>
+                        </Link>
                       </motion.div>
                     </>
                   )}

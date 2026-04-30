@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocalization } from "@/context/LocalizationContext";
 import {
   ChevronDown,
   Beef,
@@ -268,6 +269,7 @@ export default function TermsPage({
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const { t } = useLocalization();
 
   const sections: Section[] = [
     {
@@ -305,7 +307,10 @@ export default function TermsPage({
           }
         });
       },
-      { rootMargin: "-20% 0px -60% 0px" },
+      {
+        rootMargin: "-100px 0px -50% 0px",
+        threshold: 0.3,
+      },
     );
 
     sections.forEach((s) => {
@@ -319,7 +324,15 @@ export default function TermsPage({
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      const headerOffset = 100;
+      const elementPosition = el.getBoundingClientRect().top;
+      const offsetPosition =
+        elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
       setMobileMenuOpen(false);
     }
   };
@@ -330,8 +343,9 @@ export default function TermsPage({
       <BackToTop />
 
       {/* ─── Hero ───────────────────────────────────────── */}
-      <header className="relative bg-emerald-900 text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
+      <header className="relative overflow-hidden bg-linear-to-b from-emerald-950 via-emerald-900 to-emerald-950 text-white">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-[0.08]">
           <svg
             className="w-full h-full"
             viewBox="0 0 100 100"
@@ -339,12 +353,12 @@ export default function TermsPage({
           >
             <pattern
               id="grid"
-              width="10"
-              height="10"
+              width="12"
+              height="12"
               patternUnits="userSpaceOnUse"
             >
               <path
-                d="M 10 0 L 0 0 0 10"
+                d="M 12 0 L 0 0 0 12"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="0.5"
@@ -353,36 +367,52 @@ export default function TermsPage({
             <rect width="100" height="100" fill="url(#grid)" />
           </svg>
         </div>
-        <div className="relative max-w-5xl mx-auto px-6 py-20 md:py-28">
+
+        {/* Soft glow accents */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -right-32 w-96 h-96 bg-lime-400/10 rounded-full blur-3xl" />
+
+        <div className="relative max-w-5xl mx-auto px-6 py-24 md:py-32">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={containerVariants}
           >
+            {/* Badge */}
             <motion.div
               variants={itemVariants}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-800/50 rounded-full text-emerald-200 text-sm font-medium mb-6 border border-emerald-700/50"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-emerald-100 text-sm font-medium mb-8"
             >
-              <ShieldCheck className="w-4 h-4" />
-              <span>Official Terms & Conditions</span>
+              <ShieldCheck className="w-4 h-4 text-emerald-300" />
+              <span>{t("terms_hero_badge")}</span>
             </motion.div>
+
+            {/* Title */}
             <motion.h1
               variants={itemVariants}
-              className="text-4xl md:text-6xl font-bold tracking-tight mb-6"
+              className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight mb-6"
             >
-              INSURECOW QURBANI 2026
+              {t("terms_hero_title")}
             </motion.h1>
+
+            {/* Subtitle */}
             <motion.p
               variants={itemVariants}
-              className="text-emerald-200 text-lg md:text-xl max-w-2xl leading-relaxed"
+              className="text-emerald-100/80 text-lg md:text-xl max-w-2xl leading-relaxed"
             >
-              Please read these terms carefully before booking. All policies are
-              designed to ensure transparency, food safety, and a seamless
-              Qurbani experience.
+              {t("terms_hero_subtitle")}
             </motion.p>
+
+            {/* Optional subtle divider */}
+            <motion.div
+              variants={itemVariants}
+              className="mt-10 w-24 h-[2px] bg-emerald-400/40 rounded-full"
+            />
           </motion.div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-gray-50 to-transparent" />
+
+        {/* Bottom fade */}
+        {/* <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-50 to-transparent" /> */}
       </header>
 
       {/* ─── Sticky Nav ─────────────────────────────────── */}
@@ -390,7 +420,7 @@ export default function TermsPage({
         <nav className="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
           <div className="max-w-screen-2xl mx-auto px-6">
             <div className="flex items-center justify-between h-14">
-              <div className="hidden md:flex items-center gap-1 overflow-x-auto">
+              <div className="hidden md:flex items-center gap-1 overflow-x-auto w-full">
                 {sections.map((s) => (
                   <button
                     key={s.id}
@@ -401,7 +431,7 @@ export default function TermsPage({
                         : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                     }`}
                   >
-                    {s.title.split(" ").slice(0, 3).join(" ")}...
+                    {s.title}
                   </button>
                 ))}
               </div>
@@ -459,18 +489,18 @@ export default function TermsPage({
           >
             <InfoCard
               icon={<MapPin className="w-5 h-5" />}
-              title="Service Area"
-              text="Strictly available within Dhaka City & Dhaka Metropolitan limits only."
+              title="সেবার এলাকা"
+              text="শুধুমাত্র ঢাকা শহর ও ঢাকা মহানগর এলাকার মধ্যে উপলব্ধ।"
             />
             <InfoCard
               icon={<Thermometer className="w-5 h-5" />}
-              title="Cold Chain"
-              text="Meat maintained at 0°C to 4°C throughout processing and delivery."
+              title="কোল্ড চেইন"
+              text="প্রক্রিয়াজাতকরণ ও ডেলিভারির পুরো সময়জুড়ে মাংস ০°সে থেকে ৪°সে তাপমাত্রায় সংরক্ষিত থাকে।"
             />
             <InfoCard
               icon={<Ban className="w-5 h-5" />}
-              title="Non-Refundable"
-              text="All bookings are strictly non-cancellable and non-refundable once confirmed."
+              title="ফেরতযোগ্য নয়"
+              text="একবার নিশ্চিত হওয়ার পর সকল বুকিং সম্পূর্ণরূপে বাতিল অযোগ্য এবং অর্থ ফেরতযোগ্য নয়।"
             />
           </motion.section>
         )}
@@ -505,13 +535,13 @@ export default function TermsPage({
         >
           <ShieldCheck className="w-10 h-10 mx-auto mb-4 text-emerald-400" />
           <h3 className="text-xl font-semibold text-white mb-2">
-            Thank you for choosing InsureCow
+            InsureCow নির্বাচন করার জন্য আপনাকে ধন্যবাদ
           </h3>
           <p className="text-emerald-300 max-w-xl mx-auto">
-            By confirming any order, you acknowledge and agree to all terms,
-            conditions, and policies stated herein. All Qurbani operations are
-            conducted in compliance with Islamic principles and halal processing
-            standards.
+            যেকোনো অর্ডার নিশ্চিত করার মাধ্যমে আপনি এখানে বর্ণিত সকল শর্তাবলি,
+            নীতিমালা এবং প্রযোজ্য বিধানসমূহ স্বীকার ও মেনে নিচ্ছেন। সকল কুরবানির
+            কার্যক্রম ইসলামী নীতিমালা এবং হালাল প্রক্রিয়াকরণ মানদণ্ড অনুসারে
+            পরিচালিত হয়।
           </p>
         </motion.div>
       </main>
@@ -524,82 +554,82 @@ function FullServiceSection() {
   return (
     <div className="space-y-6">
       {/* 1.1 Service Area */}
-      <SubSection title="1.1 Service Area">
-        <p>This service is strictly available within Dhaka City only.</p>
+      <SubSection title="১.১ সেবার এলাকা">
+        <p>এই সেবাটি শুধুমাত্র ঢাকা শহরের মধ্যে উপলব্ধ।</p>
       </SubSection>
 
       {/* 1.2 Meat Processing & Delivery */}
-      <SubSection title="1.2 Meat Processing & Delivery Schedule (Food Safety Compliant)">
+      <SubSection title="১.২ মাংস প্রক্রিয়াজাতকরণ ও ডেলিভারি সময়সূচি (খাদ্য নিরাপত্তা মানসম্মত)">
         <BulletList
           items={[
-            "All processed meat will be handled, processed, stored, and transported in accordance with recognized food safety standards.",
-            "Processed meat will be delivered in fresh chilled condition (maintained between 0°C to 4°C) on Eid Day +2, +3, and +4 (2nd, 3rd, and 4th day of Eid-ul-Azha).",
-            "For deliveries from Eid Day +5 onward, InsureCow will ensure that meat is maintained under a controlled cold chain (0°C to 4°C) throughout processing, storage, and transportation, subject to operational feasibility.",
-            "InsureCow will use insulated, food-grade packaging and refrigerated transport systems to preserve product safety, hygiene, and quality until delivery.",
-            "The customer is advised to immediately transfer the meat to appropriate refrigeration (0°C to 4°C) or freezing conditions upon receipt to maintain freshness and safety.",
+            "সমস্ত প্রক্রিয়াজাত মাংস স্বীকৃত খাদ্য নিরাপত্তা মানদণ্ড অনুসারে হ্যান্ডলিং, প্রক্রিয়াজাতকরণ, সংরক্ষণ এবং পরিবহন করা হবে।",
+            "প্রক্রিয়াজাত মাংস ঈদের ২য়, ৩য় এবং ৪র্থ দিনে (Eid Day +2, +3 এবং +4) তাজা ঠান্ডা অবস্থায় (০°সে থেকে ৪°সে তাপমাত্রায় সংরক্ষিত) সরবরাহ করা হবে।",
+            "ঈদের ৫ম দিন (Eid Day +5) থেকে পরবর্তী ডেলিভারির ক্ষেত্রে, InsureCow কার্যক্রমগত সক্ষমতার ভিত্তিতে প্রক্রিয়াজাতকরণ, সংরক্ষণ এবং পরিবহনের পুরো সময়জুড়ে মাংসকে নিয়ন্ত্রিত কোল্ড চেইন (০°সে থেকে ৪°সে) এর মধ্যে সংরক্ষণের ব্যবস্থা করবে।",
+            "পণ্য নিরাপত্তা, স্বাস্থ্যবিধি এবং গুণগত মান বজায় রাখতে InsureCow ইনসুলেটেড, ফুড-গ্রেড প্যাকেজিং এবং রেফ্রিজারেটেড পরিবহন ব্যবস্থা ব্যবহার করবে।",
+            "মাংস গ্রহণের পর এর সতেজতা ও নিরাপত্তা বজায় রাখতে গ্রাহককে অবিলম্বে উপযুক্ত রেফ্রিজারেশন (০°সে থেকে ৪°সে) অথবা ফ্রিজিং অবস্থায় সংরক্ষণের পরামর্শ দেওয়া হচ্ছে।",
           ]}
         />
       </SubSection>
 
       {/* 1.3 Booking & Payment */}
-      <SubSection title="1.3 Booking & Payment">
+      <SubSection title="১.৩ বুকিং ও পেমেন্ট">
         <BulletList
           items={[
-            "Booking is strictly subject to availability and will close 5 (five) days prior to Eid-ul-Azha.",
-            "A minimum of 50% advance payment is required to provisionally confirm the order.",
-            "The remaining 50% balance must be paid within the deadline communicated by InsureCow at the time of booking.",
-            "Failure to pay the remaining balance within the specified deadline will result in automatic cancellation of the order without prior notice.",
-            "In such cases, the advance payment shall be strictly non-refundable and will be forfeited, and InsureCow reserves the right to reallocate the cattle to another customer.",
+            "বুকিং সম্পূর্ণরূপে প্রাপ্যতার উপর নির্ভরশীল এবং ঈদুল আযহার ৫ (পাঁচ) দিন পূর্বে বুকিং বন্ধ হয়ে যাবে।",
+            "অর্ডার প্রাথমিকভাবে নিশ্চিত করতে ন্যূনতম ৫০% অগ্রিম পেমেন্ট আবশ্যক।",
+            "অবশিষ্ট ৫০% অর্থ বুকিংয়ের সময় InsureCow কর্তৃক নির্ধারিত সময়সীমার মধ্যে পরিশোধ করতে হবে।",
+            "নির্ধারিত সময়সীমার মধ্যে অবশিষ্ট অর্থ পরিশোধে ব্যর্থ হলে, কোনো পূর্ব নোটিশ ছাড়াই অর্ডার স্বয়ংক্রিয়ভাবে বাতিল হয়ে যাবে।",
+            "এক্ষেত্রে অগ্রিম প্রদত্ত অর্থ সম্পূর্ণরূপে অ-ফেরতযোগ্য হিসেবে বাজেয়াপ্ত হবে এবং InsureCow উক্ত গরুটি অন্য গ্রাহকের কাছে পুনরায় বরাদ্দ করার অধিকার সংরক্ষণ করে।",
           ]}
         />
 
         <div className="mt-6 p-5 bg-amber-50 border border-amber-200 rounded-xl">
           <h5 className="font-semibold text-amber-900 mb-4 flex items-center gap-2">
             <DollarSign className="w-4 h-4" />
-            Price & Payment Protection Clauses
+            মূল্য ও পেমেন্ট সুরক্ষা সংক্রান্ত শর্তাবলি
           </h5>
           <div className="space-y-4 text-sm">
             <div>
               <span className="font-semibold text-amber-900">
-                No Price Lock Guarantee:
+                মূল্য স্থির থাকার কোনো নিশ্চয়তা নেই:
               </span>{" "}
               <span className="text-amber-800">
-                The initial price quoted at the time of booking is not
-                guaranteed unless full payment is completed within the specified
-                timeline. InsureCow does not provide any price lock facility
-                beyond the communicated payment deadline.
+                বুকিংয়ের সময় প্রদত্ত প্রাথমিক মূল্য নির্ধারিত সময়সীমার মধ্যে
+                সম্পূর্ণ অর্থ পরিশোধ না করা পর্যন্ত নিশ্চিত নয়। InsureCow
+                নির্ধারিত পেমেন্ট সময়সীমার পর কোনো মূল্য লক সুবিধা প্রদান করে
+                না।
               </span>
             </div>
+
             <div>
               <span className="font-semibold text-amber-900">
-                Price Revision Protection:
+                মূল্য সংশোধনের অধিকার:
               </span>{" "}
               <span className="text-amber-800">
-                If the customer fails to clear the remaining balance within the
-                stipulated deadline, InsureCow reserves the right to revise the
-                total payable amount in line with prevailing market rates of
-                cattle, logistics, and processing costs at the time of final
-                payment.
+                গ্রাহক নির্ধারিত সময়সীমার মধ্যে অবশিষ্ট অর্থ পরিশোধে ব্যর্থ
+                হলে, InsureCow চূড়ান্ত পেমেন্টের সময় প্রচলিত গরুর বাজারদর,
+                লজিস্টিক ব্যয় এবং প্রক্রিয়াজাতকরণ খরচ অনুযায়ী মোট পরিশোধযোগ্য
+                অর্থ পুনর্নির্ধারণ করার অধিকার সংরক্ষণ করে।
               </span>
             </div>
+
             <div>
               <span className="font-semibold text-amber-900">
-                Dynamic Pricing Clause:
+                গতিশীল মূল্য নির্ধারণ ধারা:
               </span>{" "}
               <span className="text-amber-800">
-                Prices of cattle and related services are subject to market
-                fluctuations, seasonal demand, supply chain conditions, and
-                operational costs during the Qurbani period. Any revised price
-                communicated by InsureCow shall be final and binding, and the
-                order will only proceed upon acceptance and full settlement of
-                the updated amount.
+                কুরবানির সময় গরু এবং সংশ্লিষ্ট সেবার মূল্য বাজারের ওঠানামা,
+                মৌসুমি চাহিদা, সরবরাহ শৃঙ্খলের অবস্থা এবং পরিচালন ব্যয়ের উপর
+                নির্ভরশীল। InsureCow কর্তৃক জানানো যেকোনো সংশোধিত মূল্য চূড়ান্ত
+                ও বাধ্যতামূলক হবে, এবং হালনাগাদ অর্থের পূর্ণ পরিশোধ ও গ্রহণের
+                পরই অর্ডার কার্যকর হবে।
               </span>
             </div>
+
             <div>
               <span className="font-semibold text-amber-900">
-                An order shall be considered fully confirmed only upon receipt
-                of the complete payment within the stipulated or revised
-                timeline.
+                নির্ধারিত বা সংশোধিত সময়সীমার মধ্যে সম্পূর্ণ অর্থ গ্রহণের পরই
+                একটি অর্ডার সম্পূর্ণরূপে নিশ্চিত বলে গণ্য হবে।
               </span>
             </div>
           </div>
@@ -607,143 +637,148 @@ function FullServiceSection() {
       </SubSection>
 
       {/* 1.4 Processing Charges */}
-      <SubSection title="1.4 Processing Charges (Per Cattle)">
+      <SubSection title="১.৪ প্রক্রিয়াজাতকরণ চার্জ (প্রতি গরু)">
         <p className="text-sm text-gray-600 mb-4">
-          The following charges shall apply for slaughtering, hygienic
-          processing, packaging, and delivery of cattle under the Full-Service
-          Qurbani package:
+          ফুল-সার্ভিস কুরবানি প্যাকেজের আওতায় গরু জবাই, স্বাস্থ্যসম্মত
+          প্রক্রিয়াজাতকরণ, প্যাকেজিং এবং ডেলিভারির জন্য নিম্নোক্ত চার্জ
+          প্রযোজ্য হবে:
         </p>
+
         <TableBlock
           headers={[
-            "Cattle Price Range (BDT)",
-            "Eid Day +1 (2nd Day)",
-            "Eid Day +2 (3rd Day)",
-            "Eid Day +3 (4th Day)",
-            "Eid Day +4 & Beyond",
+            "গরুর মূল্যসীমা (টাকা)",
+            "ঈদের ২য় দিন",
+            "ঈদের ৩য় দিন",
+            "ঈদের ৪র্থ দিন",
+            "ঈদের ৫ম দিন ও পরবর্তী",
           ]}
           rows={[
             [
-              "Below 130,000",
-              "24,000",
-              "15,000 (inclusive of BDT 3,000 discount)",
-              "13,000",
-              "13,000 (fresh chilled)",
+              "১,৩০,০০০ টাকার নিচে",
+              "২৪,০০০",
+              "১৫,০০০ (৩,০০০ টাকা ছাড়সহ)",
+              "১৩,০০০",
+              "১৩,০০০ (তাজা ঠান্ডা)",
             ],
             [
-              "130,000 – 180,000",
-              "25,000",
-              "16,000 (inclusive of BDT 3,000 discount)",
-              "14,000",
-              "14,000 (fresh chilled)",
+              "১,৩০,০০০ – ১,৮০,০০০",
+              "২৫,০০০",
+              "১৬,০০০ (৩,০০০ টাকা ছাড়সহ)",
+              "১৪,০০০",
+              "১৪,০০০ (তাজা ঠান্ডা)",
             ],
             [
-              "Above 180,000",
-              "27,000",
-              "18,000 (inclusive of BDT 3,000 discount)",
-              "16,000",
-              "16,000 (fresh chilled)",
+              "১,৮০,০০০ টাকার উপরে",
+              "২৭,০০০",
+              "১৮,০০০ (৩,০০০ টাকা ছাড়সহ)",
+              "১৬,০০০",
+              "১৬,০০০ (তাজা ঠান্ডা)",
             ],
           ]}
         />
+
         <BulletList
           items={[
-            "The above charges are inclusive of slaughtering, standard processing, hygienic packaging, and last-mile delivery within Dhaka City.",
-            "The discount applicable on Eid Day +2 (3rd Day) is already adjusted in the listed price and is time-specific and non-transferable.",
-            "Charges may vary in case of special handling requirements, custom processing requests, or unforeseen operational costs, subject to prior customer consent.",
+            "উপরোক্ত চার্জের মধ্যে জবাই, মানসম্মত প্রক্রিয়াজাতকরণ, স্বাস্থ্যসম্মত প্যাকেজিং এবং ঢাকা শহরের মধ্যে লাস্ট-মাইল ডেলিভারি অন্তর্ভুক্ত রয়েছে।",
+            "ঈদের ৩য় দিনের জন্য প্রযোজ্য ছাড় তালিকাভুক্ত মূল্যের মধ্যেই সমন্বয় করা হয়েছে; এটি নির্দিষ্ট সময়ের জন্য প্রযোজ্য এবং হস্তান্তরযোগ্য নয়।",
+            "বিশেষ হ্যান্ডলিং, কাস্টম প্রক্রিয়াজাতকরণ অথবা অনাকাঙ্ক্ষিত পরিচালন ব্যয়ের ক্ষেত্রে, গ্রাহকের পূর্ব সম্মতি সাপেক্ষে চার্জ পরিবর্তিত হতে পারে।",
           ]}
         />
       </SubSection>
 
       {/* 1.5 Meat Processing Standards */}
-      <SubSection title="1.5 Meat Processing Standards">
+      <SubSection title="১.৫ মাংস প্রক্রিয়াজাতকরণের মানদণ্ড">
         <BulletList
           items={[
-            "Carcass will be processed into uniform, standardized cuts (approximately 17–18 portions per kg basis) in accordance with hygienic meat processing protocols.",
-            "All meat will be packed in food-grade, leak-proof 3 kg poly packs to ensure hygiene, safety, and portion control.",
-            "Each master carton will contain a maximum of 15 kg (5 × 3 kg packs) for efficient handling and cold-chain management.",
-            "Offal items (including liver, heart, kidney, lungs, and spleen) will be processed and packaged separately under hygienic conditions.",
-            "Special cuts, including head meat, brain, and legs (paya), will be individually packed and labeled separately.",
-            "All inedible by-products (including bowels and excess fat) will be handled and disposed of in accordance with approved hygienic and environmental standards, unless otherwise requested by the customer at the time of booking.",
+            "স্বাস্থ্যসম্মত মাংস প্রক্রিয়াজাতকরণ প্রটোকল অনুসারে কারকাসকে সমান ও মানসম্মত কাটে প্রক্রিয়াজাত করা হবে (প্রতি কেজিতে আনুমানিক ১৭–১৮টি অংশ)।",
+            "স্বাস্থ্যবিধি, নিরাপত্তা এবং পরিমাণ নিয়ন্ত্রণ নিশ্চিত করতে সমস্ত মাংস ৩ কেজি ওজনের ফুড-গ্রেড, লিক-প্রুফ পলি প্যাকে প্যাক করা হবে।",
+            "দক্ষ হ্যান্ডলিং এবং কোল্ড-চেইন ব্যবস্থাপনার জন্য প্রতিটি মাস্টার কার্টনে সর্বোচ্চ ১৫ কেজি (৫ × ৩ কেজি প্যাক) রাখা হবে।",
+            "কলিজা, হৃদপিণ্ড, কিডনি, ফুসফুস এবং প্লীহাসহ সমস্ত ভুঁড়ি ও অভ্যন্তরীণ অঙ্গ আলাদাভাবে স্বাস্থ্যসম্মতভাবে প্রক্রিয়াজাত ও প্যাক করা হবে।",
+            "মাথার মাংস, মগজ এবং পায়াসহ বিশেষ কাটগুলো পৃথকভাবে প্যাক ও লেবেল করা হবে।",
+            "অখাদ্য উপজাত (যেমন অন্ত্র ও অতিরিক্ত চর্বি) গ্রাহক বুকিংয়ের সময় অন্যথা অনুরোধ না করলে, অনুমোদিত স্বাস্থ্যবিধি ও পরিবেশগত মানদণ্ড অনুসারে ব্যবস্থাপনা ও নিষ্পত্তি করা হবে।",
           ]}
         />
       </SubSection>
 
       {/* 1.6 Optional Bowels Collection */}
-      <SubSection title="1.6 Optional Bowels Collection (Explanation)">
+      <SubSection title="১.৬ ঐচ্ছিক ভুঁড়ি সংগ্রহ (ব্যাখ্যা)">
         <p className="text-sm text-gray-500 mb-3 italic">
-          This clause defines an optional customer choice regarding the
-          collection of animal bowels (intestines and related inedible internal
-          parts) after slaughter.
+          এই ধারাটি জবাইয়ের পর পশুর ভুঁড়ি (অন্ত্র এবং সংশ্লিষ্ট অখাদ্য
+          অভ্যন্তরীণ অংশ) সংগ্রহের ক্ষেত্রে গ্রাহকের একটি ঐচ্ছিক পছন্দ নির্ধারণ
+          করে।
         </p>
         <BulletList
           items={[
-            "After processing, bowels and inedible internal by-products are normally segregated and disposed of hygienically in accordance with food safety and environmental standards.",
-            "However, the customer may opt to collect bowels at the time of purchase as an additional service preference.",
-            "If selected, the bowels will be separately preserved, packed, and made available for collection from designated InsureCow outlets.",
-            "Collection will be permitted on or after the 5th day following Eid-ul-Azha, subject to operational scheduling and outlet availability.",
-            "This option is strictly optional and must be confirmed during the booking process; requests made after order confirmation may not be accommodated.",
+            "প্রক্রিয়াজাতকরণের পর ভুঁড়ি এবং অখাদ্য অভ্যন্তরীণ উপজাতসমূহ সাধারণত খাদ্য নিরাপত্তা ও পরিবেশগত মানদণ্ড অনুসারে স্বাস্থ্যসম্মতভাবে পৃথক করে অপসারণ করা হয়।",
+            "তবে, গ্রাহক অতিরিক্ত সেবা সুবিধা হিসেবে ক্রয়ের সময় ভুঁড়ি সংগ্রহের বিকল্প নির্বাচন করতে পারেন।",
+            "এই বিকল্প নির্বাচন করা হলে, ভুঁড়ি আলাদাভাবে সংরক্ষণ, প্যাকেজিং এবং নির্ধারিত InsureCow আউটলেট থেকে সংগ্রহের জন্য উপলব্ধ করা হবে।",
+            "ঈদুল আজহার ৫ম দিন বা তার পর থেকে, কার্যক্রমের সময়সূচি ও আউটলেটের প্রাপ্যতা সাপেক্ষে সংগ্রহ করা যাবে।",
+            "এই সুবিধাটি সম্পূর্ণরূপে ঐচ্ছিক এবং বুকিংয়ের সময় নিশ্চিত করতে হবে; অর্ডার নিশ্চিত হওয়ার পর করা অনুরোধ গ্রহণযোগ্য নাও হতে পারে।",
           ]}
         />
       </SubSection>
 
       {/* 1.7 Hide Value & Ownership */}
-      <SubSection title="1.7 Hide (Skin) Value & Ownership Clause">
+      <SubSection title="১.৭ চামড়ার মূল্য ও মালিকানা ধারা">
         <p className="mb-4">
-          The Hide (Skin) Value represents the estimated fair market value of
-          the animal skin generated from slaughter, determined based on the
-          cattle’s categorized price range at the time of booking.
+          চামড়ার মূল্য বলতে জবাইয়ের ফলে প্রাপ্ত পশুর চামড়ার আনুমানিক ন্যায্য
+          বাজারমূল্যকে বোঝায়, যা বুকিংয়ের সময় গরুর নির্ধারিত মূল্যসীমার
+          ভিত্তিতে নির্ধারণ করা হয়।
         </p>
         <TableBlock
-          headers={["Cattle Price Range (BDT)", "Hide Value (BDT per cattle)"]}
+          headers={["গরুর মূল্যসীমা (টাকা)", "চামড়ার মূল্য (প্রতি গরু)"]}
           rows={[
-            ["Below 130,000", "700"],
-            ["130,000 – 180,000", "910"],
-            ["Above 180,000", "1,120"],
+            ["১,৩০,০০০ টাকার নিচে", "৭০০"],
+            ["১,৩০,০০০ – ১,৮০,০০০", "৯১০"],
+            ["১,৮০,০০০ টাকার বেশি", "১,১২০"],
           ]}
         />
 
         <div className="space-y-4 mt-4">
           <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
             <h6 className="font-semibold text-gray-900 mb-2">
-              1.7.1 Ownership of Hide
+              ১.৭.১ চামড়ার মালিকানা
             </h6>
             <BulletList
               items={[
-                "Unless otherwise expressly agreed in writing, the hide (skin) shall remain the sole property of InsureCow after slaughter and processing.",
-                "The customer acknowledges that the hide forms part of the overall operational economics of Qurbani processing services.",
+                "লিখিতভাবে ভিন্ন কোনো চুক্তি না থাকলে, জবাই ও প্রক্রিয়াজাতকরণের পর চামড়া সম্পূর্ণরূপে InsureCow-এর মালিকানাধীন থাকবে।",
+                "গ্রাহক স্বীকার করেন যে, চামড়া কুরবানির প্রক্রিয়াজাতকরণ সেবার সামগ্রিক অর্থনৈতিক কাঠামোর একটি অংশ।",
               ]}
             />
           </div>
+
           <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
             <h6 className="font-semibold text-gray-900 mb-2">
-              1.7.2 Adjustment of Hide Value
+              ১.৭.২ চামড়ার মূল্য সমন্বয়
             </h6>
             <BulletList
               items={[
-                "The stated Hide Value is an estimated reference value used for internal allocation and pricing structure.",
-                "InsureCow reserves the right to adjust, offset, or incorporate the hide value against processing, logistics, or service costs as part of the overall service pricing model.",
-                "Any such adjustment shall not affect the agreed meat delivery obligations under the confirmed order.",
+                "উল্লিখিত চামড়ার মূল্য একটি আনুমানিক রেফারেন্স মূল্য, যা অভ্যন্তরীণ বণ্টন ও মূল্য নির্ধারণ কাঠামোর জন্য ব্যবহৃত হয়।",
+                "InsureCow সামগ্রিক সেবামূল্য কাঠামোর অংশ হিসেবে প্রক্রিয়াজাতকরণ, লজিস্টিকস বা অন্যান্য সেবার খরচের সাথে চামড়ার মূল্য সমন্বয়, সমন্বিতকরণ বা অফসেট করার অধিকার সংরক্ষণ করে।",
+                "এ ধরনের কোনো সমন্বয় নিশ্চিত অর্ডারের অধীনে নির্ধারিত মাংস সরবরাহের বাধ্যবাধকতাকে প্রভাবিত করবে না।",
               ]}
             />
           </div>
+
           <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
             <h6 className="font-semibold text-gray-900 mb-2">
-              1.7.3 Market Variation Clause
+              ১.৭.৩ বাজারমূল্য পরিবর্তন ধারা
             </h6>
             <BulletList
               items={[
-                "Hide values are subject to market fluctuations in the leather and by-product industry.",
-                "InsureCow may revise the hide valuation from time to time without prior notice to reflect prevailing market conditions.",
+                "চামড়ার মূল্য চামড়া ও উপজাত শিল্পের বাজার ওঠানামার উপর নির্ভরশীল।",
+                "বর্তমান বাজার পরিস্থিতি প্রতিফলিত করতে InsureCow পূর্ব নোটিশ ছাড়াই সময়ে সময়ে চামড়ার মূল্য সংশোধন করতে পারে।",
               ]}
             />
           </div>
+
           <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
             <h6 className="font-semibold text-gray-900 mb-2">
-              1.7.4 No Separate Claim
+              ১.৭.৪ পৃথক দাবি অগ্রহণযোগ্য
             </h6>
             <BulletList
               items={[
-                "The customer shall have no separate ownership claim, refund claim, or monetary entitlement over the hide value unless explicitly agreed in a written contract signed by InsureCow.",
+                "InsureCow কর্তৃক স্বাক্ষরিত লিখিত চুক্তিতে স্পষ্টভাবে উল্লেখ না থাকলে, গ্রাহক চামড়ার মূল্য সম্পর্কিত কোনো পৃথক মালিকানা দাবি, অর্থ ফেরতের দাবি বা আর্থিক অধিকার দাবি করতে পারবেন না।",
               ]}
             />
           </div>
@@ -751,117 +786,118 @@ function FullServiceSection() {
       </SubSection>
 
       {/* 1.8 Delivery Conditions */}
-      <SubSection title="1.8 Delivery Conditions">
+      <SubSection title="১.৮ ডেলিভারি শর্তাবলি">
         <BulletList
           items={[
-            "The customer shall provide a complete and accurate delivery address within Dhaka City, including valid landmarks, apartment/house details, and active mobile contact numbers of the recipient(s).",
-            "The delivery location must be fully accessible for refrigerated transport vehicles (chiller vans/trucks), ensuring safe unloading and handling of goods.",
-            "InsureCow reserves the right to decline doorstep delivery if the access route is deemed unsafe, restricted, or operationally unfeasible for refrigerated vehicles.",
-            "In such cases, delivery will be completed at the nearest accessible and safe roadside or designated drop-off point within Dhaka City, as determined by InsureCow logistics personnel.",
+            "গ্রাহককে ঢাকা শহরের মধ্যে সম্পূর্ণ ও সঠিক ডেলিভারি ঠিকানা প্রদান করতে হবে, যার মধ্যে বৈধ ল্যান্ডমার্ক, বাসা/অ্যাপার্টমেন্টের বিবরণ এবং প্রাপকের সক্রিয় মোবাইল নম্বর অন্তর্ভুক্ত থাকবে।",
+            "ডেলিভারি স্থানটি রেফ্রিজারেটেড পরিবহন যানবাহন (চিলার ভ্যান/ট্রাক) প্রবেশ ও নিরাপদে পণ্য খালাসের জন্য সম্পূর্ণ উপযোগী হতে হবে।",
+            "রেফ্রিজারেটেড যানবাহনের জন্য প্রবেশপথ অনিরাপদ, সীমাবদ্ধ বা কার্যত অযোগ্য মনে হলে InsureCow সরাসরি বাসায় ডেলিভারি প্রত্যাখ্যান করার অধিকার সংরক্ষণ করে।",
+            "এমন ক্ষেত্রে, InsureCow-এর লজিস্টিকস টিমের নির্ধারণ অনুযায়ী ঢাকা শহরের মধ্যে নিকটতম নিরাপদ ও প্রবেশযোগ্য সড়কপথ বা নির্ধারিত ড্রপ-অফ পয়েন্টে ডেলিভারি সম্পন্ন করা হবে।",
           ]}
         />
 
         <div className="mt-4 p-5 bg-red-50 border border-red-200 rounded-xl">
           <h6 className="font-semibold text-red-900 mb-3 flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" />
-            1.8.1 Liability & Delivery Failure Clause
+            ১.৮.১ দায়বদ্ধতা ও ডেলিভারি ব্যর্থতা ধারা
           </h6>
           <div className="space-y-3 text-sm text-red-800">
             <p>
-              InsureCow shall not be held liable for any delay, delivery
-              failure, or service disruption arising due to:
+              নিম্নলিখিত কারণসমূহে সৃষ্ট বিলম্ব, ডেলিভারি ব্যর্থতা বা সেবা
+              বিঘ্নের জন্য InsureCow দায়ী থাকবে না:
             </p>
             <ul className="list-disc pl-5 space-y-1">
               <li>
-                Incorrect, incomplete, or misleading address information
-                provided by the customer
+                গ্রাহক কর্তৃক প্রদত্ত ভুল, অসম্পূর্ণ বা বিভ্রান্তিকর ঠিকানা
               </li>
-              <li>Unreachable or inactive contact numbers</li>
+              <li>অকার্যকর বা সংযোগবিহীন যোগাযোগ নম্বর</li>
+              <li>ডেলিভারির সময় প্রাপক বা অনুমোদিত প্রতিনিধির অনুপস্থিতি</li>
               <li>
-                Absence of the recipient or authorized representative at the
-                time of delivery
-              </li>
-              <li>
-                Refusal or failure to accept delivery at the scheduled time and
-                location
+                নির্ধারিত সময় ও স্থানে ডেলিভারি গ্রহণে অস্বীকৃতি বা ব্যর্থতা
               </li>
               <li>
-                Restricted access, traffic congestion, civic restrictions, or
-                force majeure conditions
+                সীমাবদ্ধ প্রবেশাধিকার, যানজট, নাগরিক বিধিনিষেধ বা ফোর্স মেজর
+                পরিস্থিতি
               </li>
             </ul>
+
             <p className="mt-3">
-              If delivery cannot be completed due to any of the above reasons,
-              InsureCow reserves the right to:
+              উপরোক্ত যেকোনো কারণে ডেলিভারি সম্পন্ন করা সম্ভব না হলে,
+              InsureCow-এর অধিকার থাকবে:
             </p>
             <ul className="list-disc pl-5 space-y-1">
-              <li>Reschedule delivery at its discretion, or</li>
-              <li>Deliver to an alternative nearby accessible location, or</li>
+              <li>নিজস্ব বিবেচনায় ডেলিভারি পুনঃনির্ধারণ করা, অথবা</li>
               <li>
-                Treat the order as successfully delivered upon attempted
-                delivery confirmation
+                নিকটবর্তী অন্য কোনো প্রবেশযোগ্য স্থানে ডেলিভারি সম্পন্ন করা,
+                অথবা
+              </li>
+              <li>
+                ডেলিভারির চেষ্টা নিশ্চিত হওয়ার পর অর্ডারকে সফলভাবে ডেলিভারিকৃত
+                হিসেবে গণ্য করা
               </li>
             </ul>
+
             <p className="mt-3">
-              Any additional costs arising from redelivery attempts or address
-              corrections may be charged to the customer.
+              পুনরায় ডেলিভারি বা ঠিকানা সংশোধনের ফলে সৃষ্ট অতিরিক্ত খরচ
+              গ্রাহকের কাছ থেকে আদায় করা হতে পারে।
             </p>
+
             <p className="font-semibold mt-3">
-              In all cases, once delivery is attempted in good faith as per
-              provided instructions, the order shall be considered fulfilled and
-              completed, and no liability claims shall be entertained.
+              প্রদত্ত নির্দেশনা অনুযায়ী সদিচ্ছার সাথে একবার ডেলিভারির চেষ্টা
+              করা হলে, অর্ডার সম্পূর্ণ ও সফলভাবে সম্পন্ন হয়েছে বলে গণ্য হবে এবং
+              এ বিষয়ে কোনো দায় দাবি গ্রহণযোগ্য হবে না।
             </p>
           </div>
         </div>
       </SubSection>
 
       {/* 1.9 Animal Health & Replacement */}
-      <SubSection title="1.9 Animal Health & Replacement">
+      <SubSection title="১.৯ পশুর স্বাস্থ্য ও প্রতিস্থাপন">
         <BulletList
           items={[
-            "In the event any selected cattle is found to be unfit, clinically unwell, diseased, or otherwise not meeting InsureCow’s quality and health standards, InsureCow shall reserve the right to take appropriate corrective action.",
-            "InsureCow will notify the customer without undue delay and, where necessary, provide relevant information regarding the condition of the animal.",
-            "InsureCow shall arrange a replacement animal of comparable quality, weight range, and value, subject to availability and operational feasibility.",
-            "The replacement decision shall be made by InsureCow in accordance with its livestock health assessment and quality assurance protocols, and shall be deemed final for service continuity purposes.",
+            "নির্বাচিত কোনো গরু যদি অনুপযুক্ত, অসুস্থ, রোগাক্রান্ত বা InsureCow-এর স্বাস্থ্য ও মান নিয়ন্ত্রণ মানদণ্ড পূরণে ব্যর্থ বলে প্রতীয়মান হয়, তবে InsureCow প্রয়োজনীয় সংশোধনমূলক ব্যবস্থা গ্রহণের অধিকার সংরক্ষণ করে।",
+            "InsureCow অযৌক্তিক বিলম্ব ছাড়াই গ্রাহককে অবহিত করবে এবং প্রয়োজনে পশুর অবস্থা সম্পর্কিত প্রাসঙ্গিক তথ্য প্রদান করবে।",
+            "প্রাপ্যতা ও কার্যগত সক্ষমতা সাপেক্ষে, InsureCow সমমানের গুণগত মান, ওজনসীমা ও মূল্যের একটি বিকল্প পশুর ব্যবস্থা করবে।",
+            "পশু প্রতিস্থাপনের সিদ্ধান্ত InsureCow-এর প্রাণিস্বাস্থ্য মূল্যায়ন ও গুণগত নিশ্চয়তা নীতিমালা অনুযায়ী গৃহীত হবে এবং সেবা ধারাবাহিকতার স্বার্থে তা চূড়ান্ত বলে বিবেচিত হবে।",
           ]}
         />
       </SubSection>
 
       {/* 1.10 Force Majeure */}
-      <SubSection title="1.10 Force Majeure">
+      <SubSection title="১.১০ ফোর্স মেজর">
         <BulletList
           items={[
-            "InsureCow shall not be held liable for any delay, disruption, suspension, or failure in performance of its obligations where such delay or failure arises from events beyond its reasonable control (Force Majeure Events).",
-            "Force Majeure Events shall include, but are not limited to: government restrictions or regulatory actions, natural disasters, epidemic or pandemic situations, civil unrest, strikes, transportation disruptions, infrastructure failure, or any other unforeseen operational constraints.",
-            "In the occurrence of a Force Majeure Event, InsureCow may suspend, reschedule, or modify delivery timelines as reasonably required under the circumstances.",
-            "InsureCow will make reasonable efforts to notify customers as soon as practicable regarding any material changes to delivery schedules.",
-            "Any such delay or modification shall not constitute a breach of contract, and InsureCow shall bear no liability for resulting losses, delays, or inconveniences.",
+            "InsureCow-এর যৌক্তিক নিয়ন্ত্রণের বাইরে সংঘটিত কোনো ঘটনার (ফোর্স মেজর) কারণে দায়িত্ব পালনে বিলম্ব, বিঘ্ন, স্থগিতাদেশ বা ব্যর্থতার জন্য InsureCow দায়ী থাকবে না।",
+            "ফোর্স মেজর ঘটনার মধ্যে অন্তর্ভুক্ত থাকবে, তবে এতে সীমাবদ্ধ নয়: সরকারি বিধিনিষেধ বা নিয়ন্ত্রক পদক্ষেপ, প্রাকৃতিক দুর্যোগ, মহামারি, নাগরিক অস্থিরতা, ধর্মঘট, পরিবহন বিঘ্ন, অবকাঠামোগত ব্যর্থতা বা অন্য যেকোনো অপ্রত্যাশিত কার্যগত প্রতিবন্ধকতা।",
+            "ফোর্স মেজর পরিস্থিতিতে InsureCow প্রয়োজন অনুসারে ডেলিভারির সময়সূচি স্থগিত, পুনঃনির্ধারণ বা পরিবর্তন করতে পারে।",
+            "ডেলিভারি সময়সূচিতে কোনো গুরুত্বপূর্ণ পরিবর্তন হলে InsureCow যত দ্রুত সম্ভব গ্রাহককে অবহিত করার যুক্তিসঙ্গত প্রচেষ্টা করবে।",
+            "এ ধরনের বিলম্ব বা পরিবর্তন চুক্তিভঙ্গ হিসেবে গণ্য হবে না এবং এর ফলে সৃষ্ট ক্ষতি, বিলম্ব বা অসুবিধার জন্য InsureCow কোনো দায় বহন করবে না।",
           ]}
         />
       </SubSection>
 
       {/* 1.11 Acceptance of Delivery */}
-      <SubSection title="1.11 Acceptance of Delivery">
+      <SubSection title="১.১১ ডেলিভারি গ্রহণ">
         <BulletList
           items={[
-            "The customer (or authorized representative) must present a valid purchase receipt at the time of delivery and duly sign the Received Form acknowledging successful handover of the products.",
-            "Prior to signing the Received Form, the customer is entitled to perform a reasonable visual inspection of the delivered goods to verify the condition, packaging integrity, and general compliance with the order specification.",
-            "The customer acknowledges that inspection is limited to external and immediate observable conditions only, and does not include invasive testing or post-consumption evaluation.",
-            "Delivery shall be deemed complete, final, and fully accepted upon signing of the Received Form or any equivalent confirmation (including electronic acknowledgment, where applicable).",
-            "Once delivery has been accepted after inspection, the order shall be considered finalized, and no claims, disputes, objections, or compensation requests shall be entertained, except in cases of proven gross negligence as determined solely by InsureCow.",
+            "ডেলিভারির সময় গ্রাহক (অথবা অনুমোদিত প্রতিনিধি) বৈধ ক্রয় রসিদ প্রদর্শন করবেন এবং পণ্য সফলভাবে হস্তান্তর হয়েছে মর্মে Received Form-এ স্বাক্ষর করবেন।",
+            "Received Form-এ স্বাক্ষরের পূর্বে, গ্রাহক ডেলিভারিকৃত পণ্যের অবস্থা, প্যাকেজিংয়ের অখণ্ডতা এবং অর্ডারের সাথে সামঞ্জস্য যাচাইয়ের জন্য যুক্তিসঙ্গত দৃশ্যমান পরিদর্শনের অধিকার রাখেন।",
+            "গ্রাহক স্বীকার করেন যে, এই পরিদর্শন শুধুমাত্র বাহ্যিক ও তাৎক্ষণিকভাবে দৃশ্যমান অবস্থার মধ্যে সীমাবদ্ধ; এতে কোনো গভীর পরীক্ষা বা ভোগ-পরবর্তী মূল্যায়ন অন্তর্ভুক্ত নয়।",
+            "Received Form-এ স্বাক্ষর বা অন্য যেকোনো সমতুল্য নিশ্চিতকরণ (প্রযোজ্য ক্ষেত্রে ইলেকট্রনিক স্বীকৃতিসহ) প্রদান করা মাত্র ডেলিভারি সম্পূর্ণ, চূড়ান্ত এবং গৃহীত বলে বিবেচিত হবে।",
+            "পরিদর্শনের পর ডেলিভারি গ্রহণ করা হলে অর্ডার চূড়ান্ত বলে গণ্য হবে এবং InsureCow কর্তৃক নির্ধারিত প্রমাণিত গুরুতর অবহেলা ব্যতীত কোনো দাবি, বিরোধ, আপত্তি বা ক্ষতিপূরণের অনুরোধ গ্রহণযোগ্য হবে না।",
           ]}
         />
       </SubSection>
 
       {/* 1.12 Refund Policy */}
-      <SubSection title="1.12 Refund Policy">
+      <SubSection title="১.১২ অর্থ ফেরত নীতিমালা">
         <div className="p-5 bg-red-50 border border-red-200 rounded-xl">
           <BulletList
             items={[
-              "All Qurbani bookings are strictly non-cancellable, non-amendable, and non-refundable once confirmed, regardless of circumstances.",
-              "Customers are solely responsible for reviewing and verifying all cattle details, pricing, service type, and delivery terms prior to making payment and confirming the order.",
-              "By confirming a booking, the customer expressly acknowledges that they have fully reviewed, understood, and accepted the selected animal and associated services, and are satisfied with the same for the purpose of Qurbani compliance.",
-              "No refund claims, chargeback requests, or cancellation requests shall be entertained under any circumstances once the order is confirmed, except where explicitly agreed in writing by InsureCow management.",
+              "সকল কুরবানির বুকিং নিশ্চিত হওয়ার পর সম্পূর্ণরূপে বাতিল অযোগ্য, পরিবর্তন অযোগ্য এবং অর্থ ফেরত অযোগ্য।",
+              "পেমেন্ট ও অর্ডার নিশ্চিত করার পূর্বে গরুর বিবরণ, মূল্য, সেবার ধরন এবং ডেলিভারি শর্তাবলি পর্যালোচনা ও যাচাই করার সম্পূর্ণ দায়িত্ব গ্রাহকের।",
+              "বুকিং নিশ্চিত করার মাধ্যমে গ্রাহক স্পষ্টভাবে স্বীকার করেন যে, তিনি নির্বাচিত পশু ও সংশ্লিষ্ট সেবাসমূহ সম্পূর্ণরূপে পর্যালোচনা, বুঝে গ্রহণ করেছেন এবং কুরবানির উদ্দেশ্যে তা সন্তোষজনক বলে বিবেচনা করেন।",
+              "অর্ডার নিশ্চিত হওয়ার পর কোনো অবস্থাতেই অর্থ ফেরত, চার্জব্যাক বা বাতিলের অনুরোধ গ্রহণযোগ্য হবে না, যদি না InsureCow ব্যবস্থাপনা লিখিতভাবে অন্যথা সম্মতি প্রদান করে।",
             ]}
           />
         </div>
@@ -874,35 +910,35 @@ function FullServiceSection() {
 function SharedQurbaniSection() {
   return (
     <div className="space-y-6">
-      <SubSection title="2.1 Service Area">
-        <p>This service is strictly available within Dhaka City only.</p>
+      <SubSection title="২.১ সেবার এলাকা">
+        <p>এই সেবাটি শুধুমাত্র ঢাকা শহরের মধ্যে উপলব্ধ।</p>
       </SubSection>
 
-      <SubSection title="2.2 Service Structure">
+      <SubSection title="২.২ সেবার কাঠামো">
         <BulletList
           items={[
-            "Each cattle is shared among a maximum of 7 (seven) participants, in accordance with Islamic Qurbani guidelines.",
-            "The displayed price represents 1/7th share, inclusive of slaughtering, processing, packaging, and delivery charges.",
-            "No promotional offers, discounts, or price adjustments are applicable to shared Qurbani services.",
+            "ইসলামী কুরবানির বিধান অনুযায়ী প্রতিটি গরু সর্বোচ্চ ৭ (সাত) জন অংশগ্রহণকারীর মধ্যে ভাগ করা হয়।",
+            "প্রদর্শিত মূল্য ১/৭ অংশের জন্য প্রযোজ্য, যার মধ্যে জবাই, প্রক্রিয়াজাতকরণ, প্যাকেজিং এবং ডেলিভারি খরচ অন্তর্ভুক্ত রয়েছে।",
+            "শেয়ারভিত্তিক কুরবানি সেবার ক্ষেত্রে কোনো প্রকার প্রচারমূলক অফার, ছাড় বা মূল্য সমন্বয় প্রযোজ্য নয়।",
           ]}
         />
       </SubSection>
 
-      <SubSection title="2.3 Delivery & Collection">
+      <SubSection title="২.৩ ডেলিভারি ও সংগ্রহ">
         <BulletList
           items={[
-            "Processed meat will be delivered on Eid Day +3 (4th day of Eid-ul-Azha).",
-            "Customers must collect their share from designated InsureCow pickup points within Dhaka City.",
-            "Failure to collect within the specified timeframe may result in storage limitations or additional handling constraints.",
+            "প্রক্রিয়াজাত মাংস ঈদুল আজহার ৩ দিন পর (অর্থাৎ ঈদের ৪র্থ দিনে) সরবরাহ করা হবে।",
+            "গ্রাহককে ঢাকা শহরের মধ্যে নির্ধারিত InsureCow সংগ্রহ কেন্দ্র থেকে তার অংশ সংগ্রহ করতে হবে।",
+            "নির্ধারিত সময়ের মধ্যে সংগ্রহ করতে ব্যর্থ হলে সংরক্ষণ সীমাবদ্ধতা বা অতিরিক্ত হ্যান্ডলিং জটিলতা সৃষ্টি হতে পারে।",
           ]}
         />
       </SubSection>
 
-      <SubSection title="2.4 Refund Policy">
+      <SubSection title="২.৪ অর্থ ফেরত নীতিমালা">
         <div className="p-5 bg-red-50 border border-red-200 rounded-xl">
           <p className="text-red-800 font-medium">
-            All shared Qurbani bookings are strictly non-cancellable and
-            non-refundable once confirmed.
+            সকল শেয়ারভিত্তিক কুরবানির বুকিং নিশ্চিত হওয়ার পর সম্পূর্ণরূপে
+            বাতিল অযোগ্য এবং অর্থ ফেরত অযোগ্য।
           </p>
         </div>
       </SubSection>
@@ -914,37 +950,37 @@ function SharedQurbaniSection() {
 function LiveCattleSection() {
   return (
     <div className="space-y-6">
-      <SubSection title="3.1 Service Area">
-        <p>Delivery is strictly limited to the Dhaka Metropolitan Area only.</p>
+      <SubSection title="৩.১ সেবার এলাকা">
+        <p>ডেলিভারি শুধুমাত্র ঢাকা মহানগর এলাকার মধ্যে সীমাবদ্ধ।</p>
       </SubSection>
 
-      <SubSection title="3.2 Delivery Conditions">
+      <SubSection title="৩.২ ডেলিভারি শর্তাবলি">
         <BulletList
           items={[
-            "Delivery will be scheduled 2–4 days prior to Eid-ul-Azha.",
-            "Delivery charges range from BDT 8,000 to BDT 10,000, depending on delivery timing and logistics requirements.",
-            "The customer must ensure adequate access and unloading space for livestock transport vehicles within Dhaka.",
-            "Where access is restricted, delivery will be made to the nearest safe and accessible location, as determined by InsureCow logistics team.",
+            "ঈদুল আজহার ২ থেকে ৪ দিন পূর্বে ডেলিভারি নির্ধারিত হবে।",
+            "ডেলিভারির সময় এবং লজিস্টিকস প্রয়োজনীয়তার উপর নির্ভর করে ডেলিভারি চার্জ ৮,০০০ টাকা থেকে ১০,০০০ টাকার মধ্যে হবে।",
+            "ঢাকার মধ্যে পশুবাহী পরিবহন যানবাহনের প্রবেশ, অবস্থান এবং পশু নামানোর জন্য পর্যাপ্ত স্থান নিশ্চিত করা গ্রাহকের দায়িত্ব।",
+            "প্রবেশপথ সীমাবদ্ধ হলে, InsureCow-এর লজিস্টিকস টিমের সিদ্ধান্ত অনুযায়ী নিকটতম নিরাপদ ও প্রবেশযোগ্য স্থানে ডেলিভারি সম্পন্ন করা হবে।",
           ]}
         />
       </SubSection>
 
-      <SubSection title="3.3 Payment Terms">
+      <SubSection title="৩.৩ পেমেন্ট শর্তাবলি">
         <div className="p-5 bg-amber-50 border border-amber-200 rounded-xl">
           <BulletList
             items={[
-              "100% advance payment is mandatory for order confirmation.",
-              "Partial payments and cheques are strictly not accepted.",
+              "অর্ডার নিশ্চিত করার জন্য ১০০% অগ্রিম পরিশোধ বাধ্যতামূলক।",
+              "আংশিক পেমেন্ট এবং চেক গ্রহণযোগ্য নয়।",
             ]}
           />
         </div>
       </SubSection>
 
-      <SubSection title="3.4 Refund Policy">
+      <SubSection title="৩.৪ অর্থ ফেরত নীতিমালা">
         <div className="p-5 bg-red-50 border border-red-200 rounded-xl">
           <p className="text-red-800 font-medium">
-            All Live Cattle Qurbani orders are strictly non-cancellable and
-            non-refundable once confirmed.
+            সকল লাইভ ক্যাটল কুরবানির অর্ডার নিশ্চিত হওয়ার পর সম্পূর্ণরূপে বাতিল
+            অযোগ্য এবং অর্থ ফেরত অযোগ্য।
           </p>
         </div>
       </SubSection>
@@ -958,11 +994,11 @@ function GeneralTermsSection() {
     <div className="space-y-4">
       <BulletList
         items={[
-          "All services are strictly operated within Dhaka City and Dhaka Metropolitan limits, unless explicitly stated otherwise.",
-          "InsureCow reserves the right to modify or adjust delivery schedules due to operational constraints, logistical challenges, or external factors.",
-          "Customers must provide accurate and complete contact and delivery information to ensure successful fulfillment.",
-          "By confirming any order, the customer acknowledges and agrees to all terms, conditions, and policies stated herein.",
-          "All Qurbani operations are conducted in compliance with Islamic principles and halal processing standards.",
+          "সকল সেবা শুধুমাত্র ঢাকা শহর এবং ঢাকা মহানগর সীমার মধ্যে পরিচালিত হয়, যদি না বিশেষভাবে অন্যথা উল্লেখ করা হয়।",
+          "অপারেশনাল সীমাবদ্ধতা, লজিস্টিক জটিলতা বা বাহ্যিক কারণে ডেলিভারি সময়সূচি পরিবর্তন বা সমন্বয় করার অধিকার InsureCow সংরক্ষণ করে।",
+          "সফল সেবা প্রদান নিশ্চিত করার জন্য গ্রাহককে সঠিক এবং সম্পূর্ণ যোগাযোগ ও ডেলিভারি তথ্য প্রদান করতে হবে।",
+          "যেকোনো অর্ডার নিশ্চিত করার মাধ্যমে গ্রাহক এখানে উল্লেখিত সকল শর্ত, নীতিমালা ও নিয়মাবলি মেনে নিয়েছেন বলে গণ্য হবে।",
+          "সকল কুরবানি কার্যক্রম ইসলামী নীতি এবং হালাল প্রক্রিয়াকরণ মান অনুযায়ী সম্পন্ন করা হয়।",
         ]}
       />
     </div>
