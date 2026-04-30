@@ -50,7 +50,7 @@
   "9_question": "জন্তুর চামড়ার মালিক কে?",
   "9_answer": "লিখিত চুক্তি ব্যতীত চামড়া সম্পূর্ণরূপে InsureCow-এর মালিকানাধীন থাকে। গ্রাহক স্বীকার করেন যে, চামড়ার মূল্য কুরবানি সেবার অন্তর্ভুক্ত ব্যয়ের সাথে সমন্বয় করা হয়।",
   "terms_hero_title": "INSURECOW QURBANI 2026",
-   "10_category": "নীতিমালা ও শর্তাবলী",
+  "10_category": "নীতিমালা ও শর্তাবলী",
   "10_question": "আমি কি বিশেষ কাট বা কাস্টম প্রসেসিংয়ের অনুরোধ করতে পারি?",
   "10_answer": "বিশেষ প্রসেসিং বা কাটের অনুরোধের ক্ষেত্রে অতিরিক্ত চার্জ প্রযোজ্য হতে পারে এবং এর জন্য পূর্বানুমোদন প্রয়োজন। আমাদের মানসম্মত স্বাস্থ্যসম্মত প্রক্রিয়ায় মাংস সমান অংশে কাটা হয়।",
 
@@ -165,5 +165,77 @@
   "footer_terms_of_use": "ব্যবহারের শর্তাবলী",
 
   "terms_hero_subtitle": "বুকিং করার আগে এই শর্তাবলী দয়া করে দেখুন। প্রকৃতপক্ষে সকল নীতি খাবার নিরাপত্তা এবং কোনো সমস্যা ছাড়া কুরবানি সম্পন্ন করার জন্য তৈরি করা হয়েছে।",
-  "terms_hero_badge": "শর্তাবলী ও নীতিমালা"
+  "terms_hero_badge": "শর্তাবলী ও নীতিমালা",
+  "about.hero.badge": "কাউ কমার্স সম্পর্কে",
+  "about.hero.title_part1": "প্রিমিয়াম গরু,",
+  "about.hero.title_part2": "স্বচ্ছ প্রক্রিয়া",
+  "about.hero.description": "আমরা বাংলাদেশে প্রিমিয়াম মানের গরু সংগ্রহের পদ্ধতিকে পরিবর্তন করছি — ঐতিহ্যবাহী খামার জ্ঞান এবং আধুনিক প্রযুক্তির সমন্বয়ে সম্পূর্ণ স্বচ্ছ একটি কেনাকাটার অভিজ্ঞতা তৈরি করছি।",
+  "about.hero.browseCows": "গরু দেখুন",
+  "about.hero.getInTouch": "যোগাযোগ করুন",
+
+  "about.stats.happyCustomers": "সন্তুষ্ট গ্রাহক",
+  "about.stats.cowsSold": "বিক্রিত গরু",
+  "about.stats.breedVarieties": "জাতের বৈচিত্র্য",
+  "about.stats.satisfactionRate": "সন্তুষ্টির হার",
+
+  "about.story.title": "আমাদের গল্প",
+  "about.story.bridging": "ঐতিহ্য ও প্রযুক্তির সংযোগ",
+  "about.story.description1": "কাউ কমার্স শুরু হয়েছিল একটি সহজ পর্যবেক্ষণ থেকে — বাংলাদেশে ভালো মানের গরু খুঁজে পাওয়া অপ্রয়োজনীয়ভাবে জটিল ছিল। কৃষক ও ক্রেতা উভয়েই মধ্যস্থতাকারী, অস্বচ্ছতা এবং মান নিয়ে অনিশ্চয়তার মুখোমুখি হতেন।",
+  "about.story.description2": "আমরা এটি পরিবর্তন করার সিদ্ধান্ত নিয়েছি। সরাসরি নৈতিক খামারের সাথে অংশীদারিত্ব এবং কঠোর যাচাই প্রক্রিয়ার মাধ্যমে আমরা এমন একটি মার্কেটপ্লেস তৈরি করেছি যেখানে মান নিশ্চিত এবং প্রতিটি লেনদেন স্বচ্ছ।",
+  "about.story.check1": "সার্টিফাইড খামারের সাথে সরাসরি অংশীদারিত্ব",
+  "about.story.check2": "খামার থেকে টেবিল পর্যন্ত সম্পূর্ণ যাচাই",
+  "about.story.check3": "সবার জন্য ন্যায্য মূল্য নিশ্চিতকরণ",
+
+  "about.mission.title": "আমাদের লক্ষ্য",
+  "about.mission.description": "মধ্যস্থতাকারী বাদ দিয়ে, সম্পূর্ণ স্বচ্ছতা নিশ্চিত করে এবং কৃষক ও ক্রেতা উভয়কে ন্যায্য মূল্য ও যাচাইকৃত মান দিয়ে ক্ষমতায়ন করে প্রিমিয়াম মানের গরু সহজলভ্য করা।",
+
+  "about.vision.title": "আমাদের দৃষ্টিভঙ্গি",
+  "about.vision.description": "বাংলাদেশের সবচেয়ে বিশ্বস্ত গরুর মার্কেটপ্লেস হওয়া, যেখানে মান, স্বচ্ছতা এবং নৈতিক খামার ব্যবস্থার নতুন মানদণ্ড তৈরি হবে।",
+
+  "about.whyChoose.label": "কেন আমাদের বেছে নেবেন",
+  "about.whyChoose.title_part1": "কাউ কমার্সের",
+  "about.whyChoose.title_part2": "পার্থক্য",
+
+  "about.whyChoose.verifiedQuality.title": "যাচাইকৃত মান",
+  "about.whyChoose.verifiedQuality.description": "প্রতিটি গরুর সাথে DNA যাচাই, স্বাস্থ্য সনদ এবং সম্পূর্ণ জেনেটিক তথ্য প্রদান করা হয়।",
+
+  "about.whyChoose.doorstepDelivery.title": "হোম ডেলিভারি",
+  "about.whyChoose.doorstepDelivery.description": "তাপমাত্রা নিয়ন্ত্রিত পরিবহনের মাধ্যমে সারাদেশে নিরাপদ ও দ্রুত ডেলিভারি।",
+
+  "about.whyChoose.sustainable.title": "টেকসই পদ্ধতি",
+  "about.whyChoose.sustainable.description": "পরিবেশবান্ধব ও নৈতিক খামার ব্যবস্থার মাধ্যমে গরু পালন করা হয়।",
+
+  "about.whyChoose.premium.title": "প্রিমিয়াম নির্বাচন",
+  "about.whyChoose.premium.description": "Angus, Wagyu, Hereford সহ উন্নত জাতের গরু বাছাই করা হয়।",
+
+  "about.process.label": "কিভাবে কাজ করে",
+  "about.process.title_part1": "সহজ ও",
+  "about.process.title_part2": "স্বচ্ছ প্রক্রিয়া",
+
+  "about.process.step1.title": "জাত নির্বাচন করুন",
+  "about.process.step1.description": "আমাদের প্রিমিয়াম গরুর তালিকা থেকে বিস্তারিত দেখে নির্বাচন করুন।",
+
+  "about.process.step2.title": "বুক ও রিজার্ভ করুন",
+  "about.process.step2.description": "আংশিক বা সম্পূর্ণ ইউনিট বুক করে সহজে আপনার অংশ নিশ্চিত করুন।",
+
+  "about.process.step3.title": "কমিউনিটি বুকিং",
+  "about.process.step3.description": "গরুটি সম্পূর্ণ বুক হওয়া পর্যন্ত অন্যান্য ক্রেতাদের সাথে যুক্ত থাকুন।",
+
+  "about.process.step4.title": "তাজা ডেলিভারি",
+  "about.process.step4.description": "সার্টিফাইড কসাই দ্বারা প্রক্রিয়াজাত করে তাজা মাংস আপনার ঠিকানায় পৌঁছে দেওয়া হয়।",
+
+  "about.trust.label": "বিশ্বাস ও নিশ্চয়তা",
+  "about.trust.title_part1": "সার্টিফাইড ও",
+  "about.trust.title_part2": "যাচাইকৃত",
+
+  "about.trust.dnaVerified": "DNA যাচাইকৃত",
+  "about.trust.veterinaryCertified": "পশু চিকিৎসক দ্বারা অনুমোদিত",
+  "about.trust.humaneFarmRaised": "মানবিকভাবে লালিত",
+  "about.trust.sustainablePractices": "টেকসই খামার পদ্ধতি",
+  "about.trust.usdaQuality": "উচ্চ মানের মানদণ্ড",
+
+  "about.cta.title": "আপনি কি অভিজ্ঞতা নিতে প্রস্তুত?",
+  "about.cta.description": "শত শত সন্তুষ্ট গ্রাহকের সাথে যোগ দিন যারা আমাদের উপর বিশ্বাস রাখে।",
+  "about.cta.browseAvailable": "গরু দেখুন",
+  "about.cta.callNow": "এখনই কল করুন"
 }

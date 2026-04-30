@@ -2,6 +2,7 @@
 
 import { motion, Variants } from "framer-motion";
 import Image from "next/image";
+import { useLocalization } from "@/context/LocalizationContext";
 import {
   Target,
   Heart,
@@ -41,72 +42,62 @@ const itemVariants: Variants = {
   },
 };
 
-const stats = [
-  { value: "500+", label: "Happy Customers", icon: Users },
-  { value: "50K+", label: "Cows Sold", icon: BarChart3 },
-  { value: "15+", label: "Breed Varieties", icon: Target },
-  { value: "98%", label: "Satisfaction Rate", icon: Heart },
-];
-
-const features = [
-  {
-    icon: Shield,
-    title: "Verified Quality",
-    description:
-      "Every cow comes with DNA verification, health certificates, and complete genetic documentation.",
-    color: "emerald",
-  },
-  {
-    icon: Truck,
-    title: "Doorstep Delivery",
-    description:
-      "Fresh deliveries across Bangladesh with temperature-controlled transport and real-time tracking.",
-    color: "blue",
-  },
-  {
-    icon: Leaf,
-    title: "Sustainable Practices",
-    description:
-      "Ethically raised on regenerative pastures with minimal environmental footprint.",
-    color: "green",
-  },
-  {
-    icon: Award,
-    title: "Premium Selection",
-    description:
-      "Hand-picked premium breeds including Angus, Wagyu, and Hereford with proven bloodlines.",
-    color: "amber",
-  },
-];
-
-const processSteps = [
-  {
-    number: "01",
-    title: "Select Your Breed",
-    description:
-      "Choose from our curated selection of premium breeds with detailed profiles.",
-  },
-  {
-    number: "02",
-    title: "Book & Reserve",
-    description:
-      "Secure your cow with a refundable deposit. Full or partial units available.",
-  },
-  {
-    number: "03",
-    title: "Community Booking",
-    description:
-      "Join fellow buyers until the cow is fully booked. Real-time progress updates.",
-  },
-  {
-    number: "04",
-    title: "Fresh Delivery",
-    description:
-      "Your portion is processed by certified butchers and delivered fresh to your doorstep.",
-  },
-];
-
 export default function AboutUsPage() {
+  const { t } = useLocalization();
+
+  const stats = [
+    { value: "500+", label: t("about.stats.happyCustomers"), icon: Users },
+    { value: "50K+", label: t("about.stats.cowsSold"), icon: BarChart3 },
+    { value: "15+", label: t("about.stats.breedVarieties"), icon: Target },
+    { value: "98%", label: t("about.stats.satisfactionRate"), icon: Heart },
+  ];
+
+  const features = [
+    {
+      key: "verifiedQuality",
+      icon: Shield,
+      color: "emerald",
+    },
+    {
+      key: "doorstepDelivery",
+      icon: Truck,
+      color: "blue",
+    },
+    {
+      key: "sustainable",
+      icon: Leaf,
+      color: "green",
+    },
+    {
+      key: "premium",
+      icon: Award,
+      color: "amber",
+    },
+  ];
+
+  const processSteps = [
+    {
+      number: "01",
+      title: t("about.process.step1.title"),
+      description: t("about.process.step1.description"),
+    },
+    {
+      number: "02",
+      title: t("about.process.step2.title"),
+      description: t("about.process.step2.description"),
+    },
+    {
+      number: "03",
+      title: t("about.process.step3.title"),
+      description: t("about.process.step3.description"),
+    },
+    {
+      number: "04",
+      title: t("about.process.step4.title"),
+      description: t("about.process.step4.description"),
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       {/* Hero Section */}
@@ -127,16 +118,16 @@ export default function AboutUsPage() {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold mb-6"
             >
               <Sparkles className="w-4 h-4" />
-              About Cow Commerce
+              {t("about.hero.badge")}
             </motion.span>
 
             <motion.h1
               variants={itemVariants}
               className="text-4xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight"
             >
-              Premium Cattle,{" "}
+              {t("about.hero.title_part1")}{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
-                Transparent Process
+                {t("about.hero.title_part2")}
               </span>
             </motion.h1>
 
@@ -144,9 +135,7 @@ export default function AboutUsPage() {
               variants={itemVariants}
               className="text-lg lg:text-xl text-slate-600 mb-10 max-w-2xl mx-auto"
             >
-              We&apos;re revolutionizing how Bangladesh sources premium quality cattle — by
-              combining traditional farming wisdom with modern technology for a
-              completely transparent buying experience.
+              {t("about.hero.description")}
             </motion.p>
 
             <motion.div
@@ -157,14 +146,14 @@ export default function AboutUsPage() {
                 href="/marketplace"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold transition-all hover:shadow-lg hover:shadow-emerald-600/25"
               >
-                Browse Cows
+                {t("about.hero.browseCows")}
                 <ArrowRight className="w-4 h-4" />
               </a>
               <a
                 href="/contact"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 rounded-xl font-semibold border border-slate-200 transition-all"
               >
-                Get in Touch
+                {t("about.hero.getInTouch")}
               </a>
             </motion.div>
           </motion.div>
@@ -233,7 +222,9 @@ export default function AboutUsPage() {
                     <Shield className="w-6 h-6 text-emerald-600" />
                   </div>
                   <div>
-                    <div className="font-bold text-slate-900">100% Verified</div>
+                    <div className="font-bold text-slate-900">
+                      100% Verified
+                    </div>
                     <div className="text-sm text-slate-500">DNA & Health</div>
                   </div>
                 </div>
@@ -247,42 +238,35 @@ export default function AboutUsPage() {
               transition={{ duration: 0.7 }}
             >
               <span className="text-emerald-600 font-semibold text-sm tracking-wider uppercase mb-3 block">
-                Our Story
+                {t("about.story.title")}
               </span>
               <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-6">
-                Bridging Tradition &{" "}
-                <span className="text-emerald-600">Technology</span>
+                {t("about.story.bridging")}
               </h2>
               <p className="text-slate-600 mb-6 leading-relaxed">
-                Cow Commerce was born from a simple observation: finding quality
-                cattle in Bangladesh was unnecessarily complicated. Farmers and
-                buyers alike struggled with opacity, middlemen, and quality
-                uncertainty.
+                {t("about.story.description1")}
               </p>
               <p className="text-slate-600 mb-8 leading-relaxed">
-                We decided to change that. By partnering directly with ethical
-                farms and implementing rigorous verification standards,
-                We&apos;ve created a marketplace where quality is guaranteed
-                and every purchase is transparent.
+                {t("about.story.description2")}
               </p>
 
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 shrink-0" />
                   <span className="text-slate-700">
-                    Direct partnerships with certified farms
+                    {t("about.story.check1")}
                   </span>
                 </div>
                 <div className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 shrink-0" />
                   <span className="text-slate-700">
-                    End-to-end verification from farm to table
+                    {t("about.story.check2")}
                   </span>
                 </div>
                 <div className="flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 shrink-0" />
                   <span className="text-slate-700">
-                    Community-powered pricing for fair value
+                    {t("about.story.check3")}
                   </span>
                 </div>
               </div>
@@ -304,12 +288,11 @@ export default function AboutUsPage() {
               <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center mb-6">
                 <Target className="w-7 h-7 text-emerald-400" />
               </div>
-              <h3 className="text-2xl lg:text-3xl font-bold mb-4">Our Mission</h3>
+              <h3 className="text-2xl lg:text-3xl font-bold mb-4">
+                {t("about.mission.title")}
+              </h3>
               <p className="text-slate-300 leading-relaxed">
-                To democratize access to premium quality cattle by eliminating
-                middlemen, ensuring complete transparency, and empowering both
-                farmers and consumers with fair prices and verified quality — all
-                delivered through a seamless digital experience.
+                {t("about.mission.description")}
               </p>
             </motion.div>
 
@@ -322,12 +305,11 @@ export default function AboutUsPage() {
               <div className="w-14 h-14 rounded-2xl bg-amber-500/20 flex items-center justify-center mb-6">
                 <Globe className="w-7 h-7 text-amber-400" />
               </div>
-              <h3 className="text-2xl lg:text-3xl font-bold mb-4">Our Vision</h3>
+              <h3 className="text-2xl lg:text-3xl font-bold mb-4">
+                {t("about.vision.title")}
+              </h3>
               <p className="text-slate-300 leading-relaxed">
-                To become Bangladesh&apos;s most trusted cattle marketplace,
-                setting the standard for quality, transparency, and ethical
-                farming practices — while supporting sustainable agriculture
-                and farmer livelihoods across the nation.
+                {t("about.vision.description")}
               </p>
             </motion.div>
           </div>
@@ -344,18 +326,20 @@ export default function AboutUsPage() {
             className="text-center mb-16"
           >
             <span className="text-emerald-600 font-semibold text-sm tracking-wider uppercase mb-3 block">
-              Why Choose Us
+              {t("about.whyChoose.label")}
             </span>
             <h2 className="text-3xl lg:text-4xl font-bold text-slate-900">
-              The Cow Commerce{" "}
-              <span className="text-emerald-600">Difference</span>
+              {t("about.whyChoose.title_part1")}{" "}
+              <span className="text-emerald-600">
+                {t("about.whyChoose.title_part2")}
+              </span>
             </h2>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
               <motion.div
-                key={feature.title}
+                key={feature.key}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -367,19 +351,19 @@ export default function AboutUsPage() {
                     feature.color === "emerald"
                       ? "bg-emerald-100 text-emerald-600"
                       : feature.color === "blue"
-                      ? "bg-blue-100 text-blue-600"
-                      : feature.color === "green"
-                      ? "bg-green-100 text-green-600"
-                      : "bg-amber-100 text-amber-600"
+                        ? "bg-blue-100 text-blue-600"
+                        : feature.color === "green"
+                          ? "bg-green-100 text-green-600"
+                          : "bg-amber-100 text-amber-600"
                   }`}
                 >
                   <feature.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-emerald-600 transition-colors">
-                  {feature.title}
+                  {t(`about.whyChoose.${feature.key}.title`)}
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed">
-                  {feature.description}
+                  {t(`about.whyChoose.${feature.key}.description`)}
                 </p>
               </motion.div>
             ))}
@@ -397,11 +381,10 @@ export default function AboutUsPage() {
             className="text-center mb-16"
           >
             <span className="text-emerald-600 font-semibold text-sm tracking-wider uppercase mb-3 block">
-              How It Works
+              {t("about.process.label")}
             </span>
             <h2 className="text-3xl lg:text-4xl font-bold text-slate-900">
-              Simple &{" "}
-              <span className="text-emerald-600">Transparent</span>
+              {t("about.process.title_part1")} {t("about.process.title_part2")}
             </h2>
           </motion.div>
 
@@ -447,11 +430,10 @@ export default function AboutUsPage() {
             className="text-center mb-12"
           >
             <span className="text-emerald-600 font-semibold text-sm tracking-wider uppercase mb-3 block">
-              Trust & Credibility
+              {t("about.trust.label")}
             </span>
             <h2 className="text-3xl lg:text-4xl font-bold text-slate-900">
-              Certified &{" "}
-              <span className="text-emerald-600">Verified</span>
+              {t("about.trust.title_part1")} {t("about.trust.title_part2")}
             </h2>
           </motion.div>
 
@@ -463,11 +445,31 @@ export default function AboutUsPage() {
             className="flex flex-wrap justify-center gap-6 lg:gap-8"
           >
             {[
-              { name: "DNA Verified", icon: Shield, color: "emerald" },
-              { name: "Veterinary Certified", icon: CheckCircle, color: "blue" },
-              { name: "Humane Farm Raised", icon: Heart, color: "rose" },
-              { name: "Sustainable Practices", icon: LeafyGreen, color: "green" },
-              { name: "USDA Quality", icon: Award, color: "amber" },
+              {
+                name: t("about.trust.dnaVerified"),
+                icon: Shield,
+                color: "emerald",
+              },
+              {
+                name: t("about.trust.veterinaryCertified"),
+                icon: CheckCircle,
+                color: "blue",
+              },
+              {
+                name: t("about.trust.humaneFarmRaised"),
+                icon: Heart,
+                color: "rose",
+              },
+              {
+                name: t("about.trust.sustainablePractices"),
+                icon: LeafyGreen,
+                color: "green",
+              },
+              {
+                name: t("about.trust.usdaQuality"),
+                icon: Award,
+                color: "amber",
+              },
             ].map((cert) => (
               <div
                 key={cert.name}
@@ -478,12 +480,12 @@ export default function AboutUsPage() {
                     cert.color === "emerald"
                       ? "text-emerald-600"
                       : cert.color === "blue"
-                      ? "text-blue-600"
-                      : cert.color === "rose"
-                      ? "text-rose-600"
-                      : cert.color === "green"
-                      ? "text-green-600"
-                      : "text-amber-600"
+                        ? "text-blue-600"
+                        : cert.color === "rose"
+                          ? "text-rose-600"
+                          : cert.color === "green"
+                            ? "text-green-600"
+                            : "text-amber-600"
                   }`}
                 />
                 <span className="font-medium text-slate-700">{cert.name}</span>
@@ -507,25 +509,24 @@ export default function AboutUsPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-              Ready to Experience the Difference?
+              {t("about.cta.title")}
             </h2>
             <p className="text-emerald-100 text-lg mb-8 max-w-xl mx-auto">
-              Join hundreds of satisfied customers who trust Cow Commerce for
-              premium quality cattle.
+              {t("about.cta.description")}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a
                 href="/marketplace"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-slate-50 text-emerald-700 rounded-xl font-bold text-lg transition-all hover:shadow-xl"
               >
-                Browse Available Cows
+                {t("about.cta.browseAvailable")}
                 <ArrowRight className="w-5 h-5" />
               </a>
               <a
                 href="tel:+8801234567890"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold text-lg transition-all border border-emerald-500"
               >
-                Call Now
+                {t("about.cta.callNow")}
               </a>
             </div>
           </motion.div>
