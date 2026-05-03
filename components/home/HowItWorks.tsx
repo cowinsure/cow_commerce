@@ -12,75 +12,73 @@ import {
   Leaf,
   ArrowRight,
 } from "lucide-react";
-
-const steps = [
-  {
-    title: "Choose a Cow",
-    description:
-      "Browse available cows and check unit availability in real-time. View breed details, weight estimates, and farm origins.",
-    image: "/howItWorksSection/Img1.png",
-    icon: Beef,
-    color: "emerald",
-  },
-  {
-    title: "Book Your Share",
-    description:
-      "Select full or partial units based on your needs and budget. Secure your portion with a simple deposit.",
-    image: "/howItWorksSection/Img2.png",
-    icon: Target,
-    color: "green",
-  },
-  {
-    title: "Collective Booking",
-    description:
-      "Other buyers join until all units of the cow are fully reserved. Track progress in real-time as the community grows.",
-    image: "/howItWorksSection/Img3.png",
-    icon: Users,
-    color: "teal",
-  },
-  {
-    title: "100% Completion",
-    description:
-      "Processing only begins once the cow is completely booked. No waste, no uncertainty, guaranteed full utilization.",
-    image: "/howItWorksSection/Img4.png",
-    icon: CheckCircle2,
-    color: "emerald",
-  },
-  {
-    title: "Processing & Delivery",
-    description:
-      "Your portion is prepared fresh by certified butchers and delivered to your door or ready for farm pickup.",
-    image: "/howItWorksSection/Img5.png",
-    icon: Truck,
-    color: "green",
-  },
-];
-
-const colorVariants = {
-  emerald: {
-    bg: "",
-    border: "border-emerald-400/40",
-    text: "text-emerald-400",
-    glow: "shadow-emerald-500/20",
-    gradient: "from-emerald-500 to-teal-500",
-  },
-  green: {
-    bg: "",
-    border: "border-green-400/40",
-    text: "text-green-400",
-    glow: "shadow-green-500/20",
-    gradient: "from-green-500 to-emerald-500",
-  },
-  teal: {
-    bg: "",
-    border: "border-teal-400/40",
-    text: "text-teal-400",
-    glow: "shadow-teal-500/20",
-    gradient: "from-teal-500 to-emerald-500",
-  },
-};
+import { useLocalization } from "@/context/LocalizationContext";
 
 export default function HowItWorks({ className }: { className?: string }) {
+  const { t } = useLocalization();
+
+  const steps = [
+    {
+      title: t("howItWorks.step1.title"),
+      description: t("howItWorks.step1.description"),
+      image: "/howItWorksSection/Img1.png",
+      icon: Beef,
+      color: "emerald",
+    },
+    {
+      title: t("howItWorks.step2.title"),
+      description: t("howItWorks.step2.description"),
+      image: "/howItWorksSection/Img2.png",
+      icon: Target,
+      color: "green",
+    },
+    {
+      title: t("howItWorks.step3.title"),
+      description: t("howItWorks.step3.description"),
+      image: "/howItWorksSection/Img3.png",
+      icon: Users,
+      color: "teal",
+    },
+    {
+      title: t("howItWorks.step4.title"),
+      description: t("howItWorks.step4.description"),
+      image: "/howItWorksSection/Img4.png",
+      icon: CheckCircle2,
+      color: "emerald",
+    },
+    {
+      title: t("howItWorks.step5.title"),
+      description: t("howItWorks.step5.description"),
+      image: "/howItWorksSection/Img5.png",
+      icon: Truck,
+      color: "green",
+    },
+  ];
+
+  const colorVariants = {
+    emerald: {
+      bg: "",
+      border: "border-emerald-400/40",
+      text: "text-emerald-400",
+      glow: "shadow-emerald-500/20",
+      gradient: "from-emerald-500 to-teal-500",
+    },
+    green: {
+      bg: "",
+      border: "border-green-400/40",
+      text: "text-green-400",
+      glow: "shadow-green-500/20",
+      gradient: "from-green-500 to-emerald-500",
+    },
+    teal: {
+      bg: "",
+      border: "border-teal-400/40",
+      text: "text-teal-400",
+      glow: "shadow-teal-500/20",
+      gradient: "from-teal-500 to-emerald-500",
+    },
+  };
+
   return (
     <section
       id="how-it-works"
@@ -122,18 +120,17 @@ export default function HowItWorks({ className }: { className?: string }) {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 border border-emerald-200 text-emerald-700 font-medium text-sm mb-6"
           >
             <Leaf className="w-4 h-4" />
-            Simple Process
+           {t("howItWorks.badge")}
           </motion.div>
 
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-emerald-950 mb-6 tracking-tight">
-            How It{" "}
+          {t("howItWorks.title.line1")} {" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-600 to-teal-600">
-              Works
+             {t("howItWorks.title.line2")}
             </span>
           </h2>
           <p className="text-emerald-700/70 max-w-2xl mx-auto text-lg sm:text-xl leading-relaxed">
-            From pasture to plate in five simple steps. Transparent, collective,
-            and sustainable.
+           {t("howItWorks.description")}
           </p>
         </motion.div>
 

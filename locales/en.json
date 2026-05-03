@@ -268,6 +268,19 @@
   "home_hero.slides.2.deadline": "Processing starts tomorrow",
   "home_hero.trust.0.label": "Vet Inspected",
   "home_hero.trust.1.label": "On Time Delivery",
-  "home_hero.trust.2.label": "Fresh Meat"
-
+  "home_hero.trust.2.label": "Fresh Meat",
+  "howItWorks.step1.title": "Choose a Cow",
+  "howItWorks.step1.description": "Browse available cows and check unit availability in real-time. View breed details, weight estimates, and farm origins.",
+  "howItWorks.step2.title": "Book Your Share",
+  "howItWorks.step2.description": "Select full or partial units based on your needs and budget. Secure your portion with a simple deposit.",
+  "howItWorks.step3.title": "Collective Booking",
+  "howItWorks.step3.description": "Other buyers join until all units of the cow are fully reserved. Track progress in real-time as the community grows.",
+  "howItWorks.step4.title": "100% Completion",
+  "howItWorks.step4.description": "Processing only begins once the cow is completely booked. No waste, no uncertainty, guaranteed full utilization.",
+  "howItWorks.step5.title": "Processing & Delivery",
+  "howItWorks.step5.description": "Your portion is prepared fresh by certified butchers and delivered to your door or ready for farm pickup.",
+  "howItWorks.badge": "Simple Process",
+  "howItWorks.title.line1": "How It",
+  "howItWorks.title.line2": "Works",
+  "howItWorks.description": "From pasture to plate in five simple steps. Transparent, collective, and sustainable"
 }
