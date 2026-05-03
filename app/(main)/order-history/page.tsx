@@ -4,9 +4,6 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
-  Download,
-  ChevronLeft,
-  ChevronRight,
   Box,
   EyeClosed,
   Eye,
@@ -18,6 +15,7 @@ import Tooltip from "@/components/ui/ToolTip";
 import { Modal } from "@/components/ui/Modal";
 import OrderDetails from "@/components/order/OrderDetails";
 import { PaymentModal } from "@/components/payment/PaymentModal";
+import { useLocalization } from "@/context/LocalizationContext";
 
 // Animation variants
 const containerVariants = {
@@ -96,6 +94,7 @@ export const getStatusBadge = (status: string, type: StatusType) => {
 };
 
 export default function OrderHistoryPage() {
+  const { t, locale } = useLocalization();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedFilter, setSelectedFilter] = useState("all");
@@ -173,7 +172,7 @@ export default function OrderHistoryPage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 mt-10">
+    <div className="min-h-screen flex flex-col bg-slate-50 mt-10" lang={locale === "bn" ? "bn" : "en"}>
       <main className="grow pt-24 pb-24 overflow-hidden">
         {/* Background Elements */}
         <div className="fixed inset-0 pointer-events-none">
@@ -190,11 +189,13 @@ export default function OrderHistoryPage() {
           {/* Header Section */}
           <motion.div variants={itemVariants} className="mb-12">
             <h1 className="text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">
-              Order <span className="text-emerald-600">History</span>
+              {t("order_history.title")}{" "}
+              <span className="text-emerald-600">
+                {t("order_history.title2")}
+              </span>
             </h1>
             <p className=" text-slate-600 max-w-2xl">
-              Manage your digital livestock acquisitions. View real-time status
-              updates and download historical documentation.
+              {t("order_history.description")}
             </p>
           </motion.div>
 
@@ -252,7 +253,7 @@ export default function OrderHistoryPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search orders by ID or animal name..."
+                placeholder={t("order_history.search_placeholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 bg-white rounded-2xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
@@ -272,7 +273,7 @@ export default function OrderHistoryPage() {
                       : "bg-white text-slate-600 border border-slate-200 hover:border-emerald-300 hover:bg-emerald-100",
                   )}
                 >
-                  {filter}
+                  {t(`order_history.filter_${filter}`)}
                 </motion.button>
               ))}
             </div>
@@ -285,12 +286,12 @@ export default function OrderHistoryPage() {
           >
             {/* Table Header */}
             <div className="hidden lg:grid grid-cols-5 gap-4 p-6 bg-slate-50/50 border-b border-slate-100 text-xs font-bold text-slate-500 uppercase tracking-wider">
-              <div className="">Order Date</div>
-              <div className="">Order No</div>
-              <div className="text-center">Order Amount</div>
-              <div className="text-center">Order Status</div>
+              <div className="">{t("order_history.table_date")}</div>
+              <div className="">{t("order_history.table_order_no")}</div>
+              <div className="text-center">{t("order_history.table_amount")}</div>
+              <div className="text-center">{t("order_history.table_status")}</div>
               {/* <div className="text-center">Payment Status</div> */}
-              <div className="text-center">Action</div>
+              <div className="text-center">{t("order_history.table_action")}</div>
             </div>
 
             {/* Table Body */}
@@ -359,7 +360,7 @@ export default function OrderHistoryPage() {
                       <div className="flex justify-center items-center gap-2">
                         {/* Pay Now button for APPROVED + UNPAID orders */}
 
-                        <Tooltip content="Pay Now">
+                        <Tooltip content={t("order_history.tooltip_pay")}>
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -385,7 +386,7 @@ export default function OrderHistoryPage() {
                           )} */}
 
                         {/* View button for PENDING orders */}
-                        <Tooltip content="View order">
+                        <Tooltip content={t("order_history.tooltip_view")}>
                           <motion.button
                             whileHover={{ scale: 1.1 }}
                             whileTap={{ scale: 0.9 }}
@@ -421,10 +422,10 @@ export default function OrderHistoryPage() {
                   <Box className="w-8 h-8 text-slate-400" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">
-                  No orders found
+                  {t("order_history.empty_title")}
                 </h3>
                 <p className="text-slate-500">
-                  Try adjusting your filters or search query
+                  {t("order_history.empty_description")}
                 </p>
               </motion.div>
             )}
