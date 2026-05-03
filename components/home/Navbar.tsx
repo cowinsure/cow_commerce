@@ -24,7 +24,7 @@ export function Navbar({ className }: { className?: string }) {
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
-  const { t } = useLocalization();
+  const { t, locale } = useLocalization();
 
   const { isAuthenticated, loading, logout } = useAuth();
 
@@ -114,6 +114,7 @@ export function Navbar({ className }: { className?: string }) {
             : "bg-emerald-950 backdrop-blur-xl",
           className,
         )}
+        lang={locale === "bn" ? "bn" : "en"}
       >
         <div className="flex justify-between items-center w-full px-4 sm:px-8 py-4 max-w-screen-2xl mx-auto">
           <div className="flex items-center gap-10">
@@ -123,7 +124,7 @@ export function Navbar({ className }: { className?: string }) {
                 whileHover={{ rotate: [0, -10, 10, 0] }}
                 transition={{ duration: 0.5 }}
               >
-                <img src="/logo2.png" alt="" className="w-9 "/>
+                <img src="/logo2.png" alt="" className="w-9 " />
               </motion.div>
               <span className="text-2xl font-bold tracking-tighter text-emerald-400 font-serif">
                 Fresh<span className="text-amber-400">Buy</span>

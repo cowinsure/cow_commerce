@@ -43,7 +43,7 @@ const itemVariants: Variants = {
 };
 
 export default function AboutUsPage() {
-  const { t } = useLocalization();
+  const { t, locale } = useLocalization();
 
   const stats = [
     { value: "500+", label: t("about.stats.happyCustomers"), icon: Users },
@@ -99,7 +99,10 @@ export default function AboutUsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div
+      className="min-h-screen bg-linear-to-b from-slate-50 to-white"
+      lang={locale === "bn" ? "bn" : "en"}
+    >
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 lg:py-32">
         {/* Background decorations */}

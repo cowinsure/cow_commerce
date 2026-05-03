@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+:lang(bn) {
+  font-family: var(--font-bangla), var(--font-body), sans-serif;
+}
+
 @layer utilities {
   @keyframes slide-in-right {
     from {

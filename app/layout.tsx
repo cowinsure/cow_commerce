@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter, Manrope } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Inter,
+  Manrope,
+  Hind_Siliguri,
+} from "next/font/google";
 import { ToastProvider } from "@/components/ui/Toast";
 import "./globals.css";
 import { Navbar } from "@/components/home/Navbar";
@@ -26,8 +32,15 @@ const manrope = Manrope({
   subsets: ["latin"],
 });
 
+const hindSiliguri = Hind_Siliguri({
+  variable: "--font-bangla",
+  subsets: ["bengali"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "The Digital Agrarian - Livestock Marketplace",
+  title: "Fresh Buy - Livestock Marketplace",
   description: "Premium livestock commerce platform for the digital age",
 };
 
@@ -39,7 +52,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${manrope.variable} h-full antialiased`}
+      className={`
+        ${geistSans.variable}
+        ${geistMono.variable}
+        ${inter.variable}
+        ${manrope.variable}
+        ${hindSiliguri.variable}
+        h-full antialiased
+      `}
     >
       <body className="min-h-full flex flex-col">
         <LocalizationProvider>

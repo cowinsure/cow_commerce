@@ -269,7 +269,7 @@ export default function TermsPage({
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
-  const { t } = useLocalization();
+  const { t, locale } = useLocalization();
 
   const sections: Section[] = [
     {
@@ -338,7 +338,7 @@ export default function TermsPage({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
+    <div className="min-h-screen bg-gray-50 font-sans text-gray-900" lang={locale === "bn" ? "bn" : "en"}>
       {/* <ScrollProgress /> */}
       <BackToTop />
 

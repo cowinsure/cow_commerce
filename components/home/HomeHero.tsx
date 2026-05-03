@@ -16,70 +16,65 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import Link from "next/link";
-
+import { useLocalization } from "@/context/LocalizationContext";
 
 // Slides focused on the collective booking model
 const slides = [
   {
-    image:
-      "/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM.jpeg", // Live cattle (heritage breed)
-    tag: "Breed Options",
-    title: "Book Your",
-    subtitle: "Share",
-    description:
-      "Join others in funding a premium grass-fed cow. Choose your portion—full unit or fractional shares. Processing begins only when 100% booked.",
-    price: "With Just 10% Payment",
+    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM.jpeg", // Live cattle (heritage breed)
+    tagKey: "home_hero.slides.0.tag",
+    titleKey: "home_hero.slides.0.title",
+    subtitleKey: "home_hero.slides.0.subtitle",
+    descriptionKey: "home_hero.slides.0.description",
+    priceKey: "home_hero.slides.0.price",
     progress: 75, // Percentage booked
-    unitsAvailable: "3 of 12 units left",
+    unitsAvailableKey: "home_hero.slides.0.unitsAvailable",
     icon: Users,
-    cta: "Marketplace",
-    secondaryCta: "How It Works",
-    badge: "Almost Funded",
-    deadline: "7 days left",
+    ctaKey: "home_hero.slides.0.cta",
+    secondaryCtaKey: "home_hero.slides.0.secondaryCta",
+    badgeKey: "home_hero.slides.0.badge",
+    deadlineKey: "home_hero.slides.0.deadline",
   },
   {
-    image:
-      "/cowImg/WhatsApp Image 2026-04-01 at 3.57.20 PM.jpeg", // Cattle in pasture
-    tag: "Collective Buying",
-    title: "Share The",
-    subtitle: "Cost",
-    description:
-      "Premium beef shouldn't require premium prices. Pool together with neighbors, family, or your community. Transparent pricing, no hidden fees.",
-    price: "Save Your Bank",
+    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.20 PM.jpeg", // Cattle in pasture
+    tagKey: "home_hero.slides.1.tag",
+    titleKey: "home_hero.slides.1.title",
+    subtitleKey: "home_hero.slides.1.subtitle",
+    descriptionKey: "home_hero.slides.1.description",
+    priceKey: "home_hero.slides.1.price",
     progress: 45,
-    unitsAvailable: "7 of 12 units left",
+    unitsAvailableKey: "home_hero.slides.1.unitsAvailable",
     icon: Target,
-    cta: "Marketplace",
-    secondaryCta: "Browse Cows",
-    badge: "New Listing",
-    deadline: "21 days left",
+    ctaKey: "home_hero.slides.1.cta",
+    secondaryCtaKey: "home_hero.slides.1.secondaryCta",
+    badgeKey: "home_hero.slides.1.badge",
+    deadlineKey: "home_hero.slides.1.deadline",
   },
   {
-    image:
-      "/cowImg/WhatsApp Image 2026-04-01 at 3.57.31 PM.jpeg", // Butcher/processing
-    tag: "Farm to Fork",
-    title: "Guaranteed",
-    subtitle: "Fresh",
-    description:
-      "No waste, no uncertainty. Your cow is only processed once fully booked. You'll know exactly when your beef is ready for pickup or delivery.",
-    price: "Processing included",
+    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.31 PM.jpeg", // Butcher/processing
+    tagKey: "home_hero.slides.2.tag",
+    titleKey: "home_hero.slides.2.title",
+    subtitleKey: "home_hero.slides.2.subtitle",
+    descriptionKey: "home_hero.slides.2.description",
+    priceKey: "home_hero.slides.2.price",
     progress: 100,
-    unitsAvailable: "Fully Booked",
+    unitsAvailableKey: "home_hero.slides.2.unitsAvailable",
     icon: CheckCircle2,
-    cta: "Marketplace",
-    secondaryCta: "See Process",
-    // badge: "Sold Out",
-    deadline: "Processing starts tomorrow",
+    ctaKey: "home_hero.slides.2.cta",
+    secondaryCtaKey: "home_hero.slides.2.secondaryCta",
+    badgeKey: "home_hero.slides.2.badge",
+    deadlineKey: "home_hero.slides.2.deadline",
   },
 ];
 
 const trustSignals = [
-  { icon: ShieldCheck, label: "Vet Inspected" },
-  { icon: Clock, label: "On Time Delivery" },
-  { icon: Beef, label: "Fresh Meat" },
+  { icon: ShieldCheck, labelKey: "home_hero.trust.0.label" },
+  { icon: Clock, labelKey: "home_hero.trust.1.label" },
+  { icon: Beef, labelKey: "home_hero.trust.2.label" },
 ];
 
 export function HomeHero({ className }: { className?: string }) {
+  const { t } = useLocalization();
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -160,7 +155,7 @@ export function HomeHero({ className }: { className?: string }) {
           className="absolute inset-0 bg-emerald-50"
         >
           {/* <Image
-            alt={currentSlide.title}
+            alt={t(currentSlide.titleKey)}
             className="object-cover"
             fill
             priority
@@ -212,9 +207,9 @@ export function HomeHero({ className }: { className?: string }) {
                     <CurrentIcon className="w-5 h-5 text-emerald-400" />
                   </motion.div>
                   <span className="text-emerald-400 font-semibold tracking-[0.2em] text-sm uppercase">
-                    {currentSlide.tag}
+                    {t(currentSlide.tagKey)}
                   </span>
-                  {currentSlide.badge && (
+                  {currentSlide.badgeKey && (
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
@@ -228,7 +223,7 @@ export function HomeHero({ className }: { className?: string }) {
                             : "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
                       )}
                     >
-                      {currentSlide.badge}
+                      {t(currentSlide.badgeKey)}
                     </motion.span>
                   )}
                 </motion.div>
@@ -246,7 +241,7 @@ export function HomeHero({ className }: { className?: string }) {
                     className="inline-block text-white"
                     style={{ transformOrigin: "bottom" }}
                   >
-                    {currentSlide.title}
+                    {t(currentSlide.titleKey)}
                   </motion.span>
                   <br />
                   <motion.span
@@ -260,7 +255,7 @@ export function HomeHero({ className }: { className?: string }) {
                     className="inline-block text-emerald-400"
                     style={{ transformOrigin: "bottom" }}
                   >
-                    {currentSlide.subtitle}
+                    {t(currentSlide.subtitleKey)}
                   </motion.span>
                 </h1>
 
@@ -272,7 +267,7 @@ export function HomeHero({ className }: { className?: string }) {
                   className="mb-6"
                 >
                   <span className="inline-flex items-center gap-2 py-  backdrop-blur-sm  text-emerald-300 font-bold text-lg">
-                    {currentSlide.price}
+                    {t(currentSlide.priceKey)}
                   </span>
                 </motion.div>
 
@@ -283,7 +278,7 @@ export function HomeHero({ className }: { className?: string }) {
                   transition={{ delay: 0.6, duration: 0.6 }}
                   className="text-stone-300 text-lg sm:text-xl max-w-lg mb-8 leading-relaxed font-medium"
                 >
-                  {currentSlide.description}
+                  {t(currentSlide.descriptionKey)}
                 </motion.p>
 
                 {/* CTAs */}
@@ -300,7 +295,7 @@ export function HomeHero({ className }: { className?: string }) {
                       className="group relative px-8 py-4 bg-emerald-500 text-stone-950 rounded-full font-bold text- overflow-hidden transition-all hover:shadow-2xl hover:shadow-emerald-500/30"
                     >
                       <span className="relative z-10 flex items-center gap-2">
-                        {currentSlide.cta}
+                        {t(currentSlide.ctaKey)}
                         <motion.span
                           animate={{ x: [0, 5, 0] }}
                           transition={{ repeat: Infinity, duration: 1.5 }}
@@ -327,7 +322,7 @@ export function HomeHero({ className }: { className?: string }) {
                     whileTap={{ scale: 0.95 }}
                     className="px-8 py-4 bg-transparent border-2 border-stone-400/50 text-stone-200 rounded-full font-bold text-lg hover:bg-stone-400/10 hover:border-stone-300 transition-all backdrop-blur-sm"
                   >
-                    {currentSlide.secondaryCta}
+                    {t(currentSlide.secondaryCtaKey)}
                   </motion.button> */}
                 </motion.div>
 
@@ -340,7 +335,7 @@ export function HomeHero({ className }: { className?: string }) {
                 >
                   {trustSignals.map((signal, idx) => (
                     <motion.div
-                      key={signal.label}
+                      key={t(signal.labelKey)}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.1 + idx * 0.1 }}
@@ -348,7 +343,7 @@ export function HomeHero({ className }: { className?: string }) {
                     >
                       <signal.icon className="w-4 h-4 text-emerald-500" />
                       <span className="text-sm font-medium">
-                        {signal.label}
+                        {t(signal.labelKey)}
                       </span>
                     </motion.div>
                   ))}
