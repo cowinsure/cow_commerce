@@ -6,138 +6,210 @@ import { cn } from "@/lib/theme/theme.config";
 import Image from "next/image";
 import { Beef, Flame, Droplets, Info, ChevronRight } from "lucide-react";
 import SectionMiniHeading from "../ui/SectionMiniHeading";
+import { useLocalization } from "@/context/LocalizationContext";
 
 // Accurate beef cut data based on standard butcher charts
-const bodyParts = [
+const bodyPartsKeys = [
   {
     id: "neck",
-    name: "Neck",
-    subtitle: "Chuck / Neck Section",
-    description:
-      "A hardworking muscle area with rich connective tissue. Less tender but deeply flavorful, becoming soft and juicy when cooked slowly.",
-    meatQuality: "Good",
-    marbling: "Low to Moderate",
-    culinary: ["Chuck Roast", "Minced Beef", "Stew Cuts"],
-    bestMethod: "Slow Cooking/Braising",
+    nameKey: "cowDiagram.bodyParts.neck.name",
+    subtitleKey: "cowDiagram.bodyParts.neck.subtitle",
+    descriptionKey: "cowDiagram.bodyParts.neck.description",
+    meatQualityKey: "cowDiagram.bodyParts.neck.meatQuality",
+    marblingKey: "cowDiagram.bodyParts.neck.marbling",
+    culinaryKeys: [
+      "cowDiagram.bodyParts.neck.culinary.0",
+      "cowDiagram.bodyParts.neck.culinary.1",
+      "cowDiagram.bodyParts.neck.culinary.2",
+    ],
+    bestMethodKey: "cowDiagram.bodyParts.neck.bestMethod",
     position: { top: "30%", left: "22%" },
-    cuts: ["Neck Bones", "Chuck Roast", "Shoulder Steak", "Ground Beef"],
+    cutsKeys: [
+      "cowDiagram.bodyParts.neck.cuts.0",
+      "cowDiagram.bodyParts.neck.cuts.1",
+      "cowDiagram.bodyParts.neck.cuts.2",
+      "cowDiagram.bodyParts.neck.cuts.3",
+    ],
   },
   {
     id: "chuck",
-    name: "Chuck",
-    subtitle: "Shoulder Section",
-    description:
-      "Rich, beefy flavor with good marbling. Contains connective tissue that breaks down beautifully when slow-cooked.",
-    meatQuality: "Good",
-    marbling: "Moderate",
-    culinary: ["Pot Roast", "Stews", "Ground Beef"],
-    bestMethod: "Slow Cooking",
+    nameKey: "cowDiagram.bodyParts.chuck.name",
+    subtitleKey: "cowDiagram.bodyParts.chuck.subtitle",
+    descriptionKey: "cowDiagram.bodyParts.chuck.description",
+    meatQualityKey: "cowDiagram.bodyParts.chuck.meatQuality",
+    marblingKey: "cowDiagram.bodyParts.chuck.marbling",
+    culinaryKeys: [
+      "cowDiagram.bodyParts.chuck.culinary.0",
+      "cowDiagram.bodyParts.chuck.culinary.1",
+      "cowDiagram.bodyParts.chuck.culinary.2",
+    ],
+    bestMethodKey: "cowDiagram.bodyParts.chuck.bestMethod",
     position: { top: "28%", left: "32%" },
-    cuts: ["Chuck Roast", "Flat Iron", "Denver Steak"],
+    cutsKeys: [
+      "cowDiagram.bodyParts.chuck.cuts.0",
+      "cowDiagram.bodyParts.chuck.cuts.1",
+      "cowDiagram.bodyParts.chuck.cuts.2",
+    ],
   },
   {
     id: "rib",
-    name: "Rib",
-    subtitle: "Rib Section",
-    description:
-      "Highly marbled, tender, and full of flavor. The fat content makes it perfect for high-heat cooking.",
-    meatQuality: "Excellent",
-    marbling: "High",
-    culinary: ["Ribeye", "Prime Rib", "Back Ribs"],
-    bestMethod: "Grilling/Roasting",
+    nameKey: "cowDiagram.bodyParts.rib.name",
+    subtitleKey: "cowDiagram.bodyParts.rib.subtitle",
+    descriptionKey: "cowDiagram.bodyParts.rib.description",
+    meatQualityKey: "cowDiagram.bodyParts.rib.meatQuality",
+    marblingKey: "cowDiagram.bodyParts.rib.marbling",
+    culinaryKeys: [
+      "cowDiagram.bodyParts.rib.culinary.0",
+      "cowDiagram.bodyParts.rib.culinary.1",
+      "cowDiagram.bodyParts.rib.culinary.2",
+    ],
+    bestMethodKey: "cowDiagram.bodyParts.rib.bestMethod",
     position: { top: "25%", left: "48%" },
-    cuts: ["Ribeye Steak", "Standing Rib Roast", "Rib Tips"],
+    cutsKeys: [
+      "cowDiagram.bodyParts.rib.cuts.0",
+      "cowDiagram.bodyParts.rib.cuts.1",
+      "cowDiagram.bodyParts.rib.cuts.2",
+    ],
   },
   {
     id: "brisket",
-    name: "Brisket",
-    subtitle: "Breast Section",
-    description:
-      "Tough cut with abundant fat that requires long cooking times. Transforms into tender, flavorful meat.",
-    meatQuality: "Very Good",
-    marbling: "Very High",
-    culinary: ["Smoked Brisket", "Corned Beef", "Pastrami"],
-    bestMethod: "Smoking/Braising",
+    nameKey: "cowDiagram.bodyParts.brisket.name",
+    subtitleKey: "cowDiagram.bodyParts.brisket.subtitle",
+    descriptionKey: "cowDiagram.bodyParts.brisket.description",
+    meatQualityKey: "cowDiagram.bodyParts.brisket.meatQuality",
+    marblingKey: "cowDiagram.bodyParts.brisket.marbling",
+    culinaryKeys: [
+      "cowDiagram.bodyParts.brisket.culinary.0",
+      "cowDiagram.bodyParts.brisket.culinary.1",
+      "cowDiagram.bodyParts.brisket.culinary.2",
+    ],
+    bestMethodKey: "cowDiagram.bodyParts.brisket.bestMethod",
     position: { top: "52%", left: "28%" },
-    cuts: ["Flat Cut", "Point Cut", "Whole Brisket"],
+    cutsKeys: [
+      "cowDiagram.bodyParts.brisket.cuts.0",
+      "cowDiagram.bodyParts.brisket.cuts.1",
+      "cowDiagram.bodyParts.brisket.cuts.2",
+    ],
   },
   {
     id: "plate",
-    name: "Plate",
-    subtitle: "Belly Section",
-    description:
-      "Located below the rib. Rich in fat and flavor, ideal for slow cooking or grilling over high heat.",
-    meatQuality: "Good",
-    marbling: "High",
-    culinary: ["Short Ribs", "Skirt Steak", "Hanger Steak"],
-    bestMethod: "Braising/Grilling",
+    nameKey: "cowDiagram.bodyParts.plate.name",
+    subtitleKey: "cowDiagram.bodyParts.plate.subtitle",
+    descriptionKey: "cowDiagram.bodyParts.plate.description",
+    meatQualityKey: "cowDiagram.bodyParts.plate.meatQuality",
+    marblingKey: "cowDiagram.bodyParts.plate.marbling",
+    culinaryKeys: [
+      "cowDiagram.bodyParts.plate.culinary.0",
+      "cowDiagram.bodyParts.plate.culinary.1",
+      "cowDiagram.bodyParts.plate.culinary.2",
+    ],
+    bestMethodKey: "cowDiagram.bodyParts.plate.bestMethod",
     position: { top: "45%", left: "45%" },
-    cuts: ["Inside Skirt", "Outside Skirt", "Short Ribs"],
+    cutsKeys: [
+      "cowDiagram.bodyParts.plate.cuts.0",
+      "cowDiagram.bodyParts.plate.cuts.1",
+      "cowDiagram.bodyParts.plate.cuts.2",
+    ],
   },
   {
     id: "loin",
-    name: "Short Loin",
-    subtitle: "Middle Back",
-    description:
-      "Home to the most premium cuts. Lean, tender, and perfect for quick cooking methods.",
-    meatQuality: "Superior",
-    marbling: "Moderate",
-    culinary: ["T-Bone", "Porterhouse", "NY Strip"],
-    bestMethod: "Grilling/Broiling",
+    nameKey: "cowDiagram.bodyParts.loin.name",
+    subtitleKey: "cowDiagram.bodyParts.loin.subtitle",
+    descriptionKey: "cowDiagram.bodyParts.loin.description",
+    meatQualityKey: "cowDiagram.bodyParts.loin.meatQuality",
+    marblingKey: "cowDiagram.bodyParts.loin.marbling",
+    culinaryKeys: [
+      "cowDiagram.bodyParts.loin.culinary.0",
+      "cowDiagram.bodyParts.loin.culinary.1",
+      "cowDiagram.bodyParts.loin.culinary.2",
+    ],
+    bestMethodKey: "cowDiagram.bodyParts.loin.bestMethod",
     position: { top: "30%", left: "58%" },
-    cuts: ["Strip Steak", "T-Bone", "Tenderloin"],
+    cutsKeys: [
+      "cowDiagram.bodyParts.loin.cuts.0",
+      "cowDiagram.bodyParts.loin.cuts.1",
+      "cowDiagram.bodyParts.loin.cuts.2",
+    ],
   },
   {
     id: "sirloin",
-    name: "Sirloin",
-    subtitle: "Hip Section",
-    description:
-      "Less tender than short loin but more flavorful. Great value cuts with balanced characteristics.",
-    meatQuality: "Very Good",
-    marbling: "Moderate",
-    culinary: ["Top Sirloin", "Tri-Tip", "Coulotte"],
-    bestMethod: "Grilling/Roasting",
+    nameKey: "cowDiagram.bodyParts.sirloin.name",
+    subtitleKey: "cowDiagram.bodyParts.sirloin.subtitle",
+    descriptionKey: "cowDiagram.bodyParts.sirloin.description",
+    meatQualityKey: "cowDiagram.bodyParts.sirloin.meatQuality",
+    marblingKey: "cowDiagram.bodyParts.sirloin.marbling",
+    culinaryKeys: [
+      "cowDiagram.bodyParts.sirloin.culinary.0",
+      "cowDiagram.bodyParts.sirloin.culinary.1",
+      "cowDiagram.bodyParts.sirloin.culinary.2",
+    ],
+    bestMethodKey: "cowDiagram.bodyParts.sirloin.bestMethod",
     position: { top: "18%", left: "68%" },
-    cuts: ["Top Sirloin Steak", "Tri-Tip Roast", "Ball Tip"],
+    cutsKeys: [
+      "cowDiagram.bodyParts.sirloin.cuts.0",
+      "cowDiagram.bodyParts.sirloin.cuts.1",
+      "cowDiagram.bodyParts.sirloin.cuts.2",
+    ],
   },
   {
     id: "round",
-    name: "Round",
-    subtitle: "Rear Leg",
-    description:
-      "Lean and tough due to heavy muscle use. Best when sliced thin or cooked slowly in liquid.",
-    meatQuality: "Good",
-    marbling: "Low",
-    culinary: ["London Broil", "Roast Beef", "Steak Tartare"],
-    bestMethod: "Roasting/Braising",
+    nameKey: "cowDiagram.bodyParts.round.name",
+    subtitleKey: "cowDiagram.bodyParts.round.subtitle",
+    descriptionKey: "cowDiagram.bodyParts.round.description",
+    meatQualityKey: "cowDiagram.bodyParts.round.meatQuality",
+    marblingKey: "cowDiagram.bodyParts.round.marbling",
+    culinaryKeys: [
+      "cowDiagram.bodyParts.round.culinary.0",
+      "cowDiagram.bodyParts.round.culinary.1",
+      "cowDiagram.bodyParts.round.culinary.2",
+    ],
+    bestMethodKey: "cowDiagram.bodyParts.round.bestMethod",
     position: { top: "35%", left: "72%" },
-    cuts: ["Top Round", "Bottom Round", "Eye of Round"],
+    cutsKeys: [
+      "cowDiagram.bodyParts.round.cuts.0",
+      "cowDiagram.bodyParts.round.cuts.1",
+      "cowDiagram.bodyParts.round.cuts.2",
+    ],
   },
   {
     id: "flank",
-    name: "Flank",
-    subtitle: "Abdominal Muscle",
-    description:
-      "Lean, flat cut with intense beef flavor. Must be sliced against the grain for tenderness.",
-    meatQuality: "Good",
-    marbling: "Low",
-    culinary: ["Flank Steak", "Fajitas", "Stir Fry"],
-    bestMethod: "Grilling (Quick)",
+    nameKey: "cowDiagram.bodyParts.flank.name",
+    subtitleKey: "cowDiagram.bodyParts.flank.subtitle",
+    descriptionKey: "cowDiagram.bodyParts.flank.description",
+    meatQualityKey: "cowDiagram.bodyParts.flank.meatQuality",
+    marblingKey: "cowDiagram.bodyParts.flank.marbling",
+    culinaryKeys: [
+      "cowDiagram.bodyParts.flank.culinary.0",
+      "cowDiagram.bodyParts.flank.culinary.1",
+      "cowDiagram.bodyParts.flank.culinary.2",
+    ],
+    bestMethodKey: "cowDiagram.bodyParts.flank.bestMethod",
     position: { top: "46%", left: "58%" },
-    cuts: ["Flank Steak", "Bavette", "Inside Skirt"],
+    cutsKeys: [
+      "cowDiagram.bodyParts.flank.cuts.0",
+      "cowDiagram.bodyParts.flank.cuts.1",
+      "cowDiagram.bodyParts.flank.cuts.2",
+    ],
   },
   {
     id: "shank",
-    name: "Shank",
-    subtitle: "Leg Sections",
-    description:
-      "Extremely tough with high collagen content. Requires long, slow cooking to break down.",
-    meatQuality: "Fair",
-    marbling: "Low",
-    culinary: ["Osso Buco", "Soup Bones", "Stocks"],
-    bestMethod: "Braising/Simmering",
+    nameKey: "cowDiagram.bodyParts.shank.name",
+    subtitleKey: "cowDiagram.bodyParts.shank.subtitle",
+    descriptionKey: "cowDiagram.bodyParts.shank.description",
+    meatQualityKey: "cowDiagram.bodyParts.shank.meatQuality",
+    marblingKey: "cowDiagram.bodyParts.shank.marbling",
+    culinaryKeys: [
+      "cowDiagram.bodyParts.shank.culinary.0",
+      "cowDiagram.bodyParts.shank.culinary.1",
+      "cowDiagram.bodyParts.shank.culinary.2",
+    ],
+    bestMethodKey: "cowDiagram.bodyParts.shank.bestMethod",
     position: { top: "49%", left: "36%" },
-    cuts: ["Fore Shank", "Hind Shank", "Cross-Cut Shanks"],
+    cutsKeys: [
+      "cowDiagram.bodyParts.shank.cuts.0",
+      "cowDiagram.bodyParts.shank.cuts.1",
+      "cowDiagram.bodyParts.shank.cuts.2",
+    ],
   },
 ];
 
@@ -149,7 +221,21 @@ export function CowBodyDiagram({ className }: CowBodyDiagramProps) {
   const [activePart, setActivePart] = useState<string | null>(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const { t } = useLocalization();
   const fallbackImage = "/placeholder/no-image.jpg";
+
+  // Localize body parts data
+  const bodyParts = bodyPartsKeys.map((part) => ({
+    ...part,
+    name: t(part.nameKey),
+    subtitle: t(part.subtitleKey),
+    description: t(part.descriptionKey),
+    meatQuality: t(part.meatQualityKey),
+    marbling: t(part.marblingKey),
+    culinary: part.culinaryKeys.map((key) => t(key)),
+    bestMethod: t(part.bestMethodKey),
+    cuts: part.cutsKeys.map((key) => t(key)),
+  }));
 
   const activePartData = bodyParts.find((p) => p.id === activePart);
 
@@ -165,14 +251,12 @@ export function CowBodyDiagram({ className }: CowBodyDiagramProps) {
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         className="text-center mb-16"
       >
-        <SectionMiniHeading heading="Butchers Guide" />
+        <SectionMiniHeading heading={t("cowDiagram.sectionHeading")} />
         <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6">
-          Know Your Cuts
+          {t("cowDiagram.title")}
         </h2>
         <p className="text-on-surface-variant text-lg max-w-2xl mx-auto leading-relaxed">
-          Explore our interactive butchers chart. Hover over each section to
-          discover the best cooking methods and premium cuts from every part of
-          the animal.
+          {t("cowDiagram.description")}
         </p>
       </motion.div>
 
@@ -209,7 +293,7 @@ export function CowBodyDiagram({ className }: CowBodyDiagramProps) {
               {/* Overlay hint if using pastoral image */}
               {!isImageLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center text-on-surface-variant">
-                  <span className="text-sm">Loading diagram...</span>
+                  <span className="text-sm">{t("cowDiagram.loading")}</span>
                 </div>
               )}
             </div>
@@ -384,7 +468,7 @@ export function CowBodyDiagram({ className }: CowBodyDiagramProps) {
                     <div className="flex items-center gap-2 text-outline mb-1">
                       <Info className="w-4 h-4" />
                       <span className="text-xs font-bold uppercase tracking-wider">
-                        Quality
+                        {t("cowDiagram.stats.quality")}
                       </span>
                     </div>
                     <span className="text-lg font-bold text-on-surface">
@@ -401,7 +485,7 @@ export function CowBodyDiagram({ className }: CowBodyDiagramProps) {
                     <div className="flex items-center gap-2 text-outline mb-1">
                       <Droplets className="w-4 h-4" />
                       <span className="text-xs font-bold uppercase tracking-wider">
-                        Marbling
+                        {t("cowDiagram.stats.marbling")}
                       </span>
                     </div>
                     <span className="text-lg font-bold text-on-surface">
@@ -420,7 +504,7 @@ export function CowBodyDiagram({ className }: CowBodyDiagramProps) {
                   <div className="flex items-center gap-2 text-primary-fixed mb-2">
                     <Flame className="w-5 h-5" />
                     <span className="text-xs font-bold uppercase tracking-wider">
-                      Best Cooking Method
+                      {t("cowDiagram.bestMethod")}
                     </span>
                   </div>
                   <span className="text-xl font-bold text-on-surface">
@@ -435,7 +519,7 @@ export function CowBodyDiagram({ className }: CowBodyDiagramProps) {
                   transition={{ delay: 0.45 }}
                 >
                   <h4 className="text-sm font-bold text-outline uppercase tracking-wider mb-3">
-                    Popular Cuts
+                    {t("cowDiagram.popularCuts")}
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {activePartData.cuts.map((cut, idx) => (
@@ -460,7 +544,7 @@ export function CowBodyDiagram({ className }: CowBodyDiagramProps) {
                   className="mt-6 pt-6 border-t border-outline-variant/10"
                 >
                   <h4 className="text-sm font-bold text-outline uppercase tracking-wider mb-3">
-                    Perfect For
+                    {t("cowDiagram.perfectFor")}
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {activePartData.culinary.map((dish) => (
@@ -494,11 +578,10 @@ export function CowBodyDiagram({ className }: CowBodyDiagramProps) {
                   <Beef className="w-10 h-10 text-primary-fixed/50" />
                 </motion.div>
                 <h3 className="text-xl font-bold text-on-surface mb-2">
-                  Explore the Cuts
+                  {t("cowDiagram.empty.title")}
                 </h3>
                 <p className="text-on-surface-variant max-w-xs leading-relaxed">
-                  Hover over any hotspot on the diagram to reveal detailed
-                  information about that section
+                  {t("cowDiagram.empty.description")}
                 </p>
               </motion.div>
             )}
@@ -507,7 +590,7 @@ export function CowBodyDiagram({ className }: CowBodyDiagramProps) {
           {/* Legend for Desktop */}
           <div className="hidden lg:block">
             <h4 className="text-xs font-bold text-outline uppercase tracking-wider mb-3 px-2">
-              Quick Navigation
+              {t("cowDiagram.quickNav")}
             </h4>
             <div className="grid grid-cols-3 gap-2">
               {bodyParts.map((part) => (

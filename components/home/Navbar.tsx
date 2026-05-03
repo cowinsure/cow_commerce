@@ -205,7 +205,7 @@ export function Navbar({ className }: { className?: string }) {
                   href="/auth?login=true"
                   className="px-5 py-2 bg-emerald-700 text-white rounded-full font-semibold text-sm hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-600/20 active:scale-95 transition-all duration-200"
                 >
-                  <span>Login</span>
+                  <span>{t("navbar.login")}</span>
                 </Link>
               </div>
             )}
@@ -300,7 +300,7 @@ export function Navbar({ className }: { className?: string }) {
                               : "text-zinc-700 hover:bg-zinc-50 ",
                           )}
                         >
-                          {link.key}
+                          {t(link.key)}
                         </Link>
                       </motion.div>
                     ))}
@@ -321,7 +321,7 @@ export function Navbar({ className }: { className?: string }) {
                           className="flex items-center gap-3 py-3 px-4 rounded-xl text-zinc-700  hover:bg-zinc-50 transition-all duration-200"
                         >
                           <User className="w-5 h-5" />
-                          <span className="font-medium">Profile</span>
+                          <span className="font-medium">{t("navbar.profile")}</span>
                         </Link>
                       </motion.div>
                       <motion.button
@@ -332,7 +332,7 @@ export function Navbar({ className }: { className?: string }) {
                         className="w-full flex items-center gap-3 py-3 px-4 rounded-xl text-red-600  hover:bg-red-50 transition-all duration-200"
                       >
                         <LogOut className="w-5 h-5" />
-                        <span className="font-medium">Logout</span>
+                        <span className="font-medium">{t("navbar.logout")}</span>
                       </motion.button>
                     </>
                   ) : (
@@ -347,7 +347,7 @@ export function Navbar({ className }: { className?: string }) {
                           onClick={() => setMobileMenuOpen(false)}
                           className="block py-3 px-4 rounded-xl text-center font-semibold bg-emerald-600  text-white hover:bg-emerald-700 transition-all duration-200"
                         >
-                          <span>Login</span>
+                          <span>{t("navbar.login")}</span>
                         </Link>
                       </motion.div>
                     </>
