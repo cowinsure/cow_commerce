@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { cn } from "@/lib/theme/theme.config";
 import {
@@ -11,12 +11,18 @@ import {
   Edit3,
   Shield,
   ChevronRight,
+  ArrowLeft,
 } from "lucide-react";
-import Link from "next/link";
+import { usePersonalInfo } from "@/hooks/personalInfo/usePersonalInfo";
+import PersonalInfoFarmer from "@/components/profle/PersonalInfo";
 
 export default function ProfilePage() {
   const { user } = useAuth();
+  const { fetchPersonalInfo } = usePersonalInfo();
   const [loading] = useState(false);
+  const [showPersonalInfo, setShowPersonalInfo] = useState(false);
+  const [userName, setUserName] = useState<string>("");
+  const mobile_number = user?.mobile_number;
 
   // Mock user data for display (in real app, this would come from API)
   const userData = user || {
@@ -27,19 +33,39 @@ export default function ProfilePage() {
     is_superuser: false,
   };
 
+  // Fetch personal info to get user name
+  useEffect(() => {
+    const loadPersonalInfo = async () => {
+      try {
+        const response = await fetchPersonalInfo();
+        if (response?.data) {
+          const data = response.data as { first_name?: string; last_name?: string };
+          const name = `${data.first_name || ""} ${data.last_name || ""}`.trim();
+          setUserName(name || "User Account");
+        }
+      } catch (error) {
+        // If no personal info exists yet, use default
+        setUserName("User Account");
+      }
+    };
+
+    loadPersonalInfo();
+  }, [fetchPersonalInfo]);
+
+
+
   const menuItems = [
     {
       icon: UserIcon,
       label: "Personal Information",
       description: "Update your personal details",
-      href: "/profile/edit",
     },
-    {
-      icon: Shield,
-      label: "Security",
-      description: "Password and security settings",
-      href: "/profile/security",
-    },
+    // {
+    //   icon: Shield,
+    //   label: "Security",
+    //   description: "Password and security settings",
+    //   href: "/profile/security",
+    // },
     // {
     //   icon: CreditCard,
     //   label: "Payment Methods",
@@ -52,12 +78,12 @@ export default function ProfilePage() {
     //   description: "Configure notification preferences",
     //   href: "/profile/notifications",
     // },
-    {
-      icon: MapPin,
-      label: "Addresses",
-      description: "Manage delivery addresses",
-      href: "/profile/addresses",
-    },
+    // {
+    //   icon: MapPin,
+    //   label: "Addresses",
+    //   description: "Manage delivery addresses",
+    //   href: "/profile/addresses",
+    // },
     // {
     //   icon: Settings,
     //   label: "Settings",
@@ -123,7 +149,7 @@ export default function ProfilePage() {
                   </button>
                 </div>
                 <h2 className="text-xl font-bold text-emerald-900 mb-1">
-                  User Account
+                  {userName}
                 </h2>
                 {/* <p className="text-sm text-zinc-500">
                   {userData.role === "user" ? "Customer" : userData.role}
@@ -138,7 +164,9 @@ export default function ProfilePage() {
                 </div> */}
                 <div className="flex items-center gap-3 text-sm">
                   <Phone className="w-4 h-4 text-emerald-600" />
-                  <span className="text-zinc-600">+1 234 567 8900</span>
+                  <span className="text-zinc-600">
+                    {mobile_number}
+                  </span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
                   <MapPin className="w-4 h-4 text-emerald-600" />
@@ -195,48 +223,81 @@ export default function ProfilePage() {
           >
             <div className="bg-white rounded-3xl shadow-lg shadow-emerald-900/5 border border-emerald-100/30 overflow-hidden">
               <div className="p-6 border-b border-emerald-100/30">
+                {showPersonalInfo && (
+                  <button
+                    onClick={() => setShowPersonalInfo(false)}
+                    className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 mb-2 transition-colors"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span className="text-sm font-medium">Back</span>
+                  </button>
+                )}
                 <h3 className="text-lg font-semibold text-emerald-900">
-                  Account Settings
+                  {showPersonalInfo ? "Personal Information" : "Account Settings"}
                 </h3>
                 <p className="text-sm text-zinc-500">
-                  Manage your account preferences
+                  {showPersonalInfo 
+                    ? "Update your personal details" 
+                    : "Manage your account preferences"}
                 </p>
               </div>
 
               <div className="divide-y divide-emerald-100/30">
-                {menuItems.map((item, index) => {
-                  const IconComponent = item.icon;
-                  return (
+                <AnimatePresence mode="wait">
+                  {!showPersonalInfo ? (
                     <motion.div
-                      key={item.label}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + index * 0.05, duration: 0.3 }}
+                      key="menu"
+                      initial={{ opacity: 1 }}
+                      exit={{ opacity: 0, transition: { duration: 0.3 } }}
+                      className="divide-y divide-emerald-100/30"
                     >
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          "flex items-center gap-4 p-4 sm:p-6",
-                          "hover:bg-emerald-50-900/20",
-                          "transition-colors duration-200",
-                        )}
-                      >
-                        <div className="w-12 h-12 bg-emerald-100/30 rounded-xl flex items-center justify-center shrink-0">
-                          <IconComponent className="w-5 h-5 text-emerald-600" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-emerald-900">
-                            {item.label}
-                          </p>
-                          <p className="text-sm text-zinc-500 truncate">
-                            {item.description}
-                          </p>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-zinc-400 shrink-0" />
-                      </Link>
+                      {menuItems.map((item, index) => {
+                        const IconComponent = item.icon;
+                        return (
+                          <motion.div
+                            key={item.label}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 + index * 0.05, duration: 0.3 }}
+                          >
+                            <button
+                              onClick={() => setShowPersonalInfo(true)}
+                              className={cn(
+                                "flex items-center gap-4 p-4 sm:p-6 w-full text-left",
+                                "hover:bg-emerald-50-900/20",
+                                "transition-colors duration-200",
+                              )}
+                            >
+                              <div className="w-12 h-12 bg-emerald-100/30 rounded-xl flex items-center justify-center shrink-0">
+                                <IconComponent className="w-5 h-5 text-emerald-600" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-emerald-900">
+                                  {item.label}
+                                </p>
+                                <p className="text-sm text-zinc-500 truncate">
+                                  {item.description}
+                                </p>
+                              </div>
+                              <ChevronRight className="w-5 h-5 text-zinc-400 shrink-0" />
+                            </button>
+                          </motion.div>
+                        );
+                      })}
                     </motion.div>
-                  );
-                })}
+                  ) : (
+                    <motion.div
+                      key="personal-info"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className="p-6"
+                    >
+                      <PersonalInfoFarmer />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 

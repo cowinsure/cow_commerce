@@ -24,7 +24,7 @@ const LocalizationContext = createContext<LocalizationContextProps | undefined>(
 );
 
 export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
-  // Initialize from localStorage or default to 'en' using lazy initialization
+  // Initialize from localStorage or default to 'bn' using lazy initialization
   const [locale, setLocaleState] = useState<Locale>(() => {
     if (typeof window !== "undefined") {
       const savedLocale = localStorage.getItem("locale") as Locale | null;
@@ -32,7 +32,7 @@ export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
         return savedLocale;
       }
     }
-    return "en";
+    return "bn";
   });
 
   // Save locale to localStorage whenever it changes

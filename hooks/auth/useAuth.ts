@@ -6,10 +6,25 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { loginApi } from "@/lib/api/auth/login";
-import { registerApi, verifyOtpApi, setPasswordApi } from "@/lib/api/auth/register";
+import {
+  registerApi,
+  verifyOtpApi,
+  setPasswordApi,
+} from "@/lib/api/auth/register";
 import { forgotPasswordApi } from "@/lib/api/auth/forgotPassword";
-import { setToken, removeToken, getUserData, isAuthenticated, setUserData } from "@/lib/auth/tokenService";
-import { LoginRequest, LoginResponse, SignupRequest, User } from "@/lib/models/authDTO";
+import {
+  setToken,
+  removeToken,
+  getUserData,
+  isAuthenticated,
+  setUserData,
+} from "@/lib/auth/tokenService";
+import {
+  LoginRequest,
+  LoginResponse,
+  SignupRequest,
+  User,
+} from "@/lib/models/authDTO";
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -50,7 +65,7 @@ export function useAuth() {
       // Store tokens
       // console.log("Storing tokens:", response.access_token, response.refresh_token);
       setToken(response.access_token, response.refresh_token);
-      
+
       // Also set httpOnly cookies for middleware
       try {
         await fetch("/api/auth/set-cookies", {
@@ -64,7 +79,7 @@ export function useAuth() {
       } catch (cookieError) {
         console.error("Failed to set cookies:", cookieError);
       }
-      
+
       // Store user data
       const user: User = {
         role: response.role,
@@ -74,6 +89,7 @@ export function useAuth() {
         is_insurance_agent: response.is_insurance_agent,
         is_enterprise_agent: response.is_enterprise_agent,
         is_superuser: response.is_superuser,
+        mobile_number: credentials.mobile_number,
       };
       setUserData(user);
       setState({
@@ -84,7 +100,8 @@ export function useAuth() {
       });
       return response;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Login failed";
+      const errorMessage =
+        error instanceof Error ? error.message : "Login failed";
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -101,7 +118,8 @@ export function useAuth() {
       setState((prev) => ({ ...prev, loading: false }));
       return response;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Registration failed";
+      const errorMessage =
+        error instanceof Error ? error.message : "Registration failed";
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -118,7 +136,8 @@ export function useAuth() {
       setState((prev) => ({ ...prev, loading: false }));
       return response;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "OTP verification failed";
+      const errorMessage =
+        error instanceof Error ? error.message : "OTP verification failed";
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -128,22 +147,26 @@ export function useAuth() {
     }
   }, []);
 
-  const setPassword = useCallback(async (mobile_number: string, password: string) => {
-    setState((prev) => ({ ...prev, loading: true, error: null }));
-    try {
-      const response = await setPasswordApi({ mobile_number, password });
-      setState((prev) => ({ ...prev, loading: false }));
-      return response;
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to set password";
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
-      throw error;
-    }
-  }, []);
+  const setPassword = useCallback(
+    async (mobile_number: string, password: string) => {
+      setState((prev) => ({ ...prev, loading: true, error: null }));
+      try {
+        const response = await setPasswordApi({ mobile_number, password });
+        setState((prev) => ({ ...prev, loading: false }));
+        return response;
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to set password";
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+          error: errorMessage,
+        }));
+        throw error;
+      }
+    },
+    [],
+  );
 
   const forgotPassword = useCallback(async (mobile_number: string) => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
@@ -152,7 +175,8 @@ export function useAuth() {
       setState((prev) => ({ ...prev, loading: false }));
       return response;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to process request";
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to process request";
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -164,7 +188,7 @@ export function useAuth() {
 
   const logout = useCallback(async () => {
     removeToken();
-    
+
     // Also clear server-side httpOnly cookies
     try {
       await fetch("/api/auth/clear-cookies", {
@@ -173,7 +197,7 @@ export function useAuth() {
     } catch (error) {
       console.error("Failed to clear cookies:", error);
     }
-    
+
     setState({
       isAuthenticated: false,
       loading: false,

@@ -43,9 +43,15 @@ export const BREED_API = {
   GET_BREEDS: "/lms/breed-service/",
 } as const;
 
-// Breed service endpoints
+// Delivery service endpoints
 export const DELIVERY_SERVICE_API = {
   GET_DELIVERY_TYPES: "/invms/inventory-shipping-method-service/",
+} as const;
+
+// Personal Info service endpoints
+export const PERSONALINFO_SERVICE_API = {
+  CREATE_PERSONAL_INFO: "/v1/auth/user/personal-info/",
+  GET_PERSONAL_INFO: "/v1/auth/user/personal-info/",
 } as const;
 
 // Type for combining all API routes

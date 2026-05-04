@@ -83,6 +83,7 @@ export interface User {
   is_insurance_agent: boolean;
   is_enterprise_agent: boolean;
   is_superuser: boolean;
+  mobile_number?: string;
 }
 
 // ==================== API RESPONSE WRAPPER ====================
