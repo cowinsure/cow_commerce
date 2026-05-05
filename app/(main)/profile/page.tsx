@@ -15,13 +15,21 @@ import {
 } from "lucide-react";
 import { usePersonalInfo } from "@/hooks/personalInfo/usePersonalInfo";
 import PersonalInfoFarmer from "@/components/profle/PersonalInfo";
+import PersonalInfoCus from "@/components/profle/PersonalInfo";
+import { useLocalization } from "@/context/LocalizationContext";
 
 export default function ProfilePage() {
   const { user } = useAuth();
   const { fetchPersonalInfo } = usePersonalInfo();
+  const { t, locale } = useLocalization();
   const [loading] = useState(false);
   const [showPersonalInfo, setShowPersonalInfo] = useState(false);
   const [userName, setUserName] = useState<string>("");
+  const [profileImageUrl, setProfileImageUrl] = useState<string>("");
+  const [userAddress, setUserAddress] = useState<string>("");
+  const [userDob, setUserDob] = useState<string>("");
+  const [userGender, setUserGender] = useState<string>("");
+  const [userTin, setUserTin] = useState<string>("");
   const mobile_number = user?.mobile_number;
 
   // Mock user data for display (in real app, this would come from API)
@@ -33,32 +41,63 @@ export default function ProfilePage() {
     is_superuser: false,
   };
 
-  // Fetch personal info to get user name
+  // Fetch personal info to get user details
   useEffect(() => {
     const loadPersonalInfo = async () => {
       try {
         const response = await fetchPersonalInfo();
         if (response?.data) {
-          const data = response.data as { first_name?: string; last_name?: string };
-          const name = `${data.first_name || ""} ${data.last_name || ""}`.trim();
-          setUserName(name || "User Account");
+          const data = response.data as {
+            first_name?: string;
+            last_name?: string;
+            profile_image_url?: string;
+            thana?: string;
+            union?: string;
+            village?: string;
+            zilla?: string;
+            date_of_birth?: string;
+            gender?: string;
+            tin?: string;
+          };
+          const name =
+            `${data.first_name || ""} ${data.last_name || ""}`.trim();
+          setUserName(name || t("profile.defaultUserName"));
+          setProfileImageUrl(data.profile_image_url || "");
+
+          // Build address from components
+          const addressParts = [
+            data.village,
+            data.thana,
+            data.union,
+            data.zilla,
+          ].filter(Boolean);
+          if (addressParts.length > 0) {
+            setUserAddress(addressParts.join(", "));
+          }
+
+          setUserDob(data.date_of_birth || "");
+          setUserGender(data.gender || "");
+          setUserTin(data.tin || "");
         }
       } catch (error) {
         // If no personal info exists yet, use default
-        setUserName("User Account");
+        setUserName(t("profile.defaultUserName"));
+        setProfileImageUrl("");
+        setUserAddress("");
+        setUserDob("");
+        setUserGender("");
+        setUserTin("");
       }
     };
 
     loadPersonalInfo();
-  }, [fetchPersonalInfo]);
-
-
+  }, [fetchPersonalInfo, t]);
 
   const menuItems = [
     {
       icon: UserIcon,
-      label: "Personal Information",
-      description: "Update your personal details",
+      label: t("profile.menu.personalInfo"),
+      description: t("profile.menu.personalInfoDescription"),
     },
     // {
     //   icon: Shield,
@@ -106,7 +145,7 @@ export default function ProfilePage() {
   console.log(userData);
 
   return (
-    <div className=" bg-emerald-50/50 mt-10">
+    <div className=" bg-emerald-50/50 mt-10"  lang={locale === "bn" ? "bn" : "en"}>
       {/* Background Pattern */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-emerald-200/20/10 rounded-full blur-3xl" />
@@ -116,18 +155,18 @@ export default function ProfilePage() {
       <div className="relative z-10 max-w-screen-2xl mx-auto px-4 sm:px-8 py-8 pt-24 min-h-screen">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-8"
-        >
-          <h1 className="text-3xl sm:text-4xl font-bold text-emerald-900 mb-2">
-            My Profile
-          </h1>
-          <p className="text-zinc-600">
-            Manage your account settings and preferences
-          </p>
-        </motion.div>
+           initial={{ opacity: 0, y: 20 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+           className="mb-8"
+         >
+           <h1 className="text-3xl sm:text-4xl font-bold text-emerald-900 mb-2">
+             {t("profile.title")}
+           </h1>
+           <p className="text-zinc-600">
+             {t("profile.description")}
+           </p>
+         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Profile Card */}
@@ -139,43 +178,134 @@ export default function ProfilePage() {
           >
             <div className="bg-white rounded-3xl p-6 shadow-lg shadow-emerald-900/5 border border-emerald-100/30">
               {/* Avatar */}
-              <div className="flex flex-col items-center mb-6">
+              <div className="flex md:gap-5 items-start flex-col md:flex-row mb-6">
+                {/* Image */}
                 <div className="relative mb-4">
-                  <div className="w-28 h-28 bg-emerald-100/30 rounded-full flex items-center justify-center">
-                    <UserIcon className="w-14 h-14 text-emerald-600" />
-                  </div>
-                  <button className="absolute bottom-0 right-0 w-9 h-9 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-colors">
-                    <Edit3 className="w-4 h-4" />
-                  </button>
+                  {profileImageUrl ? (
+                    <div className="w-28 h-28 rounded-2xl overflow-hidden border-2 border-emerald-200">
+                      <img
+                        src={profileImageUrl}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-28 h-28 bg-emerald-100/30 rounded-full flex items-center justify-center">
+                      <UserIcon className="w-14 h-14 text-emerald-600" />
+                    </div>
+                  )}
+                  {/* <button className="absolute bottom-0 right-0 w-9 h-9 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-700 transition-colors">
+                     <Edit3 className="w-4 h-4" />
+                   </button> */}
                 </div>
-                <h2 className="text-xl font-bold text-emerald-900 mb-1">
-                  {userName}
-                </h2>
-                {/* <p className="text-sm text-zinc-500">
-                  {userData.role === "user" ? "Customer" : userData.role}
-                </p> */}
+                {/* Name and Number */}
+                <div className="md:mt-5">
+                  <h2 className="text-xl font-bold text-emerald-900 mb-1">
+                    {userName}
+                  </h2>
+                  {/* Phone - always shown */}
+                  <div className="flex items-center justify-between gap-2 text-sm">
+                    <div className="flex items-center gap-3">
+                      <Phone className="w-4 h-4 text-emerald-600" />
+                    </div>
+                    <span className="text-zinc-600">{mobile_number}</span>
+                  </div>
+                </div>
               </div>
 
               {/* User Details */}
-              <div className="space-y-4 mb-6">
-                {/* <div className="flex items-center gap-3 text-sm">
-                  <Mail className="w-4 h-4 text-emerald-600" />
-                  <span className="text-zinc-600">user@example.com</span>
-                </div> */}
-                <div className="flex items-center gap-3 text-sm">
-                  <Phone className="w-4 h-4 text-emerald-600" />
-                  <span className="text-zinc-600">
-                    {mobile_number}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <MapPin className="w-4 h-4 text-emerald-600" />
-                  <span className="text-zinc-600">Bangladesh</span>
-                </div>
+              <div className="grid grid-cols-1 gap-4 md:gap-3 mb-">
+                {/* Address - only show if data exists */}
+                 {userAddress && (
+                   <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
+                     <div className="flex items-center gap-3">
+                       <MapPin className="w-4 h-4 text-emerald-600" />
+                       <span className="text-emerald-700 font-medium">
+                         {t("profile.address")}
+                       </span>
+                     </div>
+                     <span className="text-zinc-600 font-medium">{userAddress}</span>
+                   </div>
+                 )}
+
+                 {/* Date of Birth - only show if exists */}
+                 {userDob && (
+                   <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
+                     <div className="flex items-center gap-3">
+                       <svg
+                         className="w-4 h-4 text-emerald-600"
+                         fill="none"
+                         stroke="currentColor"
+                         viewBox="0 0 24 24"
+                       >
+                         <path
+                           strokeLinecap="round"
+                           strokeLinejoin="round"
+                           strokeWidth={2}
+                           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                         />
+                       </svg>
+                       <span className="text-emerald-700 font-medium">
+                         {t("profile.dateOfBirth")}
+                       </span>
+                     </div>
+                     <span className="text-zinc-600 font-medium">{userDob}</span>
+                   </div>
+                 )}
+
+                 {/* Gender - only show if exists */}
+                 {userGender && (
+                   <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
+                     <div className="flex items-center gap-3">
+                       <svg
+                         className="w-4 h-4 text-emerald-600"
+                         fill="none"
+                         stroke="currentColor"
+                         viewBox="0 0 24 24"
+                       >
+                         <path
+                           strokeLinecap="round"
+                           strokeLinejoin="round"
+                           strokeWidth={2}
+                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                         />
+                       </svg>
+                       <span className="text-emerald-700 font-medium">
+                         {t("profile.gender")}
+                       </span>
+                     </div>
+                     <span className="text-zinc-600 font-medium capitalize">
+                       {userGender}
+                     </span>
+                   </div>
+                 )}
+
+                 {/* TIN - only show if exists */}
+                 {userTin && (
+                   <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
+                     <div className="flex items-center gap-3">
+                       <svg
+                         className="w-4 h-4 text-emerald-600"
+                         fill="none"
+                         stroke="currentColor"
+                         viewBox="0 0 24 24"
+                       >
+                         <path
+                           strokeLinecap="round"
+                           strokeLinejoin="round"
+                           strokeWidth={2}
+                           d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                         />
+                       </svg>
+                       <span className="text-emerald-700 font-medium">{t("profile.tin")}</span>
+                     </div>
+                     <span className="text-zinc-600 font-medium">{userTin}</span>
+                   </div>
+                 )}
               </div>
 
               {/* Account Type Badge */}
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex flex-wrap gap-2">
                 {/* {userData.is_superuser && (
                   <span className="px-3 py-1 bg-purple-100/30 text-purple-700 text-xs font-medium rounded-full">
                     Super Admin
@@ -196,14 +326,14 @@ export default function ProfilePage() {
                     Enterprise Agent
                   </span>
                 )} */}
-                {!userData.is_superuser &&
+                {/* {!userData.is_superuser &&
                   !userData.is_insurecow_agent &&
                   !userData.is_insurance_agent &&
                   !userData.is_enterprise_agent && (
                     <span className="px-3 py-1 bg-emerald-100/30 text-emerald-700 text-xs font-medium rounded-full">
                       Customer
                     </span>
-                  )}
+                  )} */}
               </div>
 
               {/* Edit Profile Button */}
@@ -223,24 +353,26 @@ export default function ProfilePage() {
           >
             <div className="bg-white rounded-3xl shadow-lg shadow-emerald-900/5 border border-emerald-100/30 overflow-hidden">
               <div className="p-6 border-b border-emerald-100/30">
-                {showPersonalInfo && (
-                  <button
-                    onClick={() => setShowPersonalInfo(false)}
-                    className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 mb-2 transition-colors"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span className="text-sm font-medium">Back</span>
-                  </button>
-                )}
-                <h3 className="text-lg font-semibold text-emerald-900">
-                  {showPersonalInfo ? "Personal Information" : "Account Settings"}
-                </h3>
-                <p className="text-sm text-zinc-500">
-                  {showPersonalInfo 
-                    ? "Update your personal details" 
-                    : "Manage your account preferences"}
-                </p>
-              </div>
+               {showPersonalInfo && (
+                   <button
+                     onClick={() => setShowPersonalInfo(false)}
+                     className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 mb-2 transition-colors"
+                   >
+                     <ArrowLeft className="w-4 h-4" />
+                     <span className="text-sm font-medium">{t("profile.back")}</span>
+                   </button>
+                 )}
+                 <h3 className="text-lg font-semibold text-emerald-900">
+                   {showPersonalInfo
+                     ? t("profile.menu.personalInfo")
+                     : t("profile.accountSettings")}
+                 </h3>
+                 <p className="text-sm text-zinc-500">
+                   {showPersonalInfo
+                     ? t("profile.menu.personalInfoDescription")
+                     : t("profile.accountSettingsDescription")}
+                 </p>
+               </div>
 
               <div className="divide-y divide-emerald-100/30">
                 <AnimatePresence mode="wait">
@@ -258,7 +390,10 @@ export default function ProfilePage() {
                             key={item.label}
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.3 + index * 0.05, duration: 0.3 }}
+                            transition={{
+                              delay: 0.3 + index * 0.05,
+                              duration: 0.3,
+                            }}
                           >
                             <button
                               onClick={() => setShowPersonalInfo(true)}
@@ -294,7 +429,7 @@ export default function ProfilePage() {
                       transition={{ duration: 0.3 }}
                       className="p-6"
                     >
-                      <PersonalInfoFarmer />
+                      <PersonalInfoCus />
                     </motion.div>
                   )}
                 </AnimatePresence>

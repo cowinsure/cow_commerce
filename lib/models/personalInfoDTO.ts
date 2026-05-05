@@ -15,6 +15,10 @@ export interface PersonalInfo {
   union: string;
   village: string;
   zilla: string;
+  // Image URLs from API response
+  profile_image_url?: string;
+  nid_front_image_url?: string;
+  nid_back_image_url?: string;
 }
 
 // Process info response interface

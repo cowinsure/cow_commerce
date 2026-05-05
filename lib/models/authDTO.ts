@@ -50,7 +50,7 @@ export interface LoginResponse {
 
 export interface SignupResponse {
   message: string;
-  status: string;
+  results: unknown[];
 }
 
 export interface OtpVerificationResponse {

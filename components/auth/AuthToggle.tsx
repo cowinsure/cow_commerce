@@ -69,7 +69,7 @@ export function AuthToggle({ mode, onToggle, className }: AuthToggleProps) {
           Create Account
           <span
             className={cn(
-              "w-1.5 h-1.5 rounded-full bg-primary transition-all duration-300",
+              "w-1.5 h-1.5 rounded-full bg-green-500 transition-all duration-300",
               mode === "signup" ? "opacity-100 scale-100" : "opacity-0 scale-0",
             )}
           />

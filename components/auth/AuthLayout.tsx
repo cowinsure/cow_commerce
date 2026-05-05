@@ -4,6 +4,8 @@ import { ReactNode } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/theme/theme.config";
+import UseLogo from "../ui/UseLogo";
+import { useLocalization } from "@/context/LocalizationContext";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -49,7 +51,7 @@ const imageVariants = {
   hidden: { scale: 1.2, opacity: 0 },
   visible: {
     scale: 1,
-    opacity: 0.7,
+    opacity: 1,
     transition: {
       duration: 1.2,
       ease: [0.22, 1, 0.36, 1] as const,
@@ -85,8 +87,9 @@ const glassElementVariants = {
   hidden: { x: 100, opacity: 0, rotate: 0 },
   visible: {
     x: 0,
-    opacity: 0.2,
-    rotate: 12,
+    y: -120,
+    opacity: 1,
+    rotate: 100,
     transition: {
       duration: 1,
       delay: 0.5,
@@ -96,34 +99,42 @@ const glassElementVariants = {
 };
 
 export function AuthLayout({ children, className }: AuthLayoutProps) {
+  const { t, locale } = useLocalization();
+
   return (
     <motion.main
       className="min-h-screen flex items-stretch overflow-hidden"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
+      lang={locale === "bn" ? "bn" : "en"}
     >
       {/* Left Side: Visual/Pastoral Side */}
       <motion.section
-        className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-primary/80"
+        className="hidden w-1/2 lg:flex lg:w-2/3 relative overflow-hidden"
         variants={leftPanelVariants}
       >
-        <motion.div className="absolute inset-0" variants={imageVariants}>
+        <motion.div className="" variants={imageVariants}>
           <Image
-            alt="The Digital Agrarian Pastoral Landscape"
-            className="absolute inset-0 w-full h-full object-cover mix-blend-overlay"
+            alt="FreshBuy Pastoral Landscape"
+            className="absolute inset-0 w-full h-full object-cover"
             fill
             priority
             sizes="50vw"
-            src="/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM.jpeg"
+            src="/cowImg/landscape.png"
           />
         </motion.div>
 
+        {/* 🔥 Gradient Overlay */}
+        <div
+          className="absolute inset-0 z-10 
+  bg-[radial-gradient(circle_at_80%_40%,rgba(6,78,59,0.05)_0%,rgba(6,78,59,0.15)_30%,rgba(2,44,34,0.65)_60%,rgba(2,44,34,0.95)_85%)]
+"
+        />
+
         <div className="relative z-10 p-16 flex flex-col justify-between h-[90dvh] w-full">
           <motion.div variants={textVariants}>
-            <h1 className="font-headline text-3xl font-extrabold tracking-tighter text-on-primary">
-              The Digital Agrarian
-            </h1>
+            <UseLogo imgWidth="w-14" textSize="text-4xl" />
           </motion.div>
 
           <div className="max-w-md">
@@ -142,14 +153,13 @@ export function AuthLayout({ children, className }: AuthLayoutProps) {
               className="font-headline text-5xl font-extrabold tracking-tight text-white mb-6 leading-tight"
               variants={textVariants}
             >
-              Cultivating the future of livestock commerce.
+              {t("authLayout.headline")}
             </motion.h2>
             <motion.p
               className="text-primary-fixed text-lg leading-relaxed font-medium"
               variants={textVariants}
             >
-              Join an elite network of producers and buyers. Managing your farms
-              digital footprint has never been this seamless.
+              {t("authLayout.description")}
             </motion.p>
           </div>
 
@@ -162,7 +172,7 @@ export function AuthLayout({ children, className }: AuthLayoutProps) {
                 icon: (
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                 ),
-                text: "Verified Assets",
+                tKey: "feature1",
                 fill: "currentColor",
               },
               {
@@ -174,7 +184,7 @@ export function AuthLayout({ children, className }: AuthLayoutProps) {
                     d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
                   />
                 ),
-                text: "Secure Auctions",
+                tKey: "feature2",
                 fill: "none",
               },
               {
@@ -186,12 +196,12 @@ export function AuthLayout({ children, className }: AuthLayoutProps) {
                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
                   />
                 ),
-                text: "Real-time Data",
+                tKey: "feature3",
                 fill: "none",
               },
             ].map((item, index) => (
               <motion.span
-                key={item.text}
+                key={item.tKey}
                 className="flex items-center gap-2"
                 variants={badgeVariants}
                 custom={index}
@@ -204,7 +214,7 @@ export function AuthLayout({ children, className }: AuthLayoutProps) {
                 >
                   {item.icon}
                 </svg>
-                {item.text}
+                {t(`authLayout.${item.tKey}`)}
               </motion.span>
             ))}
           </motion.div>
@@ -212,25 +222,29 @@ export function AuthLayout({ children, className }: AuthLayoutProps) {
 
         {/* Asymmetric Glass Decorative Element */}
         <motion.div
-          className="absolute -right-20 top-1/4 w-64 h-96 bg-white/20 backdrop-blur-xl rounded-full"
+          className="absolute left-10 top-1 w-64 h-96 bg-emerald-950 backdrop-blur-xl rounded-full"
           variants={glassElementVariants}
         />
       </motion.section>
 
       {/* Right Side: Auth Form */}
-      <motion.section
-        className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-white"
-        variants={rightPanelVariants}
-      >
-        <motion.div
-          className={cn("w-full max-w-110", className)}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
+        <motion.section
+          className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-white"
+          variants={rightPanelVariants}
         >
-          {children}
-        </motion.div>
-      </motion.section>
+          <motion.div
+            className={cn("w-full max-w-110", className)}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              delay: 0.4,
+              duration: 0.6,
+              ease: [0.22, 1, 0.36, 1] as const,
+            }}
+          >
+            {children}
+          </motion.div>
+        </motion.section>
     </motion.main>
   );
 }

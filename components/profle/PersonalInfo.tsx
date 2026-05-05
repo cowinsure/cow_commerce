@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/auth/useAuth";
 import { usePersonalInfo } from "@/hooks/personalInfo/usePersonalInfo";
 import { PersonalInfo } from "@/lib/models/personalInfoDTO";
 
-const PersonalInfoFarmer: React.FC = () => {
+const PersonalInfoCus: React.FC = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const { submitPersonalInfo, fetchPersonalInfo } = usePersonalInfo();
@@ -32,6 +32,9 @@ const PersonalInfoFarmer: React.FC = () => {
     union: "",
     village: "",
     zilla: "",
+    profile_image_url: "",
+    nid_front_image_url: "",
+    nid_back_image_url: "",
   });
 
   // Update phone when user context is available
@@ -44,38 +47,41 @@ const PersonalInfoFarmer: React.FC = () => {
     }
   }, [user]);
 
-  // Fetch personal info on mount
-  useEffect(() => {
-    const loadPersonalInfo = async () => {
-      try {
-        const response = await fetchPersonalInfo();
-        if (response?.data) {
-          const data = response.data as PersonalInfo;
-          setFormData((prev) => ({
-            ...prev,
-            userType: data.userType || prev.userType,
-            first_name: data.first_name || prev.first_name,
-            last_name: data.last_name || prev.last_name,
-            nid: data.nid || prev.nid,
-            date_of_birth: data.date_of_birth || prev.date_of_birth,
-            gender: data.gender || prev.gender,
-            tin: data.tin || prev.tin,
-            bin: data.bin || prev.bin,
-            phone: data.phone || prev.phone,
-            thana: data.thana || prev.thana,
-            union: data.union || prev.union,
-            village: data.village || prev.village,
-            zilla: data.zilla || prev.zilla,
-          }));
-        }
-      } catch (error) {
-        // If no personal info exists yet, that's okay
-        console.log('No existing personal info found');
-      }
-    };
+   // Fetch personal info on mount
+   useEffect(() => {
+     const loadPersonalInfo = async () => {
+       try {
+         const response = await fetchPersonalInfo();
+         if (response?.data) {
+           const data = response.data as PersonalInfo;
+           setFormData((prev) => ({
+             ...prev,
+             userType: data.userType || prev.userType,
+             first_name: data.first_name || prev.first_name,
+             last_name: data.last_name || prev.last_name,
+             nid: data.nid || prev.nid,
+             date_of_birth: data.date_of_birth || prev.date_of_birth,
+             gender: data.gender || prev.gender,
+             tin: data.tin || prev.tin,
+             bin: data.bin || prev.bin,
+             phone: data.phone || prev.phone,
+             thana: data.thana || prev.thana,
+             union: data.union || prev.union,
+             village: data.village || prev.village,
+             zilla: data.zilla || prev.zilla,
+             profile_image_url: data.profile_image_url || prev.profile_image_url,
+             nid_front_image_url: data.nid_front_image_url || prev.nid_front_image_url,
+             nid_back_image_url: data.nid_back_image_url || prev.nid_back_image_url,
+           }));
+         }
+       } catch (error) {
+         // If no personal info exists yet, that's okay
+         console.log('No existing personal info found');
+       }
+     };
 
-    loadPersonalInfo();
-  }, [fetchPersonalInfo]);
+     loadPersonalInfo();
+   }, [fetchPersonalInfo]);
 
   const validateField = (name: string, value: unknown): string => {
     const strValue = typeof value === "string" ? value : "";
@@ -299,33 +305,37 @@ const PersonalInfoFarmer: React.FC = () => {
         }
       `}</style>
       <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="flex lg:flex-col flex-col gap-3 items-start w-auto">
-          <PhotoCaptureModal
-            onPhotoCapture={(file) => handlePhotoCapture(file, "profile_image")}
-            triggerText="Capture Profile Image"
-            title="Capture Profile Image"
-          />
+         <div className="flex lg:flex-col flex-col gap-3 items-start w-auto">
+           <PhotoCaptureModal
+             onPhotoCapture={(file) => handlePhotoCapture(file, "profile_image")}
+             triggerText="Capture Profile Image"
+             title="Capture Profile Image"
+           />
 
-          {formData.profile_image && (
-            <div className="mt-4">
-              <h3 className="text-center text-sm font-medium w-auto mb-4">
-                Profile Image
-              </h3>
-              <Image
-                src={URL.createObjectURL(formData.profile_image)}
-                alt="Profile Image"
-                width={128}
-                height={128}
-                className="w-32 h-32 object-cover border rounded-3xl"
-              />
-            </div>
-          )}
-          {errors.profile_image && touched.profile_image && (
-            <p className="text-red-500 text-sm mt-1 animate-fade-in">
-              {errors.profile_image}
-            </p>
-          )}
-        </div>
+           {(formData.profile_image || formData.profile_image_url) && (
+             <div className="mt-4">
+               <h3 className="text-center text-sm font-medium w-auto mb-4">
+                 Profile Image
+               </h3>
+               <Image
+                 src={
+                   formData.profile_image
+                     ? URL.createObjectURL(formData.profile_image)
+                     : formData.profile_image_url || ""
+                 }
+                 alt="Profile Image"
+                 width={128}
+                 height={128}
+                 className="w-32 h-32 object-cover border rounded-3xl"
+               />
+             </div>
+           )}
+           {errors.profile_image && touched.profile_image && (
+             <p className="text-red-500 text-sm mt-1 animate-fade-in">
+               {errors.profile_image}
+             </p>
+           )}
+         </div>
 
         <div className="grid lg:grid-cols-2 gap-10">
           <div className="flex flex-col">
@@ -464,59 +474,67 @@ const PersonalInfoFarmer: React.FC = () => {
             )}
           </div>
 
-          <div className="flex lg:flex-col flex-col gap-3 items-start w-auto">
-            <PhotoCaptureModal
-              onPhotoCapture={(file) => handlePhotoCapture(file, "nid_front")}
-              triggerText="Capture NID Front"
-              title="Capture NID Front"
-            />
-            {formData.nid_front && (
-              <div className="mt-4">
-                <h3 className="text-center text-sm font-medium w-auto">
-                  NID Front
-                </h3>
-                <Image
-                  src={URL.createObjectURL(formData.nid_front)}
-                  alt="NID Front"
-                  width={128}
-                  height={128}
-                  className="w-32 h-32 object-cover border rounded"
-                />
-              </div>
-            )}
-            {errors.nid_front && touched.nid_front && (
-              <p className="text-red-500 text-sm mt-1 animate-fade-in">
-                {errors.nid_front}
-              </p>
-            )}
-          </div>
+           <div className="flex lg:flex-col flex-col gap-3 items-start w-auto">
+             <PhotoCaptureModal
+               onPhotoCapture={(file) => handlePhotoCapture(file, "nid_front")}
+               triggerText="Capture NID Front"
+               title="Capture NID Front"
+             />
+             {(formData.nid_front || formData.nid_front_image_url) && (
+               <div className="mt-4">
+                 <h3 className="text-center text-sm font-medium w-auto">
+                   NID Front
+                 </h3>
+                 <Image
+                   src={
+                     formData.nid_front
+                       ? URL.createObjectURL(formData.nid_front)
+                       : formData.nid_front_image_url || ""
+                   }
+                   alt="NID Front"
+                   width={128}
+                   height={128}
+                   className="w-32 h-32 object-cover border rounded"
+                 />
+               </div>
+             )}
+             {errors.nid_front && touched.nid_front && (
+               <p className="text-red-500 text-sm mt-1 animate-fade-in">
+                 {errors.nid_front}
+               </p>
+             )}
+           </div>
 
-          <div className="flex lg:flex-col flex-col gap-3 items-start w-auto">
-            <PhotoCaptureModal
-              onPhotoCapture={(file) => handlePhotoCapture(file, "nid_back")}
-              triggerText="Capture NID Back"
-              title="Capture NID Back"
-            />
-            {formData.nid_back && (
-              <div className="mt-4">
-                <h3 className="text-center text-sm font-medium w-auto">
-                  NID Back
-                </h3>
-                <Image
-                  src={URL.createObjectURL(formData.nid_back)}
-                  alt="NID Back"
-                  width={128}
-                  height={128}
-                  className="w-32 h-32 object-cover border rounded"
-                />
-              </div>
-            )}
-            {errors.nid_back && touched.nid_back && (
-              <p className="text-red-500 text-sm mt-1 animate-fade-in">
-                {errors.nid_back}
-              </p>
-            )}
-          </div>
+           <div className="flex lg:flex-col flex-col gap-3 items-start w-auto">
+             <PhotoCaptureModal
+               onPhotoCapture={(file) => handlePhotoCapture(file, "nid_back")}
+               triggerText="Capture NID Back"
+               title="Capture NID Back"
+             />
+             {(formData.nid_back || formData.nid_back_image_url) && (
+               <div className="mt-4">
+                 <h3 className="text-center text-sm font-medium w-auto">
+                   NID Back
+                 </h3>
+                 <Image
+                   src={
+                     formData.nid_back
+                       ? URL.createObjectURL(formData.nid_back)
+                       : formData.nid_back_image_url || ""
+                   }
+                   alt="NID Back"
+                   width={128}
+                   height={128}
+                   className="w-32 h-32 object-cover border rounded"
+                 />
+               </div>
+             )}
+             {errors.nid_back && touched.nid_back && (
+               <p className="text-red-500 text-sm mt-1 animate-fade-in">
+                 {errors.nid_back}
+               </p>
+             )}
+           </div>
 
           <div className="flex flex-col">
             <label
@@ -714,4 +732,4 @@ const PersonalInfoFarmer: React.FC = () => {
   );
 };
 
-export default PersonalInfoFarmer;
+export default PersonalInfoCus;

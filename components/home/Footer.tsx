@@ -6,26 +6,24 @@ import React from "react";
 import { useLocalization } from "@/context/LocalizationContext";
 import { CiLinkedin } from "react-icons/ci";
 import { FaFacebookSquare } from "react-icons/fa";
+import UseLogo from "../ui/UseLogo";
+import { usePathname } from "next/navigation";
 // import { FaXTwitter } from "react-icons/fa6";
 // import { FaYoutube } from "react-icons/fa";
 // import { FaSquareInstagram } from "react-icons/fa6";
 
 const Footer = () => {
   const { t } = useLocalization();
+  const pathname = usePathname();
+  const hideFooter = pathname.startsWith("/auth");
+  if (hideFooter) return null;
 
   return (
     <footer className="bg-emerald-950 text-gray-800 py-10 px-6 md:px-16">
       <div className="grid grid-cols-2 lg:flex-row max-w-screen-2xl mx-auto">
         {/* Left Section - Company Info */}
         <div className="">
-          <div className="flex items-center gap-2 ">
-            <img src="/logo2.png" alt="" className="w-12" />
-            <h2 className="text-2xl font-bold text-green-400 flex items-center ">
-              <span className="text-4xl font-extrabold tracking-tighter text-emerald-400 font-serif">
-                Fresh<span className="text-amber-400">Buy</span>
-              </span>
-            </h2>
-          </div>
+          <UseLogo imgWidth="w-12" textSize="text-4xl" />
           <p className="mt-3 text-gray-200">{t("footer_bangladesh_office")}</p>
           <p className="mt-3 text-gray-200">{t("footer_singapore_office")}</p>
 

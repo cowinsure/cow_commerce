@@ -7,7 +7,7 @@
 // Auth endpoints
 export const AUTH_API = {
   LOGIN: "/v1/auth/public/login/",
-  REGISTER: "/v1/auth/public/register/",
+  REGISTER: "/v1/auth/public/register/step1/",
   VERIFY_OTP: "/v1/auth/public/register/verify-otp/",
   SET_PASSWORD: "/v1/auth/public/register/set-password/",
   REFRESH_TOKEN: "/v1/auth/public/refresh-token/",

@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import { shouldShowNavLink } from "@/lib/config/protected-routes";
 import ToggleLan from "@/components/ui/ToggleLan";
 import { useLocalization } from "@/context/LocalizationContext";
+import UseLogo from "../ui/UseLogo";
 
 const navLinks = [
   { key: "navbar.home", href: "/" },
@@ -119,17 +120,7 @@ export function Navbar({ className }: { className?: string }) {
         <div className="flex justify-between items-center w-full px-4 sm:px-8 py-4 max-w-screen-2xl mx-auto">
           <div className="flex items-center gap-10">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group">
-              <motion.div
-                whileHover={{ rotate: [0, -10, 10, 0] }}
-                transition={{ duration: 0.5 }}
-              >
-                <img src="/logo2.png" alt="" className="w-9 " />
-              </motion.div>
-              <span className="text-2xl font-bold tracking-tighter text-emerald-400 font-serif">
-                Fresh<span className="text-amber-400">Buy</span>
-              </span>
-            </Link>
+            <UseLogo />
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex gap-8 items-center font-headline text-sm font-medium tracking-tight">
@@ -321,7 +312,9 @@ export function Navbar({ className }: { className?: string }) {
                           className="flex items-center gap-3 py-3 px-4 rounded-xl text-zinc-700  hover:bg-zinc-50 transition-all duration-200"
                         >
                           <User className="w-5 h-5" />
-                          <span className="font-medium">{t("navbar.profile")}</span>
+                          <span className="font-medium">
+                            {t("navbar.profile")}
+                          </span>
                         </Link>
                       </motion.div>
                       <motion.button
@@ -332,7 +325,9 @@ export function Navbar({ className }: { className?: string }) {
                         className="w-full flex items-center gap-3 py-3 px-4 rounded-xl text-red-600  hover:bg-red-50 transition-all duration-200"
                       >
                         <LogOut className="w-5 h-5" />
-                        <span className="font-medium">{t("navbar.logout")}</span>
+                        <span className="font-medium">
+                          {t("navbar.logout")}
+                        </span>
                       </motion.button>
                     </>
                   ) : (
