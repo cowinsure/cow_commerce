@@ -145,7 +145,10 @@ export default function ProfilePage() {
   console.log(userData);
 
   return (
-    <div className=" bg-emerald-50/50 mt-10"  lang={locale === "bn" ? "bn" : "en"}>
+    <div
+      className=" bg-emerald-50/50 mt-10"
+      lang={locale === "bn" ? "bn" : "en"}
+    >
       {/* Background Pattern */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-emerald-200/20/10 rounded-full blur-3xl" />
@@ -155,18 +158,16 @@ export default function ProfilePage() {
       <div className="relative z-10 max-w-screen-2xl mx-auto px-4 sm:px-8 py-8 pt-24 min-h-screen">
         {/* Header */}
         <motion.div
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-           className="mb-8"
-         >
-           <h1 className="text-3xl sm:text-4xl font-bold text-emerald-900 mb-2">
-             {t("profile.title")}
-           </h1>
-           <p className="text-zinc-600">
-             {t("profile.description")}
-           </p>
-         </motion.div>
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-8"
+        >
+          <h1 className="text-3xl sm:text-4xl font-bold text-emerald-900 mb-2">
+            {t("profile.title")}
+          </h1>
+          <p className="text-zinc-600">{t("profile.description")}</p>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Profile Card */}
@@ -205,7 +206,7 @@ export default function ProfilePage() {
                   </h2>
                   {/* Phone - always shown */}
                   <div className="flex items-center justify-between gap-2 text-sm">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
                       <Phone className="w-4 h-4 text-emerald-600" />
                     </div>
                     <span className="text-zinc-600">{mobile_number}</span>
@@ -216,92 +217,96 @@ export default function ProfilePage() {
               {/* User Details */}
               <div className="grid grid-cols-1 gap-4 md:gap-3 mb-">
                 {/* Address - only show if data exists */}
-                 {userAddress && (
-                   <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
-                     <div className="flex items-center gap-3">
-                       <MapPin className="w-4 h-4 text-emerald-600" />
-                       <span className="text-emerald-700 font-medium">
-                         {t("profile.address")}
-                       </span>
-                     </div>
-                     <span className="text-zinc-600 font-medium">{userAddress}</span>
-                   </div>
-                 )}
+                {userAddress && (
+                  <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
+                    <div className="flex items-center gap-3">
+                      <MapPin className="w-4 h-4 text-emerald-600" />
+                      <span className="text-emerald-700 font-medium">
+                        {t("profile.address")}
+                      </span>
+                    </div>
+                    <span className="text-zinc-600 font-medium">
+                      {userAddress}
+                    </span>
+                  </div>
+                )}
 
-                 {/* Date of Birth - only show if exists */}
-                 {userDob && (
-                   <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
-                     <div className="flex items-center gap-3">
-                       <svg
-                         className="w-4 h-4 text-emerald-600"
-                         fill="none"
-                         stroke="currentColor"
-                         viewBox="0 0 24 24"
-                       >
-                         <path
-                           strokeLinecap="round"
-                           strokeLinejoin="round"
-                           strokeWidth={2}
-                           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                         />
-                       </svg>
-                       <span className="text-emerald-700 font-medium">
-                         {t("profile.dateOfBirth")}
-                       </span>
-                     </div>
-                     <span className="text-zinc-600 font-medium">{userDob}</span>
-                   </div>
-                 )}
+                {/* Date of Birth - only show if exists */}
+                {userDob && (
+                  <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
+                    <div className="flex items-center gap-3">
+                      <svg
+                        className="w-4 h-4 text-emerald-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <span className="text-emerald-700 font-medium">
+                        {t("profile.dateOfBirth")}
+                      </span>
+                    </div>
+                    <span className="text-zinc-600 font-medium">{userDob}</span>
+                  </div>
+                )}
 
-                 {/* Gender - only show if exists */}
-                 {userGender && (
-                   <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
-                     <div className="flex items-center gap-3">
-                       <svg
-                         className="w-4 h-4 text-emerald-600"
-                         fill="none"
-                         stroke="currentColor"
-                         viewBox="0 0 24 24"
-                       >
-                         <path
-                           strokeLinecap="round"
-                           strokeLinejoin="round"
-                           strokeWidth={2}
-                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                         />
-                       </svg>
-                       <span className="text-emerald-700 font-medium">
-                         {t("profile.gender")}
-                       </span>
-                     </div>
-                     <span className="text-zinc-600 font-medium capitalize">
-                       {userGender}
-                     </span>
-                   </div>
-                 )}
+                {/* Gender - only show if exists */}
+                {userGender && (
+                  <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
+                    <div className="flex items-center gap-3">
+                      <svg
+                        className="w-4 h-4 text-emerald-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
+                      </svg>
+                      <span className="text-emerald-700 font-medium">
+                        {t("profile.gender")}
+                      </span>
+                    </div>
+                    <span className="text-zinc-600 font-medium capitalize">
+                      {userGender}
+                    </span>
+                  </div>
+                )}
 
-                 {/* TIN - only show if exists */}
-                 {userTin && (
-                   <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
-                     <div className="flex items-center gap-3">
-                       <svg
-                         className="w-4 h-4 text-emerald-600"
-                         fill="none"
-                         stroke="currentColor"
-                         viewBox="0 0 24 24"
-                       >
-                         <path
-                           strokeLinecap="round"
-                           strokeLinejoin="round"
-                           strokeWidth={2}
-                           d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                         />
-                       </svg>
-                       <span className="text-emerald-700 font-medium">{t("profile.tin")}</span>
-                     </div>
-                     <span className="text-zinc-600 font-medium">{userTin}</span>
-                   </div>
-                 )}
+                {/* TIN - only show if exists */}
+                {userTin && (
+                  <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
+                    <div className="flex items-center gap-3">
+                      <svg
+                        className="w-4 h-4 text-emerald-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      <span className="text-emerald-700 font-medium">
+                        {t("profile.tin")}
+                      </span>
+                    </div>
+                    <span className="text-zinc-600 font-medium">{userTin}</span>
+                  </div>
+                )}
               </div>
 
               {/* Account Type Badge */}
@@ -352,27 +357,29 @@ export default function ProfilePage() {
             className="lg:col-span-8"
           >
             <div className="bg-white rounded-3xl shadow-lg shadow-emerald-900/5 border border-emerald-100/30 overflow-hidden">
-              <div className="p-6 border-b border-emerald-100/30">
-               {showPersonalInfo && (
-                   <button
-                     onClick={() => setShowPersonalInfo(false)}
-                     className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 mb-2 transition-colors"
-                   >
-                     <ArrowLeft className="w-4 h-4" />
-                     <span className="text-sm font-medium">{t("profile.back")}</span>
-                   </button>
-                 )}
-                 <h3 className="text-lg font-semibold text-emerald-900">
-                   {showPersonalInfo
-                     ? t("profile.menu.personalInfo")
-                     : t("profile.accountSettings")}
-                 </h3>
-                 <p className="text-sm text-zinc-500">
-                   {showPersonalInfo
-                     ? t("profile.menu.personalInfoDescription")
-                     : t("profile.accountSettingsDescription")}
-                 </p>
-               </div>
+              <div className="p-6 border-emerald-100/30">
+                {showPersonalInfo && (
+                  <button
+                    onClick={() => setShowPersonalInfo(false)}
+                    className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 mb-5 transition-colors"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span className="text-sm font-medium">
+                      {t("profile.back")}
+                    </span>
+                  </button>
+                )}
+                <h3 className="text-lg font-semibold text-emerald-900">
+                  {showPersonalInfo
+                    ? t("profile.menu.personalInfo")
+                    : t("profile.accountSettings")}
+                </h3>
+                <p className="text-sm text-zinc-500">
+                  {showPersonalInfo
+                    ? t("profile.menu.personalInfoDescription")
+                    : t("profile.accountSettingsDescription")}
+                </p>
+              </div>
 
               <div className="divide-y divide-emerald-100/30">
                 <AnimatePresence mode="wait">
@@ -398,23 +405,41 @@ export default function ProfilePage() {
                             <button
                               onClick={() => setShowPersonalInfo(true)}
                               className={cn(
-                                "flex items-center gap-4 p-4 sm:p-6 w-full text-left",
-                                "hover:bg-emerald-50-900/20",
-                                "transition-colors duration-200",
+                                "flex items-center gap-4 p-4 sm:p-6 w-full text-left cursor-pointer group",
+                                "transition-all duration-500 ease-out",
+                                "hover:bg-emerald-900 hover:shadow-lg hover:shadow-emerald-900/20",
+                                "active:scale-[0.98]",
                               )}
                             >
-                              <div className="w-12 h-12 bg-emerald-100/30 rounded-xl flex items-center justify-center shrink-0">
-                                <IconComponent className="w-5 h-5 text-emerald-600" />
+                              {/* Icon Container with morphing background */}
+                              <div className="relative w-12 h-12 shrink-0">
+                                {/* Background that expands on hover */}
+                                <div className="absolute inset-0 bg-emerald-100/30 rounded-xl transition-all duration-500 ease-out group-hover:bg-emerald-600 group-hover:rounded-2xl group-hover:scale-110" />
+
+                                {/* Icon with rotation and scale */}
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <IconComponent className="w-5 h-5 text-emerald-600 transition-all duration-500 ease-out group-hover:text-emerald-100 group-hover:scale-110 group-hover:rotate-3" />
+                                </div>
+
+                                {/* Subtle glow effect */}
+                                <div className="absolute inset-0 rounded-xl bg-emerald-400/0 blur-lg transition-all duration-500 group-hover:bg-emerald-400/20" />
                               </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="font-medium text-emerald-900">
+
+                              {/* Text Content with staggered reveals */}
+                              <div className="flex-1 min-w-0 space-y-1">
+                                <p className="font-medium text-emerald-900 transition-all duration-500 ease-out group-hover:text-emerald-400 group-hover:translate-x-1">
                                   {item.label}
                                 </p>
-                                <p className="text-sm text-zinc-500 truncate">
+                                <p className="text-sm text-zinc-500 transition-all duration-500 delay-75 ease-out group-hover:text-zinc-300 group-hover:translate-x-1 truncate">
                                   {item.description}
                                 </p>
                               </div>
-                              <ChevronRight className="w-5 h-5 text-zinc-400 shrink-0" />
+
+                              {/* Animated Chevron with slide and color shift */}
+                              <div className="relative shrink-0 w-5 h-5 overflow-hidden">
+                                <ChevronRight className="w-5 h-5 text-zinc-400 absolute transition-all duration-500 ease-out group-hover:text-emerald-400 group-hover:translate-x-1" />
+                                <ChevronRight className="w-5 h-5 text-emerald-400 absolute -translate-x-5 opacity-0 transition-all duration-500 ease-out group-hover:translate-x-1 group-hover:opacity-100" />
+                              </div>
                             </button>
                           </motion.div>
                         );

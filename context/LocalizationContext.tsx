@@ -1,6 +1,13 @@
 // core/context/LocalizationContext.tsx
 "use client";
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
 
 // Import your translation files
 import en from "../locales/en.json";
@@ -24,9 +31,16 @@ const LocalizationContext = createContext<LocalizationContextProps | undefined>(
 );
 
 export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
-  // Initialize from localStorage or default to 'bn' using lazy initialization
+  // Initialize from cookie (server) or localStorage (client fallback)
   const [locale, setLocaleState] = useState<Locale>(() => {
     if (typeof window !== "undefined") {
+      // Check cookie first (set by server), then localStorage
+      const cookies = document.cookie.split(";");
+      const localeCookie = cookies.find((c) => c.trim().startsWith("locale="));
+      if (localeCookie) {
+        const value = localeCookie.split("=")[1] as Locale;
+        if (value === "en" || value === "bn") return value;
+      }
       const savedLocale = localStorage.getItem("locale") as Locale | null;
       if (savedLocale && (savedLocale === "en" || savedLocale === "bn")) {
         return savedLocale;
@@ -60,8 +74,12 @@ export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
     [locale],
   );
 
+  // Update both cookie and localStorage
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);
+    // Set cookie with 1-year expiry
+    document.cookie = `locale=${newLocale};path=/;max-age=${60 * 60 * 24 * 365}`;
+    localStorage.setItem("locale", newLocale);
   };
 
   return (

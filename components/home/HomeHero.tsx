@@ -206,10 +206,10 @@ export function HomeHero({ className }: { className?: string }) {
                   >
                     <CurrentIcon className="w-5 h-5 text-emerald-400" />
                   </motion.div>
-                  <span className="text-emerald-400 font-semibold tracking-[0.2em] text-sm uppercase">
+                  <span className="text-emerald-400 font-semibold uppercase">
                     {t(currentSlide.tagKey)}
                   </span>
-                  {currentSlide.badgeKey && (
+                  {/* {currentSlide.badgeKey && (
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
@@ -225,7 +225,7 @@ export function HomeHero({ className }: { className?: string }) {
                     >
                       {t(currentSlide.badgeKey)}
                     </motion.span>
-                  )}
+                  )} */}
                 </motion.div>
 
                 {/* Title Animation */}
@@ -292,7 +292,7 @@ export function HomeHero({ className }: { className?: string }) {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="group relative px-8 py-4 bg-emerald-500 text-stone-950 rounded-full font-bold text- overflow-hidden transition-all hover:shadow-2xl hover:shadow-emerald-500/30"
+                      className="group relative px-8 py-4 bg-emerald-500 text-stone-950 rounded-full font-bold text- overflow-hidden transition-all hover:shadow-2xl hover:shadow-emerald-500/30 cursor-pointer"
                     >
                       <span className="relative z-10 flex items-center gap-2">
                         {t(currentSlide.ctaKey)}

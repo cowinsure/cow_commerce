@@ -20,9 +20,9 @@ const Footer = () => {
 
   return (
     <footer className="bg-emerald-950 text-gray-800 py-10 px-6 md:px-16">
-      <div className="grid grid-cols-2 lg:flex-row max-w-screen-2xl mx-auto">
+      <div className="flex items-center justify-center max-w-screen-2xl mx-auto">
         {/* Left Section - Company Info */}
-        <div className="">
+        <div className="flex flex-col items-center justify-center">
           <UseLogo imgWidth="w-12" textSize="text-4xl" />
           <p className="mt-3 text-gray-200">{t("footer_bangladesh_office")}</p>
           <p className="mt-3 text-gray-200">{t("footer_singapore_office")}</p>
@@ -53,20 +53,20 @@ const Footer = () => {
           </div>
 
           {/* Contact Info */}
-          <div className="flex flex-col gap-5 mt-5">
-            <div className="mr-5">
+          <div className="flex gap-5 mt-5 text-center">
+            {/* <div className="mr-5">
               <p className="text-gray-200">info@insurecow.com</p>
               <p className="text-gray-200">+8801999INSURE</p>
-            </div>
+            </div> */}
             <div>
-              <p className="text-gray-200">{t("footer_helpline")}</p>
+              <p className="text-gray-200 underline underline-offset-1">{t("footer_helpline")}</p>
               <p className="text-gray-200">+8801999467873</p>
             </div>
           </div>
         </div>
 
         {/* Middle Section - About */}
-        <div className="flex justify-start flex-col items-center">
+        {/* <div className="flex justify-start flex-col items-center">
           <h3 className="text-xl font-semibold text-green-400">
             {t("footer_about_company")}
           </h3>
@@ -81,14 +81,14 @@ const Footer = () => {
               <a href="/about_us">{t("footer_about_us")}</a>
             </li>
             <li>
-              {/* <a href="#" className="flex items-center gap-2">
+              <a href="#" className="flex items-center gap-2">
               Career
               <span className="bg-green-600 text-white px-2 py-1 text-xs rounded-full">We are hiring!</span>
-            </a> */}
+            </a>
             </li>
-            {/* <li><a href="#">FAQ</a></li> */}
+            <li><a href="#">FAQ</a></li>
           </ul>
-        </div>
+        </div> */}
 
         {/* Right Section - Download App */}
         {/* <div>

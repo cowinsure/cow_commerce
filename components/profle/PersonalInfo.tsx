@@ -6,11 +6,13 @@ import { useToast } from "@/components/ui/Toast";
 import { useAuth } from "@/hooks/auth/useAuth";
 import { usePersonalInfo } from "@/hooks/personalInfo/usePersonalInfo";
 import { PersonalInfo } from "@/lib/models/personalInfoDTO";
+import { useLocalization } from "@/context/LocalizationContext";
 
 const PersonalInfoCus: React.FC = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const { submitPersonalInfo, fetchPersonalInfo } = usePersonalInfo();
+  const { t } = useLocalization();
   const [isProcessing, setIsProcessing] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -90,38 +92,38 @@ const PersonalInfoCus: React.FC = () => {
     switch (name) {
       case "first_name":
         return !strValue || strValue.trim() === ""
-          ? "First name is required"
+          ? t("profile.personalInfo.error.firstNameRequired")
           : "";
       case "last_name":
         return !strValue || strValue.trim() === ""
-          ? "Last name is required"
+          ? t("profile.personalInfo.error.lastNameRequired")
           : "";
       case "phone":
-        return !strValue || strValue.trim() === "" ? "Phone is required" : "";
+        return !strValue || strValue.trim() === "" ? t("profile.personalInfo.error.phoneRequired") : "";
       case "nid":
-        return !strValue || strValue.trim() === "" ? "NID is required" : "";
+        return !strValue || strValue.trim() === "" ? t("profile.personalInfo.error.nidRequired") : "";
       case "date_of_birth":
         return !strValue || strValue.trim() === ""
-          ? "Date of birth is required"
+          ? t("profile.personalInfo.error.dateOfBirthRequired")
           : "";
       case "gender":
-        return !strValue || strValue.trim() === "" ? "Gender is required" : "";
+        return !strValue || strValue.trim() === "" ? t("profile.personalInfo.error.genderRequired") : "";
       case "tin":
-        return !strValue || strValue.trim() === "" ? "TIN is required" : "";
+        return !strValue || strValue.trim() === "" ? t("profile.personalInfo.error.tinRequired") : "";
       case "profile_image":
-        return !fileValue ? "Profile image is required" : "";
+        return !fileValue ? t("profile.personalInfo.error.profileImageRequired") : "";
       case "nid_front":
-        return !fileValue ? "NID front image is required" : "";
+        return !fileValue ? t("profile.personalInfo.error.nidFrontRequired") : "";
       case "nid_back":
-        return !fileValue ? "NID back image is required" : "";
+        return !fileValue ? t("profile.personalInfo.error.nidBackRequired") : "";
       case "thana":
-        return !strValue || strValue.trim() === "" ? "Thana is required" : "";
+        return !strValue || strValue.trim() === "" ? t("profile.personalInfo.error.thanaRequired") : "";
       case "union":
-        return !strValue || strValue.trim() === "" ? "Union is required" : "";
+        return !strValue || strValue.trim() === "" ? t("profile.personalInfo.error.unionRequired") : "";
       case "village":
-        return !strValue || strValue.trim() === "" ? "Village is required" : "";
+        return !strValue || strValue.trim() === "" ? t("profile.personalInfo.error.villageRequired") : "";
       case "zilla":
-        return !strValue || strValue.trim() === "" ? "Zilla is required" : "";
+        return !strValue || strValue.trim() === "" ? t("profile.personalInfo.error.zillaRequired") : "";
       default:
         return "";
     }
@@ -223,7 +225,7 @@ const PersonalInfoCus: React.FC = () => {
         field.classList.add("shake");
         setTimeout(() => field.classList.remove("shake"), 500);
       });
-      showToast("Please fill in all required fields", "error");
+      showToast(t("profile.personalInfo.error.fillRequiredFields"), "error");
       return;
     }
 
@@ -256,14 +258,14 @@ const PersonalInfoCus: React.FC = () => {
       await submitPersonalInfo(payload);
 
       // Show success toast
-      showToast("Personal information saved successfully!", "success");
+      showToast(t("profile.personalInfo.success"), "success");
     } catch (error: unknown) {
       console.error("Submission error:", error);
       // Show error toast with message from backend
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "Failed to save personal information. Please try again.";
+          : t("profile.personalInfo.error.saveFailed");
       showToast(errorMessage, "error");
     } finally {
       setIsProcessing(false);
@@ -304,32 +306,32 @@ const PersonalInfoCus: React.FC = () => {
           animation: shake 0.5s ease-in-out;
         }
       `}</style>
-      <form onSubmit={handleSubmit} className="space-y-8">
-         <div className="flex lg:flex-col flex-col gap-3 items-start w-auto">
-           <PhotoCaptureModal
-             onPhotoCapture={(file) => handlePhotoCapture(file, "profile_image")}
-             triggerText="Capture Profile Image"
-             title="Capture Profile Image"
-           />
+       <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="flex lg:flex-col flex-col gap-3 items-start w-auto">
+            <PhotoCaptureModal
+              onPhotoCapture={(file) => handlePhotoCapture(file, "profile_image")}
+              triggerText={t("profile.personalInfo.captureProfileImage")}
+              title={t("profile.personalInfo.captureProfileImage")}
+            />
 
-           {(formData.profile_image || formData.profile_image_url) && (
-             <div className="mt-4">
-               <h3 className="text-center text-sm font-medium w-auto mb-4">
-                 Profile Image
-               </h3>
-               <Image
-                 src={
-                   formData.profile_image
-                     ? URL.createObjectURL(formData.profile_image)
-                     : formData.profile_image_url || ""
-                 }
-                 alt="Profile Image"
-                 width={128}
-                 height={128}
-                 className="w-32 h-32 object-cover border rounded-3xl"
-               />
-             </div>
-           )}
+            {(formData.profile_image || formData.profile_image_url) && (
+              <div className="mt-4">
+                <h3 className="text-center text-sm font-medium w-auto mb-4">
+                  {t("profile.personalInfo.profileImage")}
+                </h3>
+                <Image
+                  src={
+                    formData.profile_image
+                      ? URL.createObjectURL(formData.profile_image)
+                      : formData.profile_image_url || ""
+                  }
+                  alt={t("profile.personalInfo.profileImage")}
+                  width={128}
+                  height={128}
+                  className="w-32 h-32 object-cover border rounded-3xl"
+                />
+              </div>
+            )}
            {errors.profile_image && touched.profile_image && (
              <p className="text-red-500 text-sm mt-1 animate-fade-in">
                {errors.profile_image}
@@ -337,243 +339,243 @@ const PersonalInfoCus: React.FC = () => {
            )}
          </div>
 
-        <div className="grid lg:grid-cols-2 gap-10">
-          <div className="flex flex-col">
-            <label
-              htmlFor="first_name"
-              className="mb-1 text-sm font-medium text-emerald-700"
-            >
-              First Name: *
-            </label>
-            <input
-              type="text"
-              id="first_name"
-              name="first_name"
-              className={getInputClass("first_name")}
-              value={formData.first_name}
-              onChange={handleInputChange}
-            />
-            {errors.first_name && touched.first_name && (
-              <p className="text-red-500 text-sm mt-1 animate-fade-in">
-                {errors.first_name}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <label
-              htmlFor="last_name"
-              className="mb-1 text-sm font-medium text-emerald-700"
-            >
-              Last Name: *
-            </label>
-            <input
-              value={formData.last_name}
-              onChange={handleInputChange}
-              type="text"
-              id="last_name"
-              name="last_name"
-              className={getInputClass("last_name")}
-            />
-            {errors.last_name && touched.last_name && (
-              <p className="text-red-500 text-sm mt-1 animate-fade-in">
-                {errors.last_name}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <label
-              htmlFor="phone"
-              className="mb-1 text-sm font-medium text-emerald-700"
-            >
-              Phone: *
-            </label>
-            <input
-              type="text"
-              id="phone"
-              name="phone"
-              className={`${getInputClass("phone")} bg-gray-50`}
-              value={formData.phone}
-              disabled
-            />
-            {errors.phone && touched.phone && (
-              <p className="text-red-500 text-sm mt-1 animate-fade-in">
-                {errors.phone}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <label
-              htmlFor="gender"
-              className="mb-1 text-sm font-medium text-emerald-700"
-            >
-              Gender: *
-            </label>
-            <select
-              id="gender"
-              name="gender"
-              value={formData.gender}
-              onChange={handleInputChange}
-              className={getInputClass("gender")}
-            >
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-            {errors.gender && touched.gender && (
-              <p className="text-red-500 text-sm mt-1 animate-fade-in">
-                {errors.gender}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <label
-              htmlFor="date_of_birth"
-              className="mb-1 text-sm font-medium text-emerald-700"
-            >
-              Date of Birth: *
-            </label>
-            <input
-              value={formData.date_of_birth}
-              onChange={handleInputChange}
-              type="date"
-              id="date_of_birth"
-              name="date_of_birth"
-              className={getInputClass("date_of_birth")}
-            />
-            {errors.date_of_birth && touched.date_of_birth && (
-              <p className="text-red-500 text-sm mt-1 animate-fade-in">
-                {errors.date_of_birth}
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <label
-              htmlFor="nid"
-              className="mb-1 text-sm font-medium text-emerald-700"
-            >
-              NID (9-digit number): *
-            </label>
-            <input
-              type="text"
-              id="nid"
-              name="nid"
-              maxLength={9}
-              value={formData.nid}
-              onChange={handleInputChange}
-              className={getInputClass("nid")}
-            />
-            {errors.nid && touched.nid && (
-              <p className="text-red-500 text-sm mt-1 animate-fade-in">
-                {errors.nid}
-              </p>
-            )}
-          </div>
-
-           <div className="flex lg:flex-col flex-col gap-3 items-start w-auto">
-             <PhotoCaptureModal
-               onPhotoCapture={(file) => handlePhotoCapture(file, "nid_front")}
-               triggerText="Capture NID Front"
-               title="Capture NID Front"
+         <div className="grid lg:grid-cols-2 gap-10">
+           <div className="flex flex-col">
+             <label
+               htmlFor="first_name"
+               className="mb-1 text-sm font-medium text-emerald-700"
+             >
+               {t("profile.personalInfo.firstName")}: *
+             </label>
+             <input
+               type="text"
+               id="first_name"
+               name="first_name"
+               className={getInputClass("first_name")}
+               value={formData.first_name}
+               onChange={handleInputChange}
              />
-             {(formData.nid_front || formData.nid_front_image_url) && (
-               <div className="mt-4">
-                 <h3 className="text-center text-sm font-medium w-auto">
-                   NID Front
-                 </h3>
-                 <Image
-                   src={
-                     formData.nid_front
-                       ? URL.createObjectURL(formData.nid_front)
-                       : formData.nid_front_image_url || ""
-                   }
-                   alt="NID Front"
-                   width={128}
-                   height={128}
-                   className="w-32 h-32 object-cover border rounded"
-                 />
-               </div>
-             )}
-             {errors.nid_front && touched.nid_front && (
+             {errors.first_name && touched.first_name && (
                <p className="text-red-500 text-sm mt-1 animate-fade-in">
-                 {errors.nid_front}
+                 {errors.first_name}
                </p>
              )}
            </div>
-
-           <div className="flex lg:flex-col flex-col gap-3 items-start w-auto">
-             <PhotoCaptureModal
-               onPhotoCapture={(file) => handlePhotoCapture(file, "nid_back")}
-               triggerText="Capture NID Back"
-               title="Capture NID Back"
+ 
+           <div className="flex flex-col">
+             <label
+               htmlFor="last_name"
+               className="mb-1 text-sm font-medium text-emerald-700"
+             >
+               {t("profile.personalInfo.lastName")}: *
+             </label>
+             <input
+               value={formData.last_name}
+               onChange={handleInputChange}
+               type="text"
+               id="last_name"
+               name="last_name"
+               className={getInputClass("last_name")}
              />
-             {(formData.nid_back || formData.nid_back_image_url) && (
-               <div className="mt-4">
-                 <h3 className="text-center text-sm font-medium w-auto">
-                   NID Back
-                 </h3>
-                 <Image
-                   src={
-                     formData.nid_back
-                       ? URL.createObjectURL(formData.nid_back)
-                       : formData.nid_back_image_url || ""
-                   }
-                   alt="NID Back"
-                   width={128}
-                   height={128}
-                   className="w-32 h-32 object-cover border rounded"
-                 />
-               </div>
-             )}
-             {errors.nid_back && touched.nid_back && (
+             {errors.last_name && touched.last_name && (
                <p className="text-red-500 text-sm mt-1 animate-fade-in">
-                 {errors.nid_back}
+                 {errors.last_name}
                </p>
              )}
            </div>
-
-          <div className="flex flex-col">
-            <label
-              htmlFor="tin"
-              className="mb-1 text-sm font-medium text-emerald-700"
-            >
-              TIN: *
-            </label>
-            <input
-              value={formData.tin}
-              onChange={handleInputChange}
-              type="text"
-              id="tin"
-              name="tin"
-              className={getInputClass("tin")}
-            />
-            {errors.tin && touched.tin && (
-              <p className="text-red-500 text-sm mt-1 animate-fade-in">
-                {errors.tin}
-              </p>
-            )}
-          </div>
 
            <div className="flex flex-col">
-            <label
-              htmlFor="bin"
-              className="mb-1 text-sm font-medium text-emerald-700"
-            >
-              BIN:
-            </label>
-            <input
-              value={formData.bin}
-              onChange={handleInputChange}
-              type="text"
-              id="bin"
-              name="bin"
-              className="p-2 border border-emerald-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
-          </div>
+             <label
+               htmlFor="phone"
+               className="mb-1 text-sm font-medium text-emerald-700"
+             >
+               {t("profile.personalInfo.phone")}: *
+             </label>
+             <input
+               type="text"
+               id="phone"
+               name="phone"
+               className={`${getInputClass("phone")} bg-gray-50`}
+               value={formData.phone}
+               disabled
+             />
+             {errors.phone && touched.phone && (
+               <p className="text-red-500 text-sm mt-1 animate-fade-in">
+                 {errors.phone}
+               </p>
+             )}
+           </div>
+ 
+           <div className="flex flex-col">
+             <label
+               htmlFor="gender"
+               className="mb-1 text-sm font-medium text-emerald-700"
+             >
+               {t("profile.personalInfo.gender")}: *
+             </label>
+             <select
+               id="gender"
+               name="gender"
+               value={formData.gender}
+               onChange={handleInputChange}
+               className={getInputClass("gender")}
+             >
+               <option value="Male">{t("profile.personalInfo.male")}</option>
+               <option value="Female">{t("profile.personalInfo.female")}</option>
+               <option value="Other">{t("profile.personalInfo.other")}</option>
+             </select>
+             {errors.gender && touched.gender && (
+               <p className="text-red-500 text-sm mt-1 animate-fade-in">
+                 {errors.gender}
+               </p>
+             )}
+           </div>
+
+           <div className="flex flex-col">
+             <label
+               htmlFor="date_of_birth"
+               className="mb-1 text-sm font-medium text-emerald-700"
+             >
+               {t("profile.personalInfo.dateOfBirth")}: *
+             </label>
+             <input
+               value={formData.date_of_birth}
+               onChange={handleInputChange}
+               type="date"
+               id="date_of_birth"
+               name="date_of_birth"
+               className={getInputClass("date_of_birth")}
+             />
+             {errors.date_of_birth && touched.date_of_birth && (
+               <p className="text-red-500 text-sm mt-1 animate-fade-in">
+                 {errors.date_of_birth}
+               </p>
+             )}
+           </div>
+ 
+           <div className="flex flex-col">
+             <label
+               htmlFor="nid"
+               className="mb-1 text-sm font-medium text-emerald-700"
+             >
+               {t("profile.personalInfo.nidDescription")}: *
+             </label>
+             <input
+               type="text"
+               id="nid"
+               name="nid"
+               maxLength={9}
+               value={formData.nid}
+               onChange={handleInputChange}
+               className={getInputClass("nid")}
+             />
+             {errors.nid && touched.nid && (
+               <p className="text-red-500 text-sm mt-1 animate-fade-in">
+                 {errors.nid}
+               </p>
+             )}
+           </div>
+
+            <div className="flex lg:flex-col flex-col gap-3 items-start w-auto">
+              <PhotoCaptureModal
+                onPhotoCapture={(file) => handlePhotoCapture(file, "nid_front")}
+                triggerText={t("profile.personalInfo.captureNidFront")}
+                title={t("profile.personalInfo.captureNidFront")}
+              />
+              {(formData.nid_front || formData.nid_front_image_url) && (
+                <div className="mt-4">
+                  <h3 className="text-center text-sm font-medium w-auto">
+                    {t("profile.personalInfo.nidFront")}
+                  </h3>
+                  <Image
+                    src={
+                      formData.nid_front
+                        ? URL.createObjectURL(formData.nid_front)
+                        : formData.nid_front_image_url || ""
+                    }
+                    alt={t("profile.personalInfo.nidFront")}
+                    width={128}
+                    height={128}
+                    className="w-32 h-32 object-cover border rounded"
+                  />
+                </div>
+              )}
+              {errors.nid_front && touched.nid_front && (
+                <p className="text-red-500 text-sm mt-1 animate-fade-in">
+                  {errors.nid_front}
+                </p>
+              )}
+            </div>
+ 
+            <div className="flex lg:flex-col flex-col gap-3 items-start w-auto">
+              <PhotoCaptureModal
+                onPhotoCapture={(file) => handlePhotoCapture(file, "nid_back")}
+                triggerText={t("profile.personalInfo.captureNidBack")}
+                title={t("profile.personalInfo.captureNidBack")}
+              />
+              {(formData.nid_back || formData.nid_back_image_url) && (
+                <div className="mt-4">
+                  <h3 className="text-center text-sm font-medium w-auto">
+                    {t("profile.personalInfo.nidBack")}
+                  </h3>
+                  <Image
+                    src={
+                      formData.nid_back
+                        ? URL.createObjectURL(formData.nid_back)
+                        : formData.nid_back_image_url || ""
+                    }
+                    alt={t("profile.personalInfo.nidBack")}
+                    width={128}
+                    height={128}
+                    className="w-32 h-32 object-cover border rounded"
+                  />
+                </div>
+              )}
+              {errors.nid_back && touched.nid_back && (
+                <p className="text-red-500 text-sm mt-1 animate-fade-in">
+                  {errors.nid_back}
+                </p>
+              )}
+            </div>
+
+           <div className="flex flex-col">
+             <label
+               htmlFor="tin"
+               className="mb-1 text-sm font-medium text-emerald-700"
+             >
+               {t("profile.personalInfo.tin")}: *
+             </label>
+             <input
+               value={formData.tin}
+               onChange={handleInputChange}
+               type="text"
+               id="tin"
+               name="tin"
+               className={getInputClass("tin")}
+             />
+             {errors.tin && touched.tin && (
+               <p className="text-red-500 text-sm mt-1 animate-fade-in">
+                 {errors.tin}
+               </p>
+             )}
+           </div>
+ 
+            <div className="flex flex-col">
+             <label
+               htmlFor="bin"
+               className="mb-1 text-sm font-medium text-emerald-700"
+             >
+               {t("profile.personalInfo.bin")}:
+             </label>
+             <input
+               value={formData.bin}
+               onChange={handleInputChange}
+               type="text"
+               id="bin"
+               name="bin"
+               className="p-2 border border-emerald-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+             />
+           </div>
         </div>
 
         {/* Address Fields */}
@@ -583,7 +585,7 @@ const PersonalInfoCus: React.FC = () => {
               htmlFor="thana"
               className="mb-1 text-sm font-medium text-emerald-700"
             >
-              Thana: *
+              {t("profile.personalInfo.thana")}: *
             </label>
             <input
               type="text"
@@ -599,13 +601,13 @@ const PersonalInfoCus: React.FC = () => {
               </p>
             )}
           </div>
-
+ 
           <div className="flex flex-col">
             <label
               htmlFor="union"
               className="mb-1 text-sm font-medium text-emerald-700"
             >
-              Union: *
+              {t("profile.personalInfo.union")}: *
             </label>
             <input
               type="text"
@@ -621,13 +623,13 @@ const PersonalInfoCus: React.FC = () => {
               </p>
             )}
           </div>
-
+ 
           <div className="flex flex-col">
             <label
               htmlFor="village"
               className="mb-1 text-sm font-medium text-emerald-700"
             >
-              Village: *
+              {t("profile.personalInfo.village")}: *
             </label>
             <input
               type="text"
@@ -643,13 +645,13 @@ const PersonalInfoCus: React.FC = () => {
               </p>
             )}
           </div>
-
+ 
           <div className="flex flex-col">
             <label
               htmlFor="zilla"
               className="mb-1 text-sm font-medium text-emerald-700"
             >
-              Zilla: *
+              {t("profile.personalInfo.zilla")}: *
             </label>
             <input
               type="text"
@@ -704,7 +706,7 @@ const PersonalInfoCus: React.FC = () => {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                <span>Processing...</span>
+                 <span>{t("profile.personalInfo.processing")}</span>
               </>
             ) : (
               <>
@@ -722,7 +724,7 @@ const PersonalInfoCus: React.FC = () => {
                     d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
                   />
                 </svg>
-                <span>Submit Information</span>
+                 <span>{t("profile.personalInfo.submit")}</span>
               </>
             )}
           </button>

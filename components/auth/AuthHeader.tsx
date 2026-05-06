@@ -18,7 +18,6 @@ export function AuthHeader({ title, subtitle, showLogo = true, children, classNa
       {showLogo && (
         <div className="flex items-center gap-2 mb-8 lg:hidden">
           <span className="font-headline text-xl font-extrabold tracking-tighter text-primary">
-            The Digital Agrarian
           </span>
         </div>
       )}

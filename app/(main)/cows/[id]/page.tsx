@@ -72,7 +72,7 @@ import {
   Volume2,
   ClipboardList,
 } from "lucide-react";
-import { FaBangladeshiTakaSign } from "react-icons/fa6";
+import { FaBangladeshiTakaSign, FaPlusMinus } from "react-icons/fa6";
 import Link from "next/link";
 import { AnimatedPrice } from "@/components/ui/CounterAnimation";
 import { CircularShareMenu } from "@/components/ui/ShareMenu";
@@ -373,7 +373,7 @@ export default function CowDetailsPage() {
                     >
                       <div className="flex items-center gap-2">
                         <Weight className="w-5 h-5 text-emerald-400" />
-                        <span className="font-semibold">{cow.weight} kg</span>
+                        <span className="font-semibold  flex items-center gap-1">{cow.weight} kg <small className="mt-1 text-gray-100"><FaPlusMinus/></small></span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar className="w-5 h-5 text-emerald-400" />
@@ -516,7 +516,7 @@ export default function CowDetailsPage() {
                             }
                             disabled={quantity <= 1}
                             className={cn(
-                              "w-12 h-12 rounded-lg font-bold text-lg transition-all flex items-center justify-center",
+                              "w-12 h-12 rounded-lg font-bold text-lg transition-all flex items-center justify-center hover:cursor-pointer",
                               quantity > 1
                                 ? "bg-white text-emerald-600 shadow-sm hover:text-emerald-700"
                                 : "text-slate-300 cursor-not-allowed",
@@ -568,7 +568,7 @@ export default function CowDetailsPage() {
                               quantity >= (preloadedCow?.available_qty ?? 0)
                             }
                             className={cn(
-                              "w-12 h-12 rounded-lg font-bold text-lg transition-all flex items-center justify-center",
+                              "w-12 h-12 rounded-lg font-bold text-lg transition-all flex items-center justify-center hover:cursor-pointer",
                               quantity < (preloadedCow?.available_qty ?? 0)
                                 ? "bg-white text-emerald-600 shadow-sm hover:text-emerald-700"
                                 : "text-slate-300 cursor-not-allowed",
@@ -604,7 +604,7 @@ export default function CowDetailsPage() {
                           whileTap={{ scale: 0.98 }}
                           disabled={isFull}
                           className={cn(
-                            "w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all",
+                            "w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all hover:cursor-pointer",
                             isFull
                               ? "bg-slate-300 text-slate-500 cursor-not-allowed"
                               : "bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40",
@@ -782,8 +782,11 @@ export default function CowDetailsPage() {
                               {t("weight")}
                             </span>
                           </div>
-                          <span className="font-bold text-slate-900">
-                            {cowDetails[0].weight_kg} kg
+                          <span className="font-bold text-slate-900 flex items-center gap-1">
+                            {cowDetails[0].weight_kg} kg{" "}
+                            <small className="mt-1 text-gray-400">
+                              <FaPlusMinus />
+                            </small>
                           </span>
                         </motion.div>
 
@@ -1031,7 +1034,7 @@ export default function CowDetailsPage() {
         </section>
 
         {/* Related Cows - Cross Selling */}
-        <section className="bg-slate-50 py-20 border-t border-slate-200">
+        {/* <section className="bg-slate-50 py-20 border-t border-slate-200">
           <div className="px-4 sm:px-8 max-w-screen-2xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -1109,10 +1112,10 @@ export default function CowDetailsPage() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Trust Banner */}
-        <section className="bg-emerald-900 py-16">
+        {/* <section className="bg-emerald-900 py-16">
           <div className="px-4 sm:px-8 max-w-screen-2xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               {[
@@ -1137,7 +1140,7 @@ export default function CowDetailsPage() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
       </main>
     </div>
   );

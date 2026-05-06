@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/theme/theme.config";
-import { FaBangladeshiTakaSign } from "react-icons/fa6";
+import { FaBangladeshiTakaSign, FaPlusMinus } from "react-icons/fa6";
 import {
   Weight,
   Calendar,
@@ -183,7 +183,8 @@ export function ProductCard({
               <p className="text-[10px] text-gray-500/60 font-bold uppercase tracking-wider">
                 {t("weight")}
               </p>
-              <p className="text-sm font-semibold">{cow.weight_kg} kg</p>
+              <p className="text-sm font-semibold flex items-center gap-1
+              ">{cow.weight_kg} kg  <small className="mt-1 text-gray-400"><FaPlusMinus/></small></p>
             </div>
           </div>
 

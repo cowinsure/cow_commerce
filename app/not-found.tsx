@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Home, ArrowLeft, Sprout, Search } from 'lucide-react';
-import { cn } from '@/lib/theme/theme.config';
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Home, ArrowLeft, Sprout, Search } from "lucide-react";
+import { cn } from "@/lib/theme/theme.config";
+import UseLogo from "@/components/ui/UseLogo";
 
 export default function NotFound() {
   return (
@@ -54,8 +55,8 @@ export default function NotFound() {
             transition={{ delay: 0.4, duration: 0.5 }}
             className="text-zinc-600 dark:text-zinc-400 mb-8 text-lg"
           >
-            Oops! The page you&apos;re looking for seems to have wandered off like a lost cow. 
-            Let&apos;s get you back on track.
+            Oops! The page you&apos;re looking for seems to have wandered off
+            like a lost cow. Let&apos;s get you back on track.
           </motion.p>
 
           {/* Action Buttons */}
@@ -68,10 +69,10 @@ export default function NotFound() {
             <Link
               href="/"
               className={cn(
-                'inline-flex items-center justify-center gap-2 px-6 py-3',
-                'bg-emerald-700 text-white rounded-full font-semibold text-sm',
-                'hover:bg-emerald-600 hover:shadow-lg hover:shadow-emerald-600/20',
-                'active:scale-95 transition-all duration-200'
+                "inline-flex items-center justify-center gap-2 px-6 py-3",
+                "bg-emerald-700 text-white rounded-full font-semibold text-sm",
+                "hover:bg-emerald-600 hover:shadow-lg hover:shadow-emerald-600/20",
+                "active:scale-95 transition-all duration-200",
               )}
             >
               <Home className="w-4 h-4" />
@@ -81,11 +82,11 @@ export default function NotFound() {
             <Link
               href="/marketplace"
               className={cn(
-                'inline-flex items-center justify-center gap-2 px-6 py-3',
-                'bg-white dark:bg-zinc-800 text-emerald-900 dark:text-emerald-100',
-                'rounded-full font-semibold text-sm border border-emerald-200 dark:border-emerald-800',
-                'hover:bg-emerald-50 dark:hover:bg-emerald-900/20',
-                'active:scale-95 transition-all duration-200'
+                "inline-flex items-center justify-center gap-2 px-6 py-3",
+                "bg-white dark:bg-zinc-800 text-emerald-900 dark:text-emerald-100",
+                "rounded-full font-semibold text-sm border border-emerald-200 dark:border-emerald-800",
+                "hover:bg-emerald-50 dark:hover:bg-emerald-900/20",
+                "active:scale-95 transition-all duration-200",
               )}
             >
               <Search className="w-4 h-4" />
@@ -100,10 +101,10 @@ export default function NotFound() {
             transition={{ delay: 0.6, duration: 0.5 }}
             onClick={() => window.history.back()}
             className={cn(
-              'mt-6 inline-flex items-center justify-center gap-2 px-6 py-3',
-              'text-zinc-600 dark:text-zinc-400 font-medium text-sm',
-              'hover:text-emerald-700 dark:hover:text-emerald-300',
-              'transition-colors duration-200'
+              "mt-6 inline-flex items-center justify-center gap-2 px-6 py-3",
+              "text-zinc-600 dark:text-zinc-400 font-medium text-sm",
+              "hover:text-emerald-700 dark:hover:text-emerald-300",
+              "transition-colors duration-200",
             )}
           >
             <ArrowLeft className="w-4 h-4" />
@@ -115,9 +116,7 @@ export default function NotFound() {
       {/* Footer */}
       <footer className="w-full py-6 border-t border-emerald-100 dark:border-emerald-900/30">
         <div className="text-center">
-          <span className="font-headline font-semibold text-emerald-800 dark:text-emerald-200 text-sm">
-            The Digital Agrarian
-          </span>
+          <UseLogo />
           <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">
             Your trusted cow commerce platform
           </p>
