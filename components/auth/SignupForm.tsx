@@ -8,25 +8,17 @@ import { useToast } from "@/components/ui/Toast";
 import { cn } from "@/lib/theme/theme.config";
 import InputField from "../ui/InputField";
 import { useAuth } from "@/hooks/auth/useAuth";
+import { useLocalization } from "@/context/LocalizationContext";
 import { SignupRequest } from "@/lib/models/authDTO";
 import { OtpVerificationModal } from "./OtpVerificationModal";
 import { motion } from "framer-motion";
 import { resumePluginState } from "next/dist/build/build-context";
 
-const signupSchema = z
-  .object({
-    mobile_number: z
-      .string()
-      .regex(/^(?:\+880|880|0)?1[3-9]\d{8}$/, "Enter a valid mobile number"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
-type SignupFormData = z.infer<typeof signupSchema>;
+type SignupFormData = {
+  mobile_number: string;
+  password: string;
+  confirmPassword: string;
+};
 
 export function SignupForm({ className }: { className?: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,6 +34,21 @@ export function SignupForm({ className }: { className?: string }) {
   } | null>(null);
   const { showToast } = useToast();
   const { register: registerApi } = useAuth();
+  const { t } = useLocalization();
+
+  // Define schema inside component to access t() for localization
+  const signupSchema = z
+    .object({
+      mobile_number: z
+        .string()
+        .regex(/^(?:\+880|880|0)?1[3-9]\d{8}$/, t("auth.signup.error.mobile")),
+      password: z.string().min(6, t("auth.signup.error.passwordMin")),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t("auth.signup.error.passwordMatch"),
+      path: ["confirmPassword"],
+    });
 
   const {
     register,
@@ -71,9 +78,7 @@ export function SignupForm({ className }: { className?: string }) {
 
     // Custom validation for terms agreement
     if (!termsAgreed) {
-      setTermsError(
-        "You must agree to the Terms of Service and Privacy Policy",
-      );
+      setTermsError(t("auth.signup.termsError"));
       setShakeCheckbox(true);
       setTimeout(() => setShakeCheckbox(false), 500);
       setIsSubmitting(false);
@@ -124,10 +129,10 @@ export function SignupForm({ className }: { className?: string }) {
   const handleOtpSuccess = () => {
     // Close modal
     setIsOtpModalOpen(false);
-    
+
     // Show success toast
-    showToast("Account created successfully! Please login.", "success");
-    
+    showToast(t("auth.signup.success"), "success");
+
     // Clear form
     reset();
     setSignupSession(null);
@@ -149,7 +154,7 @@ export function SignupForm({ className }: { className?: string }) {
           animate={{ opacity: 1, y: 0 }}
           className="text-3xl font-bold text-gray-900 mb-2"
         >
-          Create account
+          {t("auth.signup.title")}
           <span className="text-green-700">!</span>
         </motion.h1>
         <motion.p
@@ -158,7 +163,7 @@ export function SignupForm({ className }: { className?: string }) {
           transition={{ delay: 0.1 }}
           className="text-gray-500 text-sm"
         >
-          Join us to manage your farm operations
+          {t("auth.signup.subtitle")}
         </motion.p>
       </div>
 
@@ -171,10 +176,10 @@ export function SignupForm({ className }: { className?: string }) {
       >
         {/* Mobile Number Input */}
         <InputField
-          label="Mobile Number"
+          label={t("auth.signup.mobileNumber")}
           id="signup-mobile_number"
           type="tel"
-          placeholder="Enter your mobile number"
+          placeholder={t("auth.signup.mobilePlaceholder")}
           autoComplete="tel"
           error={errors.mobile_number?.message}
           {...register("mobile_number")}
@@ -183,10 +188,10 @@ export function SignupForm({ className }: { className?: string }) {
         {/* Password Input with Toggle */}
         <div className="relative">
           <InputField
-            label="Password"
+            label={t("auth.signup.password")}
             id="signup-password"
             type={showPassword ? "text" : "password"}
-            placeholder="••••••••"
+            placeholder={t("auth.signup.passwordPlaceholder")}
             autoComplete="new-password"
             error={errors.password?.message}
             {...register("password")}
@@ -238,10 +243,10 @@ export function SignupForm({ className }: { className?: string }) {
         {/* Confirm Password Input with Toggle */}
         <div className="relative">
           <InputField
-            label="Confirm Password"
+            label={t("auth.signup.confirmPassword")}
             id="signup-confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="••••••••"
+            placeholder={t("auth.signup.passwordPlaceholder")}
             autoComplete="new-password"
             error={errors.confirmPassword?.message}
             {...register("confirmPassword")}
@@ -315,7 +320,7 @@ export function SignupForm({ className }: { className?: string }) {
                 "pointer-events-none relative z-0",
                 termsError
                   ? "border-red-300 peer-checked:bg-red-50 peer-checked:border-red-300"
-                  : "border-gray-300 peer-checked:bg-green-200 peer-checked:border-green-300"
+                  : "border-gray-300 peer-checked:bg-green-200 peer-checked:border-green-300",
               )}
             ></div>
 
@@ -326,7 +331,7 @@ export function SignupForm({ className }: { className?: string }) {
                 "peer-checked:opacity-100 transform scale-50 peer-checked:scale-110",
                 "transition-all duration-300 ease-out drop-shadow-lg",
                 "pointer-events-none z-20 -translate-y-0.5 translate-x-0.5",
-                termsError && "text-red-500"
+                termsError && "text-red-500",
               )}
               fill="none"
               viewBox="0 0 24 24"
@@ -357,13 +362,19 @@ export function SignupForm({ className }: { className?: string }) {
             className="text-sm font-medium text-gray-500 cursor-pointer select-none
                group-hover:text-gray-700 transition-colors duration-200"
           >
-            I agree to the{" "}
-            <a href="/terms" className="text-gray-900 font-semibold underline decoration-green-500 underline-offset-2">
-              Terms of Service
+            {t("auth.signup.termsAgree")}{" "}
+            <a
+              href="/terms"
+              className="text-gray-900 font-semibold underline decoration-green-500 underline-offset-2"
+            >
+              {t("auth.signup.termsLink")}
             </a>{" "}
-            and{" "}
-            <a href="/privacy" className="text-gray-900 font-semibold underline decoration-green-500 underline-offset-2">
-              Privacy Policy
+            {t("auth.signup.and")}{" "}
+            <a
+              href="/privacy"
+              className="text-gray-900 font-semibold underline decoration-green-500 underline-offset-2"
+            >
+              {t("auth.signup.privacyLink")}
             </a>
           </label>
         </div>
@@ -403,7 +414,7 @@ export function SignupForm({ className }: { className?: string }) {
             "shadow-lg shadow-green-600/20",
             isSubmitting
               ? "bg-gray-300 cursor-not-allowed"
-              : "bg-green-600 hover:bg-green-700 active:scale-95"
+              : "bg-green-600 hover:bg-green-700 active:scale-95",
           )}
         >
           {isSubmitting ? (
@@ -421,10 +432,10 @@ export function SignupForm({ className }: { className?: string }) {
                   d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                 />
               </svg>
-              Creating Account...
+              {t("auth.signup.creating")}
             </span>
           ) : (
-            "Create Account"
+            t("auth.signup.submit")
           )}
         </motion.button>
       </motion.form>

@@ -9,19 +9,15 @@ import { useToast } from "@/components/ui/Toast";
 import { cn } from "@/lib/theme/theme.config";
 import InputField from "../ui/InputField";
 import { useAuth } from "@/hooks/auth/useAuth";
+import { useLocalization } from "@/context/LocalizationContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LoginRequest } from "@/lib/models/authDTO";
 
-const loginSchema = z.object({
-  mobile_number: z
-    .string()
-    .min(11, "Mobile number must be 11 digits")
-    .max(11, "Mobile number must be 11 digits"),
-  password: z.string().min(1, "Password is required"),
-  rememberMe: z.boolean().optional(),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginFormData = {
+  mobile_number: string;
+  password: string;
+  rememberMe?: boolean;
+};
 
 export function LoginForm({ className }: { className?: string }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,6 +26,7 @@ export function LoginForm({ className }: { className?: string }) {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("redirect") || "/";
   const { login, loading } = useAuth();
+  const { t } = useLocalization();
 
   const {
     register,
@@ -37,7 +34,16 @@ export function LoginForm({ className }: { className?: string }) {
     formState: { errors },
     clearErrors,
   } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(
+      z.object({
+        mobile_number: z
+          .string()
+          .min(11, t("auth.login.error.mobileLength"))
+          .max(11, t("auth.login.error.mobileLength")),
+        password: z.string().min(1, t("auth.login.error.passwordRequired")),
+        rememberMe: z.boolean().optional(),
+      })
+    ),
     mode: "onChange",
     defaultValues: {
       mobile_number: "",
@@ -71,7 +77,7 @@ export function LoginForm({ className }: { className?: string }) {
         // Continue anyway - localStorage auth will still work
       }
       
-      showToast("Login successful", "success");
+       showToast(t("auth.login.success") || "Login successful", "success");
         
         // Navigate to redirect URL (or home if no redirect) and force refresh
         setTimeout(() => {
@@ -91,11 +97,11 @@ export function LoginForm({ className }: { className?: string }) {
       {/* Minimal Modern Heading */}
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-on-surface mb-2">
-          Welcome back
+          {t("auth.login.title")}
           <span className="text-primary">!</span>
         </h1>
         <p className="text-on-surface-variant text-sm">
-          Enter your credentials to access your account
+          {t("auth.login.subtitle")}
         </p>
       </div>
       <form
@@ -103,11 +109,11 @@ export function LoginForm({ className }: { className?: string }) {
         className={cn("space-y-5 ", className)}
       >
         <InputField
-          label="Mobile Number"
+          label={t("auth.login.mobileNumber")}
           id="mobile_number"
           {...register("mobile_number")}
           type="tel"
-          placeholder="Enter your mobile number"
+          placeholder={t("auth.login.mobilePlaceholder")}
           error={errors.mobile_number?.message}
           inputMode="numeric"
           onInput={(e: any) => {
@@ -118,11 +124,11 @@ export function LoginForm({ className }: { className?: string }) {
         {/* Password Input with Toggle */}
         <div className="relative">
           <InputField
-            label="Password"
+            label={t("auth.login.password")}
             id="password"
             {...register("password")}
             type={showPassword ? "text" : "password"}
-            placeholder="Enter your password"
+            placeholder={t("auth.login.passwordPlaceholder")}
             error={errors.password?.message}
           />
           <button
@@ -224,7 +230,7 @@ export function LoginForm({ className }: { className?: string }) {
             className="text-sm font-medium text-on-surface-variant cursor-pointer select-none
                group-hover:text-on-surface transition-colors duration-200"
           >
-            Keep me signed in
+            {t("auth.login.rememberMe")}
           </label>
         </div>
 
@@ -262,11 +268,11 @@ export function LoginForm({ className }: { className?: string }) {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              <span>Signing in...</span>
+              <span>{t("auth.login.signingIn")}</span>
             </>
           ) : (
             <>
-              <span>Sign In</span>
+              <span>{t("auth.login.submit")}</span>
               <svg
                 className="w-4 h-4"
                 fill="none"

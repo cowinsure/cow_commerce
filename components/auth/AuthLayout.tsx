@@ -53,7 +53,7 @@ const imageVariants = {
     scale: 1,
     opacity: 1,
     transition: {
-      duration: 1.2,
+      duration: 0,
       ease: [0.22, 1, 0.36, 1] as const,
     },
   },
@@ -121,7 +121,7 @@ export function AuthLayout({ children, className }: AuthLayoutProps) {
             fill
             priority
             sizes="50vw"
-            src="/cowImg/landscape.png"
+            src="/cowImg/landscape.webp"
           />
         </motion.div>
 

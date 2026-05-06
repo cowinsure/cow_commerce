@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { MessageCircle, X, Zap, Send } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
 const WHATSAPP_NUMBER = "8801999467873";
@@ -28,6 +29,7 @@ const useMagneticEffect = (strength = 0.3) => {
 export default function WhatsAppButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const pathname = usePathname();
   const [particles] = useState<Array<{ id: number; x: number; y: number }>>(
     () =>
       Array.from({ length: 6 }, (_, i) => ({
@@ -50,6 +52,8 @@ export default function WhatsAppButton() {
     });
     setIsOpen(!isOpen);
   };
+
+  if (pathname === "/auth") return null;
 
   return (
     <div className="fixed bottom-8 right-8 z-30 flex flex-col items-end gap-4">
