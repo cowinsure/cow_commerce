@@ -25,7 +25,7 @@ const Footer = () => {
         <div className="flex flex-col items-center justify-center">
           <UseLogo imgWidth="w-12" textSize="text-4xl" />
           <p className="mt-3 text-gray-200">{t("footer_bangladesh_office")}</p>
-          <p className="mt-3 text-gray-200">{t("footer_singapore_office")}</p>
+          {/* <p className="mt-3 text-gray-200">{t("footer_singapore_office")}</p> */}
 
           {/* Social Icons */}
           <div className="flex gap-3 mt-4">

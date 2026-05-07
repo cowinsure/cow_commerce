@@ -32,7 +32,7 @@ const MarketPlacePage = () => {
   return (
     <div className="pt-24 pb-20 flex-1">
       <HeroSection />
-      <section className="px-6 md:px-8 md:max-w-screen-2xl mx-auto grid md:grid-cols-12 md:gap-12">
+      <section className="px-6 md:px-8 md:max-w-screen-2xl mx-auto grid lg:grid-cols-12 md:gap-12">
         <FilterSidebar onFilterChange={handleFilterChange} />
         <ProductGrid cows={products} loading={loading} />
       </section>

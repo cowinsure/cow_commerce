@@ -231,7 +231,7 @@ export function BreedAdvantages({ breed, className }: BreedAdvantagesProps) {
                   >
                     <Star className="w-3 h-3 fill-current" />
                   </div>
-                  <span className="text-slate-700 text-sm leading-relaxed">
+                  <span className="text-slate-700 leading-relaxed">
                     {pro}
                   </span>
                 </motion.li>
@@ -331,7 +331,7 @@ export function BreedAdvantages({ breed, className }: BreedAdvantagesProps) {
                     />
                     <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-500 transition-colors" />
                   </div>
-                  <p className="font-semibold text-slate-800 text-sm leading-tight">
+                  <p className="font-semibold text-slate-800 leading-tight">
                     {dish}
                   </p>
                 </motion.div>
@@ -410,7 +410,7 @@ export function CompactBreedAdvantages({
         {content.pros.slice(0, 2).map((pro, i) => (
           <div
             key={i}
-            className="flex items-center gap-2 text-sm text-slate-600"
+            className="flex items-center gap-2 text-slate-600"
           >
             <Star
               className={cn(

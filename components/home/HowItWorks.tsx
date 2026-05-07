@@ -13,6 +13,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useLocalization } from "@/context/LocalizationContext";
+import Link from "next/link";
 
 export default function HowItWorks({ className }: { className?: string }) {
   const { t } = useLocalization();
@@ -120,17 +121,17 @@ export default function HowItWorks({ className }: { className?: string }) {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 border border-emerald-200 text-emerald-700 font-medium text-sm mb-6"
           >
             <Leaf className="w-4 h-4" />
-           {t("howItWorks.badge")}
+            {t("howItWorks.badge")}
           </motion.div>
 
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-emerald-950 mb-6 tracking-tight">
-          {t("howItWorks.title.line1")} {" "}
+            {t("howItWorks.title.line1")}{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-600 to-teal-600">
-             {t("howItWorks.title.line2")}
+              {t("howItWorks.title.line2")}
             </span>
           </h2>
           <p className="text-emerald-700/70 max-w-2xl mx-auto text-lg sm:text-xl leading-relaxed">
-           {t("howItWorks.description")}
+            {t("howItWorks.description")}
           </p>
         </motion.div>
 
@@ -246,12 +247,12 @@ export default function HowItWorks({ className }: { className?: string }) {
           <div className="inline-flex flex-col sm:flex-row items-center gap-4 p-2 rounded-full bg-white shadow-xl shadow-emerald-900/5 border border-emerald-100">
             <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-linear-to-r from-emerald-500 to-teal-500 text-white font-semibold shadow-lg shadow-emerald-500/25">
               <CheckCircle2 className="w-5 h-5" />
-              Processing only begins when 100% of units are booked
+              {t("howItWorks.cta.processing")}
             </div>
-            <button className="px-6 py-3 text-emerald-700 font-semibold hover:text-emerald-800 transition-colors flex items-center gap-2 group">
-              Browse Available Cows
+            <Link href={"/marketplace"} className="px-6 py-3 text-emerald-700 font-semibold hover:text-emerald-800 transition-colors flex items-center gap-2 group">
+              {t("howItWorks.cta.browse")}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+            </Link>
           </div>
         </motion.div>
 
@@ -264,15 +265,15 @@ export default function HowItWorks({ className }: { className?: string }) {
         >
           <span className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-400" />
-            No Waste Guarantee
+            {t("howItWorks.trust.noWaste")}
           </span>
           <span className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-teal-400" />
-            Transparent Pricing
+            {t("howItWorks.trust.transparentPricing")}
           </span>
           <span className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-400" />
-            Community Driven
+            {t("howItWorks.trust.communityDriven")}
           </span>
         </motion.div>
       </div>

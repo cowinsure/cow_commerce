@@ -464,7 +464,7 @@ const PersonalInfoCus: React.FC = () => {
                type="text"
                id="nid"
                name="nid"
-               maxLength={9}
+               maxLength={17}
                value={formData.nid}
                onChange={handleInputChange}
                className={getInputClass("nid")}
