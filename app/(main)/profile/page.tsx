@@ -32,15 +32,6 @@ export default function ProfilePage() {
   const [userTin, setUserTin] = useState<string>("");
   const mobile_number = user?.mobile_number;
 
-  // Mock user data for display (in real app, this would come from API)
-  const userData = user || {
-    role: "user",
-    is_insurecow_agent: false,
-    is_insurance_agent: false,
-    is_enterprise_agent: false,
-    is_superuser: false,
-  };
-
   // Fetch personal info to get user details
   useEffect(() => {
     const loadPersonalInfo = async () => {
@@ -142,8 +133,6 @@ export default function ProfilePage() {
     );
   }
 
-  console.log(userData);
-
   return (
     <div
       className=" bg-emerald-50/50 mt-10"
@@ -152,10 +141,10 @@ export default function ProfilePage() {
       {/* Background Pattern */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-emerald-200/20/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-200/20/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-200/20  rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 max-w-screen-2xl mx-auto px-4 sm:px-8 py-8 pt-24 min-h-screen">
+      <div className="relative z-10 max-w-screen-2xl mx-auto px-4 sm:px-8 py-8 pt-16 lg:pt-24 min-h-screen">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -163,7 +152,7 @@ export default function ProfilePage() {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mb-8"
         >
-          <h1 className="text-3xl sm:text-4xl font-bold text-emerald-900 mb-2">
+          <h1 className="text-2xl lg:text-4xl font-bold text-emerald-900 mb-2">
             {t("profile.title")}
           </h1>
           <p className="text-zinc-600">{t("profile.description")}</p>
@@ -219,7 +208,7 @@ export default function ProfilePage() {
                 {/* Address - only show if data exists */}
                 {userAddress && (
                   <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1 md:gap-3">
                       <MapPin className="w-4 h-4 text-emerald-600" />
                       <span className="text-emerald-700 font-medium">
                         {t("profile.address")}
@@ -234,7 +223,7 @@ export default function ProfilePage() {
                 {/* Date of Birth - only show if exists */}
                 {userDob && (
                   <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1 md:gap-3">
                       <svg
                         className="w-4 h-4 text-emerald-600"
                         fill="none"
@@ -259,7 +248,7 @@ export default function ProfilePage() {
                 {/* Gender - only show if exists */}
                 {userGender && (
                   <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1 md:gap-3">
                       <svg
                         className="w-4 h-4 text-emerald-600"
                         fill="none"
@@ -286,7 +275,7 @@ export default function ProfilePage() {
                 {/* TIN - only show if exists */}
                 {userTin && (
                   <div className="flex flex-col md:flex-row md:items-center justify-between text-sm">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1 md:gap-3">
                       <svg
                         className="w-4 h-4 text-emerald-600"
                         fill="none"

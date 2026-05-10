@@ -187,8 +187,6 @@ export function Navbar({ className }: { className?: string }) {
                   .map((link) => {
                     const isActive = pathname === link.href;
 
-                
-
                     return (
                       <motion.div
                         key={link.key}
@@ -393,7 +391,7 @@ export function Navbar({ className }: { className?: string }) {
                 ease: [0.22, 1, 0.36, 1],
                 delay: 0.1,
               }}
-              className="relative h-full flex flex-col pt-24 pb-8 px-6"
+              className="relative h-[90dvh] flex flex-col pt-24 pb-8 px-6 overflow-auto"
             >
               {/* Language Toggle */}
               <motion.div
@@ -406,7 +404,7 @@ export function Navbar({ className }: { className?: string }) {
               </motion.div>
 
               {/* Navigation Links - Large typography */}
-              <div className="flex-1 space-y-1">
+              <div className="flex-auto space-y-1">
                 {navLinks
                   .filter((link) =>
                     shouldShowNavLink(link.href, isAuthenticated),
@@ -427,13 +425,13 @@ export function Navbar({ className }: { className?: string }) {
                           href={link.href}
                           onClick={() => setMobileMenuOpen(false)}
                           className={cn(
-                            "group flex items-center justify-between py-4 px-4 rounded-2xl transition-all duration-300",
+                            "group flex items-center justify-between py-3 px-4 rounded-2xl transition-all duration-300",
                             isActive
                               ? "bg-emerald-500/10 text-emerald-400"
                               : "text-zinc-400 hover:text-white hover:bg-white/5",
                           )}
                         >
-                          <span className="text-xl font-medium tracking-tight">
+                          <span className="text-lg font-medium tracking-tight">
                             {t(link.key)}
                           </span>
                           <motion.div
@@ -453,7 +451,7 @@ export function Navbar({ className }: { className?: string }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="border-t border-white/10 pt-6 space-y-3"
+                className="border-t border-white/10 pt-4 space-y-2"
               >
                 {isAuthenticated ? (
                   <>
