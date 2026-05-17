@@ -449,7 +449,7 @@
   "profile.personalInfo.other": "Other",
   "profile.personalInfo.dateOfBirth": "Date of Birth",
   "profile.personalInfo.nid": "NID",
-  "profile.personalInfo.nidDescription": "NID (9-digit number)",
+  "profile.personalInfo.nidDescription": "NID Number",
   "profile.personalInfo.captureNidFront": "Capture NID Front",
   "profile.personalInfo.nidFront": "NID Front",
   "profile.personalInfo.captureNidBack": "Capture NID Back",

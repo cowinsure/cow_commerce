@@ -475,7 +475,7 @@
   "profile.personalInfo.other": "অন্য",
   "profile.personalInfo.dateOfBirth": "জন্ম তারিখ",
   "profile.personalInfo.nid": "এনআইডি",
-  "profile.personalInfo.nidDescription": "এনআইডি (৯-অঙ্কের নম্বর)",
+  "profile.personalInfo.nidDescription": "এনআইডি নাম্বার",
   "profile.personalInfo.captureNidFront": "এনআইডি ফ্রন্ট তুলুন",
   "profile.personalInfo.nidFront": "এনআইডি ফ্রন্ট",
   "profile.personalInfo.captureNidBack": "এনআইডি ব্যাক তুলুন",
