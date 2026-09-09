@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, ReactNode } from 'react';
 import { cn } from '@/lib/theme/theme.config';
 
 type ToastType = 'success' | 'error' | 'info';
@@ -33,19 +33,28 @@ interface ToastProviderProps {
 
 export function ToastProvider({ children }: ToastProviderProps) {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const showToast = useCallback((message: string, type: ToastType = 'info') => {
-    const id = Math.random().toString(36).substring(2, 9);
-    const newToast: Toast = { id, message, type };
-    
-    setToasts((prev) => [...prev, newToast]);
-
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+    setToasts((prev) => {
+      if (prev.some((t) => t.message === message && t.type === type)) return prev;
+      const id = Math.random().toString(36).substring(2, 9);
+      const newToast: Toast = { id, message, type };
+      const timer = setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== id));
+        timersRef.current.delete(id);
+      }, 4000);
+      timersRef.current.set(id, timer);
+      return [...prev, newToast];
+    });
   }, []);
 
   const removeToast = useCallback((id: string) => {
+    const timer = timersRef.current.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      timersRef.current.delete(id);
+    }
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 

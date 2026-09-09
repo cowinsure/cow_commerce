@@ -15,6 +15,7 @@ export interface GetLiveStockParams {
   max_price?: number;
   breed_id?: number;
   id?: string;
+  organization_id: number
 }
 
 export interface LivestockItem {

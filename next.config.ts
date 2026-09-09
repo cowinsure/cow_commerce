@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'dev-backend.insurecow.com',
       },
+      {
+        protocol: 'https',
+        hostname: "amzn-s3-agricore-master.s3.ap-south-1.amazonaws.com",
+      },
     ],
   },
 };

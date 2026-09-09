@@ -4,7 +4,7 @@
  * Provides login, logout, and auth state to components
  */
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { loginApi } from "@/lib/api/auth/login";
 import {
   registerApi,
@@ -40,9 +40,12 @@ export function useAuth() {
     user: null,
     error: null,
   });
+  const initializedRef = useRef(false);
 
-  // Check auth status on mount
   useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
     const checkAuth = () => {
       const authenticated = isAuthenticated();
       const user = getUserData<User>();

@@ -109,6 +109,7 @@ export function ImageWithUrl({
     <Image
       src={finalSrc}
       alt={alt || "Image"}
+      unoptimized
       className={cn("bg-emerald-50", className, isFallback && "scale-25 hover:scale-50")}
       onError={useDefaultOnError ? handleError : undefined}
       {...props}

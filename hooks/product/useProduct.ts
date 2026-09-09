@@ -24,6 +24,7 @@ interface ProductState {
   // Cow Details State
   cowDetails: CowDetails[];
   cowSummary: { Total: number; Active: number } | null;
+  organization_id: number;
 }
 
 export function useProduct() {
@@ -38,6 +39,7 @@ export function useProduct() {
     // Cow Details State
     cowDetails: [],
     cowSummary: null,
+    organization_id: 1,
   });
 
   const fetchProducts = useCallback(
@@ -47,6 +49,7 @@ export function useProduct() {
       minPrice?: number;
       maxPrice?: number;
       breeds?: string[];
+      organization_id: number;
     }) => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
       try {
@@ -66,6 +69,7 @@ export function useProduct() {
           max_price: filters?.maxPrice ?? 50000000,
           breed_id: breedIdFromFilter ?? -1,
           id: "-1",
+          organization_id: 1
         };
 
         const response = await getLiveStocksApi(params);

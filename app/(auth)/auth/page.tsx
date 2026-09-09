@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthToggle } from "@/components/auth/AuthToggle";
 import { LoginForm } from "@/components/auth/LoginForm";
@@ -40,21 +40,21 @@ function FormLoading() {
 }
 
 function AuthContent() {
-  // Default to login mode to match server-side rendering
   const [mode, setMode] = useState<AuthMode>("login");
   const { showToast } = useToast();
   const router = useRouter();
+  const hasRedirected = useRef(false);
 
-  // Check URL and auth on client-side after mount (avoids hydration mismatch)
   useEffect(() => {
-    // Check URL for signup param
+    if (hasRedirected.current) return;
+    hasRedirected.current = true;
+
     const urlParams = new URLSearchParams(window.location.search);
     const signup = urlParams.get("signup");
     if (signup === "true") {
       setMode("signup");
     }
 
-    // Check if user is already authenticated
     if (isAuthenticated()) {
       showToast(
         "You are already logged in. Please logout first to access this page.",

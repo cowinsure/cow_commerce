@@ -61,29 +61,10 @@ export function LoginForm({ className }: { className?: string }) {
       };
 
       await login(loginData);
-      
-      // Also set cookies via API for middleware to read
-      try {
-        await fetch("/api/auth/set-cookies", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            accessToken: localStorage.getItem("access_token"),
-            refreshToken: localStorage.getItem("refresh_token"),
-          }),
-        });
-      } catch (cookieError) {
-        console.error("Failed to set cookies:", cookieError);
-        // Continue anyway - localStorage auth will still work
-      }
-      
-       showToast(t("auth.login.success") || "Login successful", "success");
-        
-        // Navigate to redirect URL (or home if no redirect) and force refresh
-        setTimeout(() => {
-          router.push(redirectUrl);
-          setTimeout(() => window.location.reload(), 100);
-        }, 2000);
+
+      showToast(t("auth.login.success") || "Login successful", "success");
+
+      router.push(redirectUrl);
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : "Login failed";
