@@ -280,7 +280,7 @@ export function HomeHero({ className }: { className?: string }) {
                 </motion.div>
 
                 {/* Main heading */}
-                <h1 className="mb-7 max-w-[760px] text-[clamp(3.7rem,7vw,7.4rem)] font-black leading-[0.82] tracking-[-0.065em]">
+                <h1 className="mb-7 max-w-[760px] text-[clamp(3.7rem,7vw,6rem)] font-black leading-[0.82] tracking-[-0.065em]">
                   <motion.span
                     initial={{
                       opacity: 0,
@@ -376,7 +376,7 @@ export function HomeHero({ className }: { className?: string }) {
                       whileTap={{
                         scale: 0.97,
                       }}
-                      className="group relative flex cursor-pointer items-center gap-4 overflow-hidden rounded-full bg-emerald-400 px-7 py-4 font-bold text-[#071815] shadow-[0_20px_60px_rgba(52,211,153,0.15)]"
+                      className="group relative flex cursor-pointer items-center gap-4 overflow-hidden rounded-full bg-emerald-400 px-7 py-3 font-bold text-[#071815] shadow-[0_20px_60px_rgba(52,211,153,0.15)]"
                     >
                       <span className="relative z-10">
                         {t(currentSlide.ctaKey)}

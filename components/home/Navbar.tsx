@@ -10,7 +10,19 @@ import {
 import { cn } from "@/lib/theme/theme.config";
 import Link from "next/link";
 import { useAuth } from "@/hooks/auth/useAuth";
-import { Menu, X, User, LogOut, ChevronRight, Sparkles } from "lucide-react";
+import {
+  Menu,
+  X,
+  User,
+  LogOut,
+  ChevronRight,
+  House,
+  ShoppingBag,
+  Clock3,
+  Sparkles,
+  ScrollText,
+  Building2,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 import { shouldShowNavLink } from "@/lib/config/protected-routes";
 import ToggleLan from "@/components/ui/ToggleLan";
@@ -18,15 +30,61 @@ import { useLocalization } from "@/context/LocalizationContext";
 import UseLogo from "../ui/UseLogo";
 import { usePersonalInfo } from "@/hooks/personalInfo/usePersonalInfo";
 
+// =========================================================
+// TOOLTIP COMPONENT
+// =========================================================
+function NavTooltip({ label, visible }: { label: string; visible: boolean }) {
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ opacity: 0, y: 6, scale: 0.95, filter: "blur(4px)" }}
+          animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+          exit={{ opacity: 0, y: 6, scale: 0.95, filter: "blur(4px)" }}
+          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute -bottom-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-emerald-950/95 px-3 py-1.5 text-xs font-semibold text-emerald-100 shadow-xl shadow-black/40 border border-emerald-800/30 backdrop-blur-xl"
+        >
+          {label}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// =========================================================
+// NAV LINK DATA
+// =========================================================
 const navLinks = [
-  { key: "navbar.home", href: "/" },
-  { key: "navbar.marketplace", href: "/marketplace" },
-  { key: "navbar.order_history", href: "/order-history" },
-  { key: "navbar.about", href: "/about-us" },
-  { key: "navbar.our_terms", href: "/terms" },
+  {
+    key: "navbar.home",
+    href: "/",
+    icon: House,
+  },
+  {
+    key: "navbar.marketplace",
+    href: "/marketplace",
+    icon: ShoppingBag,
+  },
+  {
+    key: "navbar.order_history",
+    href: "/order-history",
+    icon: Clock3,
+  },
+  {
+    key: "navbar.about",
+    href: "/about-us",
+    icon: Building2,
+  },
+  {
+    key: "navbar.our_terms",
+    href: "/terms",
+    icon: ScrollText,
+  },
 ];
 
-// Magnetic button hook for desktop nav items
+// =========================================================
+// MAGNETIC BUTTON HOOK
+// =========================================================
 function useMagnetic(strength = 0.3) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const ref = useRef<HTMLAnchorElement>(null);
@@ -47,11 +105,15 @@ function useMagnetic(strength = 0.3) {
   return { position, handleMouseMove, handleMouseLeave, ref };
 }
 
+// =========================================================
+// NAVBAR COMPONENT
+// =========================================================
 export function Navbar({ className }: { className?: string }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userName, setUserName] = useState<string>("");
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const pathname = usePathname();
   const { t, locale } = useLocalization();
   const { scrollY } = useScroll();
@@ -66,12 +128,16 @@ export function Navbar({ className }: { className?: string }) {
   const magneticAbout = useMagnetic(0.2);
   const magneticTerms = useMagnetic(0.2);
 
-  // Update scrolled state based on scroll position (for styling only)
+  // =========================================================
+  // SCROLL STATE
+  // =========================================================
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 20);
   });
 
-  // Prevent body scroll when mobile menu is open
+  // =========================================================
+  // BODY LOCK (MOBILE MENU)
+  // =========================================================
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? "hidden" : "unset";
     return () => {
@@ -79,6 +145,9 @@ export function Navbar({ className }: { className?: string }) {
     };
   }, [mobileMenuOpen]);
 
+  // =========================================================
+  // USER DATA
+  // =========================================================
   useEffect(() => {
     const loadPersonalInfo = async () => {
       try {
@@ -109,6 +178,9 @@ export function Navbar({ className }: { className?: string }) {
     loadPersonalInfo();
   }, [fetchPersonalInfo, t]);
 
+  // =========================================================
+  // LOGOUT HANDLER
+  // =========================================================
   const handleLogout = async () => {
     await logout();
     setMobileMenuOpen(false);
@@ -118,6 +190,9 @@ export function Navbar({ className }: { className?: string }) {
   const hideNavbar = pathname.startsWith("/auth");
   const isHome = pathname === "/";
 
+  // =========================================================
+  // LOADING SKELETON
+  // =========================================================
   if (loading) {
     return (
       <motion.nav
@@ -146,6 +221,9 @@ export function Navbar({ className }: { className?: string }) {
 
   if (hideNavbar) return null;
 
+  // =========================================================
+  // NAVBAR SHELL
+  // =========================================================
   return (
     <>
       <motion.nav
@@ -163,9 +241,19 @@ export function Navbar({ className }: { className?: string }) {
         )}
         lang={locale === "bn" ? "bn" : "en"}
       >
-        <div className=" flex justify-between px-3 lg:grid lg:grid-cols-3 w-full py-3 max-w-screen-2xl mx-auto">
-          <div className="flex items-center col-span-2 gap-5">
-            {/* Logo with glow effect */}
+        {/* Decorative top glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 overflow-hidden"
+        >
+          <div className="absolute left-1/2 top-0 h-px w-[60%] -translate-x-1/2 bg-gradient-to-r from-transparent via-emerald-400/20 to-transparent" />
+        </div>
+
+        <div className="flex justify-between items-center px-3 w-full py-3 max-w-screen-2xl mx-auto md:grid md:grid-cols-3">
+          {/* =====================================================
+               LEFT — LOGO
+           ====================================================== */}
+          <div className="flex items-center">
             <motion.div
               className="flex items-center gap-10"
               whileHover={{ scale: 1.02 }}
@@ -176,62 +264,72 @@ export function Navbar({ className }: { className?: string }) {
                 <UseLogo imgWidth="w-9" />
               </div>
             </motion.div>
+          </div>
 
-            {/* Desktop Navigation - Pill style with magnetic hover */}
-            <div className="hidden md:flex items-center w-full lg:w-[60%]">
-              <div className="flex items-center justify-evenly gap-1 w-full overflow-hidden">
-                {navLinks
-                  .filter((link) =>
-                    shouldShowNavLink(link.href, isAuthenticated),
-                  )
-                  .map((link) => {
-                    const isActive = pathname === link.href;
+          {/* =====================================================
+               CENTER — DESKTOP NAVIGATION
+           ====================================================== */}
+          <div className="hidden md:flex items-center justify-center">
+            <div className="flex items-center gap-10">
+              {navLinks
+                .filter((link) => shouldShowNavLink(link.href, isAuthenticated))
+                .map((link) => {
+                  const isActive = pathname === link.href;
+                  const Icon = link.icon;
 
-                    return (
-                      <motion.div
-                        key={link.key}
-                        // onMouseMove={magnetic.handleMouseMove}
-                        // onMouseLeave={magnetic.handleMouseLeave}
-                        // style={{
-                        //   x: magnetic.position.x,
-                        //   y: magnetic.position.y,
-                        // }}
+                  return (
+                    <motion.div
+                      key={link.key}
+                      className="relative"
+                      onMouseEnter={() => setHoveredLink(link.href)}
+                      onMouseLeave={() => setHoveredLink(null)}
+                      whileHover={{ scale: 1.15 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 25,
+                      }}
+                    >
+                      <Link
+                        href={link.href}
+                        className={cn(
+                          "relative flex items-center justify-center rounded-full p-2.5 transition-all duration-300",
+                          isActive
+                            ? "text-emerald-400 bg-emerald-500/10"
+                            : "text-zinc-300 hover:text-white hover:bg-white/5",
+                        )}
                       >
-                        <Link
-                          // ref={magnetic.ref}
-                          href={link.href}
-                          className={cn(
-                            "relative flex items-center rounded-full transition-all duration-300",
-                            isActive
-                              ? "text-emerald-400 font-medium"
-                              : "text-zinc-300 hover:text-white",
-                          )}
-                        >
-                          {isActive && (
-                            <motion.div
-                              layoutId="nav-pill"
-                              className="absolute inset-0 top-5 mt-0.5 bg-emerald-400 rounded-xl h-1.5 "
-                              transition={{
-                                type: "spring",
-                                stiffness: 400,
-                                damping: 30,
-                              }}
-                            />
-                          )}
-                          <span className="relative z-10">{t(link.key)}</span>
-                        </Link>
-                      </motion.div>
-                    );
-                  })}
-              </div>
+                        {isActive && (
+                          <motion.div
+                            layoutId="nav-pill"
+                            className="absolute inset-0 rounded-full bg-emerald-400/10"
+                            transition={{
+                              type: "spring",
+                              stiffness: 400,
+                              damping: 30,
+                            }}
+                          />
+                        )}
+                        <Icon className="h-5 w-5 relative z-10" />
+                      </Link>
+
+                      <NavTooltip
+                        label={t(link.key)}
+                        visible={hoveredLink === link.href && !isActive}
+                      />
+                    </motion.div>
+                  );
+                })}
             </div>
           </div>
 
-          {/* Desktop Actions */}
+          {/* =====================================================
+               RIGHT — DESKTOP ACTIONS
+           ====================================================== */}
           <div className="hidden md:flex items-center gap-3 justify-end">
             <ToggleLan />
 
-            <div className="w-px h-6 bg-white/10 mx-1" />
+            <div className="w-px h-6 bg-emerald-800/30 mx-1" />
 
             {isAuthenticated ? (
               <div
@@ -240,7 +338,7 @@ export function Navbar({ className }: { className?: string }) {
                 onMouseLeave={() => setDropdownOpen(false)}
               >
                 <motion.button
-                  className="flex items-center gap-3 pl-2 pr-4 py-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors duration-300"
+                  className="flex items-center gap-3 pl-2 pr-4 py-2 rounded-full bg-white/5 border border-emerald-800/20 hover:bg-emerald-900/20 transition-colors duration-300"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -282,12 +380,6 @@ export function Navbar({ className }: { className?: string }) {
                       transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                       className="absolute right-0 mt-3 w-56 py-2 bg-emerald-950/95 backdrop-blur-2xl rounded-2xl shadow-2xl shadow-black/40 border border-emerald-800/30 overflow-hidden"
                     >
-                      {/* <div className="px-4 py-3 border-b border-emerald-800/20">
-                        <p className="text-xs text-zinc-500 uppercase tracking-wider">
-                          {t("navbar.signed_in")}
-                        </p>
-                      </div> */}
-
                       <Link
                         href="/profile"
                         className="flex items-center gap-3 px-4 py-3 text-zinc-200 font-medium hover:text-emerald-400 hover:bg-emerald-900/30 transition-all duration-200 group"
@@ -325,10 +417,12 @@ export function Navbar({ className }: { className?: string }) {
             )}
           </div>
 
-          {/* Mobile Menu Button - Morphing icon */}
+          {/* =====================================================
+               MOBILE MENU TOGGLE
+           ====================================================== */}
           <motion.button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden relative w-11 h-11 flex items-center justify-center rounded-full bg-white/5 border border-white/10 backdrop-blur-sm"
+            className="md:hidden relative w-11 h-11 flex items-center justify-center rounded-full bg-white/5 border border-emerald-800/20 backdrop-blur-sm"
             whileTap={{ scale: 0.9 }}
           >
             <AnimatePresence mode="wait">
@@ -358,7 +452,9 @@ export function Navbar({ className }: { className?: string }) {
         </div>
       </motion.nav>
 
-      {/* Mobile Menu - Full screen immersive */}
+      {/* =========================================================
+          MOBILE MENU — FULL SCREEN IMMERSIVE
+      ========================================================== */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -368,18 +464,34 @@ export function Navbar({ className }: { className?: string }) {
             transition={{ duration: 0.4 }}
             className="fixed inset-0 z-40 md:hidden"
           >
-            {/* Animated backdrop with gradient */}
+            {/* Backdrop gradient */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-emerald-950/95 backdrop-blur-3xl"
+              className="absolute inset-0 bg-gradient-to-t from-[#071815] via-emerald-950/95 to-emerald-950/90 backdrop-blur-3xl"
               onClick={() => setMobileMenuOpen(false)}
             />
 
-            {/* Decorative elements */}
-            <div className="absolute top-20 left-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-20 right-10 w-96 h-96 bg-green-600/5 rounded-full blur-3xl" />
+            {/* Decorative radial glows */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 overflow-hidden"
+            >
+              <div className="absolute top-20 left-10 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl" />
+              <div className="absolute bottom-20 right-10 h-96 w-96 rounded-full bg-green-600/5 blur-3xl" />
+            </div>
+
+            {/* Grain texture overlay */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-[0.04] mix-blend-overlay"
+              style={{
+                backgroundImage: `
+                  url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")
+                `,
+              }}
+            />
 
             {/* Menu Content */}
             <motion.div
@@ -403,7 +515,7 @@ export function Navbar({ className }: { className?: string }) {
                 <ToggleLan />
               </motion.div>
 
-              {/* Navigation Links - Large typography */}
+              {/* Navigation Links */}
               <div className="flex-auto space-y-1">
                 {navLinks
                   .filter((link) =>
@@ -411,6 +523,8 @@ export function Navbar({ className }: { className?: string }) {
                   )
                   .map((link, index) => {
                     const isActive = pathname === link.href;
+                    const Icon = link.icon;
+
                     return (
                       <motion.div
                         key={link.key}
@@ -431,9 +545,12 @@ export function Navbar({ className }: { className?: string }) {
                               : "text-zinc-400 hover:text-white hover:bg-white/5",
                           )}
                         >
-                          <span className="text-lg font-medium tracking-tight">
-                            {t(link.key)}
-                          </span>
+                          <div className="flex items-center gap-4">
+                            <Icon className="h-5 w-5" />
+                            <span className="text-lg font-medium tracking-tight">
+                              {t(link.key)}
+                            </span>
+                          </div>
                           <motion.div
                             className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                             whileHover={{ scale: 1.1, x: 4 }}
@@ -451,7 +568,7 @@ export function Navbar({ className }: { className?: string }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="border-t border-white/10 pt-4 space-y-2"
+                className="border-t border-emerald-800/20 pt-4 space-y-2"
               >
                 {isAuthenticated ? (
                   <>
