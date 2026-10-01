@@ -39,6 +39,7 @@ export interface ForgotPasswordRequest {
 
 export interface LoginResponse {
   message: string;
+  data: unknown,
   role: string;
   access_token: string;
   refresh_token: string;

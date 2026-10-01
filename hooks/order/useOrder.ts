@@ -81,6 +81,8 @@ export function useOrder() {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
       const response = await getOrderByIdApi(id);
+      const order = response.data?.[0] ?? null;
+      setState((prev) => ({ ...prev, currentOrder: order, loading: false }));
       return response;
     } catch (error: unknown) {
       const errorMessage =

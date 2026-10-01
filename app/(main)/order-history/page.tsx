@@ -16,6 +16,7 @@ import { Modal } from "@/components/ui/Modal";
 import OrderDetails from "@/components/order/OrderDetails";
 import { PaymentModal } from "@/components/payment/PaymentModal";
 import { useLocalization } from "@/context/LocalizationContext";
+import { useToast } from "@/components/ui/Toast";
 
 // Animation variants
 const containerVariants = {
@@ -95,6 +96,7 @@ export const getStatusBadge = (status: string, type: StatusType) => {
 
 export default function OrderHistoryPage() {
   const { t, locale } = useLocalization();
+  const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedFilter, setSelectedFilter] = useState("all");
@@ -116,8 +118,9 @@ export default function OrderHistoryPage() {
       try {
         const getOrders = await fetchOrders();
         setApiOrders(getOrders.data);
-      } catch (err) {
-        console.error(err);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Failed to load orders";
+        showToast(message, "error");
       }
     };
 
@@ -132,8 +135,9 @@ export default function OrderHistoryPage() {
       const res = await fetchOrderById(order.id);
 
       setSelectedOrder(res?.data?.[0] ?? null); // Get first order from array
-    } catch (err) {
-      console.error(err);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to load order details";
+      showToast(message, "error");
     } finally {
       setDetailsLoading(false);
     }
@@ -160,8 +164,9 @@ export default function OrderHistoryPage() {
     try {
       const getOrders = await fetchOrders();
       setApiOrders(getOrders.data);
-    } catch (err) {
-      console.error(err);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to refresh orders";
+      showToast(message, "error");
     }
   };
 

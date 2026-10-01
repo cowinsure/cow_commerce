@@ -14,11 +14,15 @@ export async function getLiveStocksApi(
   const response = await publicApiClient.get<ApiResponse<LivestockItem>>(
     PRODUCT_API.GET_PRODUCTS,
     {
-      params, // ✅ Using publicApiClient for guest access
+      params,
     },
   );
 
-  return response.data;
+  const responseData = response.data;
+  if (responseData.status === "failed") {
+    throw new Error(responseData.message || "Failed to fetch livestock");
+  }
+  return responseData;
 }
 
 /**
@@ -29,17 +33,21 @@ export async function getCowDetailsApi(
 ): Promise<CowDetailsResponse> {
   const { asset_id: id } = params;
 
-  // ID is required for this API
   if (typeof id !== "number") {
     throw new Error("Cow ID is required");
   }
 
-  const endpoint = "/lms/assets-service/";
-
-  const response = await publicApiClient.get<CowDetailsResponse>(endpoint, {
-    params: { asset_id: id },
-  });
-  return response.data;
+  const response = await publicApiClient.get<CowDetailsResponse>(
+    PRODUCT_API.GET_COW_DETAILS,
+    {
+      params: { asset_id: id },
+    },
+  );
+  const responseData = response.data;
+  if (responseData.status === "failed") {
+    throw new Error(responseData.message || "Failed to fetch cow details");
+  }
+  return responseData;
 }
 
 // export async function getCategoriesApi(): Promise<GetCategoriesResponse> {

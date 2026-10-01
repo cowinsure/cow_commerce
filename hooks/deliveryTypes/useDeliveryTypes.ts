@@ -10,7 +10,7 @@ export function useDeliveryTypes() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPaymentTypes = async () => {
+    const fetchDeliveryTypes = async () => {
       try {
         setLoading(true);
         const res = await getDeliveryTypes();
@@ -18,16 +18,17 @@ export function useDeliveryTypes() {
         if (res.status === "success") {
           setData(res.data);
         } else {
-          setError(res.message || "Failed to fetch payment types");
+          setError(res.message || "Failed to fetch delivery types");
         }
-      } catch (err) {
-        setError("Something went wrong");
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Something went wrong";
+        setError(message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPaymentTypes();
+    fetchDeliveryTypes();
   }, []);
 
   return {

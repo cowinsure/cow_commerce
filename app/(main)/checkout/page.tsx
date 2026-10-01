@@ -193,8 +193,9 @@ function CheckoutContent() {
       if (res.status === "success") {
         setShowSuccess(true);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Checkout failed";
+      showToast(message, "error");
     } finally {
       setIsProcessing(false);
     }

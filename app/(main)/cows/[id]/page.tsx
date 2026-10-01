@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { useProduct } from "@/hooks/product/useProduct";
+import { useAuth } from "@/hooks/auth/useAuth";
+import { useToast } from "@/components/ui/Toast";
 import { CowDetails, LivestockItem } from "@/lib/models/productDTO";
 
 // Adapter to map CowDetails API response to page expected format
@@ -124,6 +126,9 @@ const glassPanel = {
 export default function CowDetailsPage() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const { showToast } = useToast();
   const { cowDetails, fetchCowDetails, loading } = useProduct();
   const cowId = params.id as string;
   const numericCowId = parseInt(cowId, 10);
@@ -592,24 +597,29 @@ export default function CowDetailsPage() {
                         </div>
                       </div>
 
-                      <Link
-                        href={`/checkout?cowId=${preloadedCow?.livestock_id}&quantity=${quantity}&data=${btoa(JSON.stringify(preloadedCow))}`}
+                      <motion.button
+                        whileHover={{
+                          scale: 1.02,
+                          boxShadow:
+                            "0 20px 40px -10px rgba(16, 185, 129, 0.4)",
+                        }}
+                        whileTap={{ scale: 0.98 }}
+                        disabled={isFull}
+                        onClick={() => {
+                          if (!isAuthenticated) {
+                            showToast("Please Login first to place the order");
+                            return;
+                          }
+                          const checkoutUrl = `/checkout?cowId=${preloadedCow?.livestock_id}&quantity=${quantity}&data=${btoa(JSON.stringify(preloadedCow))}`;
+                          router.push(checkoutUrl);
+                        }}
+                        className={cn(
+                          "w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all hover:cursor-pointer",
+                          isFull
+                            ? "bg-slate-300 text-slate-500 cursor-not-allowed"
+                            : "bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40",
+                        )}
                       >
-                        <motion.button
-                          whileHover={{
-                            scale: 1.02,
-                            boxShadow:
-                              "0 20px 40px -10px rgba(16, 185, 129, 0.4)",
-                          }}
-                          whileTap={{ scale: 0.98 }}
-                          disabled={isFull}
-                          className={cn(
-                            "w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-all hover:cursor-pointer",
-                            isFull
-                              ? "bg-slate-300 text-slate-500 cursor-not-allowed"
-                              : "bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40",
-                          )}
-                        >
                           {isFull ? (
                             <>
                               <Clock className="w-5 h-5" />
@@ -634,9 +644,9 @@ export default function CowDetailsPage() {
                                 </div>
                               </span>
                             </span>
-                          )}
-                        </motion.button>
-                      </Link>
+                           )}
+                         </motion.button>
+
 
                       {/* <div className="flex items-center justify-center gap-6 text-xs text-slate-500">
                         <span className="flex items-center gap-1">

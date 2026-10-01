@@ -21,7 +21,11 @@ export async function registerApi(
   const response = await apiClient.post<
     { statusCode: string; statusMessage: string; data: SignupResponse }
   >(AUTH_API.REGISTER, data);
-  return response.data.data;
+  const wrapper = response.data;
+  if (wrapper.statusCode === "failed") {
+    throw new Error(wrapper.statusMessage || "Registration failed");
+  }
+  return wrapper.data;
 }
 
 export async function verifyOtpApi(
@@ -30,7 +34,11 @@ export async function verifyOtpApi(
   const response = await apiClient.post<
     { statusCode: string; statusMessage: string; data: OtpVerificationResponse }
   >(AUTH_API.VERIFY_OTP, data);
-  return response.data.data;
+  const wrapper = response.data;
+  if (wrapper.statusCode === "failed") {
+    throw new Error(wrapper.statusMessage || "OTP verification failed");
+  }
+  return wrapper.data;
 }
 
 export async function setPasswordApi(
@@ -39,5 +47,9 @@ export async function setPasswordApi(
   const response = await apiClient.post<
     { statusCode: string; statusMessage: string; data: SetPasswordResponse }
   >(AUTH_API.SET_PASSWORD, data);
-  return response.data.data;
+  const wrapper = response.data;
+  if (wrapper.statusCode === "failed") {
+    throw new Error(wrapper.statusMessage || "Failed to set password");
+  }
+  return wrapper.data;
 }

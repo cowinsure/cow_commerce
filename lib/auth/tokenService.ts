@@ -29,12 +29,8 @@ export function getRefreshToken(): string | null {
  */
 export function setToken(accessToken: string, refreshToken: string): void {
   if (typeof window === "undefined") return;
-  // console.log("setToken called with:", accessToken, refreshToken);
   localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
   localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-  // Also set cookies for middleware
-  setCookie(ACCESS_TOKEN_KEY, accessToken);
-  setCookie(REFRESH_TOKEN_KEY, refreshToken);
 }
 
 /**
@@ -45,9 +41,6 @@ export function removeToken(): void {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
   localStorage.removeItem(USER_DATA_KEY);
-  // Clear cookies
-  deleteCookie(ACCESS_TOKEN_KEY);
-  deleteCookie(REFRESH_TOKEN_KEY);
 }
 
 /**
@@ -72,28 +65,4 @@ export function setUserData<T>(userData: T): void {
  */
 export function isAuthenticated(): boolean {
   return !!getToken();
-}
-
-/**
- * Helper to set cookie (client-side)
- */
-function setCookie(name: string, value: string, days: number = 7): void {
-  const expires = new Date();
-  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
-}
-
-/**
- * Helper to delete cookie
- */
-function deleteCookie(name: string): void {
-  if (typeof window === "undefined") return;
-  const variations = [
-    `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;SameSite=Lax`,
-    `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`,
-    `${name}=;max-age=-1;path=/`,
-  ];
-  variations.forEach((cookie) => {
-    document.cookie = cookie;
-  });
 }

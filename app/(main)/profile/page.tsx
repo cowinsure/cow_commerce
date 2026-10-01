@@ -17,11 +17,14 @@ import { usePersonalInfo } from "@/hooks/personalInfo/usePersonalInfo";
 import PersonalInfoFarmer from "@/components/profle/PersonalInfo";
 import PersonalInfoCus from "@/components/profle/PersonalInfo";
 import { useLocalization } from "@/context/LocalizationContext";
+import { useToast } from "@/components/ui/Toast";
+import { PersonalInfo } from "@/lib/models/personalInfoDTO";
 
 export default function ProfilePage() {
   const { user } = useAuth();
   const { fetchPersonalInfo } = usePersonalInfo();
   const { t, locale } = useLocalization();
+  const { showToast } = useToast();
   const [loading] = useState(false);
   const [showPersonalInfo, setShowPersonalInfo] = useState(false);
   const [userName, setUserName] = useState<string>("");
@@ -31,6 +34,7 @@ export default function ProfilePage() {
   const [userGender, setUserGender] = useState<string>("");
   const [userTin, setUserTin] = useState<string>("");
   const mobile_number = user?.mobile_number;
+  const [personalInfoData, setPersonalInfoData] = useState<PersonalInfo | null>(null);
 
   // Fetch personal info to get user details
   useEffect(() => {
@@ -69,15 +73,18 @@ export default function ProfilePage() {
           setUserDob(data.date_of_birth || "");
           setUserGender(data.gender || "");
           setUserTin(data.tin || "");
+          setPersonalInfoData(response.data as PersonalInfo);
         }
-      } catch (error) {
-        // If no personal info exists yet, use default
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "Failed to load profile";
+        showToast(message, "error");
         setUserName(t("profile.defaultUserName"));
         setProfileImageUrl("");
         setUserAddress("");
         setUserDob("");
         setUserGender("");
         setUserTin("");
+        setPersonalInfoData(null);
       }
     };
 
@@ -443,7 +450,7 @@ export default function ProfilePage() {
                       transition={{ duration: 0.3 }}
                       className="p-6"
                     >
-                      <PersonalInfoCus />
+                       <PersonalInfoCus initialData={personalInfoData} />
                     </motion.div>
                   )}
                 </AnimatePresence>

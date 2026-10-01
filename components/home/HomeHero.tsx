@@ -344,11 +344,11 @@ export function HomeHero({ className }: { className?: string }) {
                     {t(currentSlide.priceKey)}
                   </span>
 
-                  <span className="h-1 w-1 rounded-full bg-white/30" />
+                  {/* <span className="h-1 w-1 rounded-full bg-white/30" /> */}
 
-                  <span className="text-xs font-semibold uppercase tracking-widest text-white/40">
+                  {/* <span className="text-xs font-semibold uppercase tracking-widest text-white/40">
                     Live marketplace
-                  </span>
+                  </span> */}
                 </motion.div>
 
                 {/* Description */}

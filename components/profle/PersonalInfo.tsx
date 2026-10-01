@@ -8,10 +8,12 @@ import { usePersonalInfo } from "@/hooks/personalInfo/usePersonalInfo";
 import { PersonalInfo } from "@/lib/models/personalInfoDTO";
 import { useLocalization } from "@/context/LocalizationContext";
 
-const PersonalInfoCus: React.FC = () => {
+const PersonalInfoCus: React.FC<{
+  initialData?: PersonalInfo | null;
+}> = ({ initialData }) => {
   const { user } = useAuth();
   const { showToast } = useToast();
-  const { submitPersonalInfo, fetchPersonalInfo } = usePersonalInfo();
+  const { submitPersonalInfo } = usePersonalInfo();
   const { t } = useLocalization();
   const [isProcessing, setIsProcessing] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -49,41 +51,29 @@ const PersonalInfoCus: React.FC = () => {
     }
   }, [user]);
 
-   // Fetch personal info on mount
-   useEffect(() => {
-     const loadPersonalInfo = async () => {
-       try {
-         const response = await fetchPersonalInfo();
-         if (response?.data) {
-           const data = response.data as PersonalInfo;
-           setFormData((prev) => ({
-             ...prev,
-             userType: data.userType || prev.userType,
-             first_name: data.first_name || prev.first_name,
-             last_name: data.last_name || prev.last_name,
-             nid: data.nid || prev.nid,
-             date_of_birth: data.date_of_birth || prev.date_of_birth,
-             gender: data.gender || prev.gender,
-             tin: data.tin || prev.tin,
-             bin: data.bin || prev.bin,
-             phone: data.phone || prev.phone,
-             thana: data.thana || prev.thana,
-             union: data.union || prev.union,
-             village: data.village || prev.village,
-             zilla: data.zilla || prev.zilla,
-             profile_image_url: data.profile_image_url || prev.profile_image_url,
-             nid_front_image_url: data.nid_front_image_url || prev.nid_front_image_url,
-             nid_back_image_url: data.nid_back_image_url || prev.nid_back_image_url,
-           }));
-         }
-       } catch (error) {
-         // If no personal info exists yet, that's okay
-         console.log('No existing personal info found');
-       }
-     };
-
-     loadPersonalInfo();
-   }, [fetchPersonalInfo]);
+  // Pre-fill form from parent-provided initial data
+  useEffect(() => {
+    if (!initialData) return;
+    setFormData((prev) => ({
+      ...prev,
+      userType: initialData.userType || prev.userType,
+      first_name: initialData.first_name || prev.first_name,
+      last_name: initialData.last_name || prev.last_name,
+      nid: initialData.nid || prev.nid,
+      date_of_birth: initialData.date_of_birth || prev.date_of_birth,
+      gender: initialData.gender || prev.gender,
+      tin: initialData.tin || prev.tin,
+      bin: initialData.bin || prev.bin,
+      phone: initialData.phone || prev.phone,
+      thana: initialData.thana || prev.thana,
+      union: initialData.union || prev.union,
+      village: initialData.village || prev.village,
+      zilla: initialData.zilla || prev.zilla,
+      profile_image_url: initialData.profile_image_url || prev.profile_image_url,
+      nid_front_image_url: initialData.nid_front_image_url || prev.nid_front_image_url,
+      nid_back_image_url: initialData.nid_back_image_url || prev.nid_back_image_url,
+    }));
+  }, [initialData]);
 
   const validateField = (name: string, value: unknown): string => {
     const strValue = typeof value === "string" ? value : "";

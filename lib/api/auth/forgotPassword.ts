@@ -18,5 +18,9 @@ export async function forgotPasswordApi(
     AUTH_API.FORGOT_PASSWORD,
     data,
   );
-  return response.data;
+  const responseData = response.data;
+  if (responseData.status === "failed") {
+    throw new Error(responseData.message || "Failed to process forgot password request");
+  }
+  return responseData;
 }

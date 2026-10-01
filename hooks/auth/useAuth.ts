@@ -58,6 +58,20 @@ export function useAuth() {
     };
 
     checkAuth();
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (
+        e.key === "access_token" ||
+        e.key === "refresh_token" ||
+        e.key === "user_data"
+      ) {
+        checkAuth();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () =>
+      window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const login = useCallback(async (credentials: LoginRequest) => {

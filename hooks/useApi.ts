@@ -1,32 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from "axios";
 import type {
   AxiosRequestConfig,
   AxiosResponse,
-  InternalAxiosRequestConfig,
 } from "axios";
 import { useState, useCallback } from "react";
-import { getToken } from "@/lib/auth/tokenService";
-
-// Create Axios instance
-const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-// Add interceptor for auth token
-apiClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const token = getToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
+import apiClient from "@/lib/api/apiClient";
 
 // Transform function type
 type Transformer<T> = (data: any) => T;
@@ -34,6 +12,18 @@ type Transformer<T> = (data: any) => T;
 const useApi = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+
+  const handleResponse = <T>(
+    response: AxiosResponse,
+    transform?: Transformer<T>,
+    failureMessage?: string,
+  ): T => {
+    const responseData = response.data;
+    if (responseData.status?.toString() === "failed") {
+      throw new Error(responseData.message || failureMessage || "Request failed");
+    }
+    return transform ? transform(responseData) : responseData;
+  };
 
   const get = useCallback(
     async <T = any>(
@@ -45,14 +35,7 @@ const useApi = () => {
       setError(null);
       try {
         const response: AxiosResponse = await apiClient.get(url, config);
-
-        //(`Response status: ${response.data.status}`);
-
-        if (response.data.status.toString() === "failed") {
-          setError(new Error("Failed to fetch data"));
-        }
-
-        return transform ? transform(response.data) : response.data;
+        return handleResponse(response, transform, "Failed to fetch data");
       } catch (err: any) {
         setError(err);
         throw err;
@@ -85,8 +68,7 @@ const useApi = () => {
           ...config,
           headers,
         });
-
-        return transform ? transform(response.data) : response.data;
+        return handleResponse(response, transform, "Request failed");
       } catch (err: any) {
         setError(err);
         throw err;
@@ -119,8 +101,7 @@ const useApi = () => {
           ...config,
           headers,
         });
-
-        return transform ? transform(response.data) : response.data;
+        return handleResponse(response, transform, "Request failed");
       } catch (err: any) {
         setError(err);
         throw err;

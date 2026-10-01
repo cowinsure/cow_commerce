@@ -9,5 +9,9 @@ import { BreedResponse } from "@/lib/models/breedDTO";
 
 export async function getBreedsApi(): Promise<BreedResponse> {
   const response = await publicApiClient.get<BreedResponse>(BREED_API.GET_BREEDS);
-  return response.data;
+  const responseData = response.data;
+  if (responseData.status === "failed") {
+    throw new Error(responseData.message || "Failed to fetch breeds");
+  }
+  return responseData;
 }

@@ -49,7 +49,11 @@ export async function getOrdersApi(
       params: { page, page_size: pageSize },
     },
   );
-  return response.data;
+  const responseData = response.data;
+  if (responseData.status === "failed") {
+    throw new Error(responseData.message || "Failed to fetch orders");
+  }
+  return responseData;
 }
 
 export async function getOrderByIdApi(
@@ -58,7 +62,11 @@ export async function getOrderByIdApi(
   const response = await apiClient.get<GetOrderByIdResponse>(
     ORDER_API.GET_ORDER_BY_ID(id),
   );
-  return response.data;
+  const responseData = response.data;
+  if (responseData.status === "failed") {
+    throw new Error(responseData.message || "Failed to fetch order details");
+  }
+  return responseData;
 }
 
 /**
@@ -74,5 +82,9 @@ export async function processOrderApi(
     ORDER_API.PROCESS_ORDER,
     data,
   );
-  return response.data;
+  const responseData = response.data;
+  if (responseData.status === "failed") {
+    throw new Error(responseData.message || "Failed to process order");
+  }
+  return responseData;
 }

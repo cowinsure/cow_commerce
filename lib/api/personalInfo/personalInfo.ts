@@ -53,7 +53,11 @@ export async function processPersonalInfoApi(
       },
     },
   );
-  return response.data;
+  const responseData = response.data;
+  if (responseData.status === "failed") {
+    throw new Error(responseData.message || "Failed to save personal info");
+  }
+  return responseData;
 }
 
 // GET personal Info
@@ -61,5 +65,9 @@ export async function getPersonalInfoApi(): Promise<ProcessInfoResponse> {
   const response = await apiClient.get<ProcessInfoResponse>(
     PERSONALINFO_SERVICE_API.GET_PERSONAL_INFO,
   );
-  return response.data;
+  const responseData = response.data;
+  if (responseData.status === "failed") {
+    throw new Error(responseData.message || "Failed to fetch personal info");
+  }
+  return responseData;
 }
