@@ -1,19 +1,19 @@
 /**
  * Next.js Middleware for Route Protection
- * 
+ *
  * This middleware intercepts requests and protects routes that require authentication.
  * It runs on the server, providing better security than client-side checks.
- * 
+ *
  * To add/remove protected routes, edit lib/config/routes.ts
  */
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { 
-  isProtectedRoute, 
-  isAuthRoute, 
+import {
+  isProtectedRoute,
+  isAuthRoute,
   getLoginRedirectUrl,
-  routeConfig 
+  routeConfig,
 } from "@/lib/config/routes";
 
 /**
@@ -28,7 +28,9 @@ const AUTH_COOKIE_NAMES = {
  * Check if user is authenticated via cookies
  */
 function isAuthenticated(request: NextRequest): boolean {
-  const accessToken = request.cookies.get(AUTH_COOKIE_NAMES.ACCESS_TOKEN)?.value;
+  const accessToken = request.cookies.get(
+    AUTH_COOKIE_NAMES.ACCESS_TOKEN,
+  )?.value;
   return !!accessToken;
 }
 
@@ -79,14 +81,8 @@ export function proxy(request: NextRequest) {
   }
 
   // 2. Handle auth routes (login/signup - redirect if already authenticated)
+  // 2. Handle auth routes
   if (isAuthRoute(pathname)) {
-    if (authenticated) {
-      // Redirect authenticated users to home or specific redirect param
-      const redirectParam = request.nextUrl.searchParams.get("redirect");
-      const redirectUrl = redirectParam || "/";
-      return NextResponse.redirect(new URL(redirectUrl, request.url));
-    }
-    // Not authenticated, allow access to auth pages
     return NextResponse.next();
   }
 

@@ -23,10 +23,11 @@ import {
   ScrollText,
   Building2,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { shouldShowNavLink } from "@/lib/config/protected-routes";
 import ToggleLan from "@/components/ui/ToggleLan";
 import { useLocalization } from "@/context/LocalizationContext";
+import { useToast } from "@/components/ui/Toast";
 import UseLogo from "../ui/UseLogo";
 import { usePersonalInfo } from "@/hooks/personalInfo/usePersonalInfo";
 
@@ -117,8 +118,10 @@ export function Navbar({ className }: { className?: string }) {
   const pathname = usePathname();
   const { t, locale } = useLocalization();
   const { scrollY } = useScroll();
+  const router = useRouter();
 
   const { isAuthenticated, loading, logout } = useAuth();
+  const { showToast } = useToast();
   const { fetchPersonalInfo } = usePersonalInfo();
 
   // Create magnetic hooks for each nav link at the top level
@@ -182,9 +185,14 @@ export function Navbar({ className }: { className?: string }) {
   // LOGOUT HANDLER
   // =========================================================
   const handleLogout = async () => {
-    await logout();
-    setMobileMenuOpen(false);
-    window.location.href = "/";
+    try {
+      await logout();
+      setMobileMenuOpen(false);
+      window.location.href = "/";
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Logout failed";
+      showToast(message, "error");
+    }
   };
 
   const hideNavbar = pathname.startsWith("/auth");
@@ -406,13 +414,13 @@ export function Navbar({ className }: { className?: string }) {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Link
-                  href="/auth?login=true"
-                  className="flex items-center gap-2 px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 rounded-full font-semibold text-sm transition-all duration-300 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-400/30"
+                <div
+                  onClick={() => router.push("/auth?login=true")}
+                  className="flex items-center gap-2 px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 rounded-full font-semibold text-sm transition-all duration-300 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-400/30 cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>{t("navbar.login")}</span>
-                </Link>
+                </div>
               </motion.div>
             )}
           </div>

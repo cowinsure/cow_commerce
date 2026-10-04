@@ -71,8 +71,8 @@ export default async function RootLayout({
   gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_TAG_KEY}');`}
         </Script>
         <LocalizationProvider>
-          <Navbar />
           <ToastProvider>
+            <Navbar />
             {children}
             <AnalyticsTracker />
             <WhatsAppButton />

@@ -204,16 +204,23 @@ export function useAuth() {
   }, []);
 
   const logout = useCallback(async () => {
-    removeToken();
-
-    // Also clear server-side httpOnly cookies
+    // Clear server-side httpOnly cookies first — must succeed before
+    // clearing client-side state, otherwise the middleware still sees
+    // the user as authenticated while the UI shows them logged out.
     try {
-      await fetch("/api/auth/clear-cookies", {
+      const response = await fetch("/api/auth/clear-cookies", {
         method: "POST",
       });
-    } catch (error) {
-      console.error("Failed to clear cookies:", error);
+      if (!response.ok) {
+        throw new Error(`Failed to clear cookies: ${response.status}`);
+      }
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to clear session";
+      throw new Error(message);
     }
+
+    // Cookies confirmed cleared — now clear client-side state
+    removeToken();
 
     setState({
       isAuthenticated: false,
