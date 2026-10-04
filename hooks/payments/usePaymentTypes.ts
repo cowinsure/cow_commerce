@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import {
-  PaymentType,
-} from "@/lib/models/paymentTypeDTO";
+import { PaymentType } from "@/lib/models/paymentTypeDTO";
 import { getPaymentTypes } from "@/lib/api/paymentType/paymentTypes";
 
 type TransactionType = "ISSUE" | "RESTOCK";
@@ -25,7 +23,8 @@ export function usePaymentTypes(transactionType?: TransactionType) {
           setError(res.message || "Failed to fetch payment types");
         }
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "Something went wrong";
+        const message =
+          err instanceof Error ? err.message : "Something went wrong";
         setError(message);
       } finally {
         setLoading(false);

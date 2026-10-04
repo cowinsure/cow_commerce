@@ -29,15 +29,47 @@ export interface ProcessOrderResponse {
   data?: unknown;
 }
 
-// export async function createOrderApi(
-//   data: CreateOrderRequest,
-// ): Promise<CreateOrderResponse> {
-//   const response = await apiClient.post<CreateOrderResponse>(
-//     ORDER_API.CREATE_ORDER,
-//     data,
-//   );
-//   return response.data;
-// }
+export interface OrderItemDetail {
+  livestock_id: number;
+  inventory_item_id: number;
+  unit_price: number;
+  quantity: number;
+}
+
+export interface OrderCharge {
+  charge_type: string;
+  amount: number;
+}
+
+export interface CreateOrderRequest {
+  delivery_address: string;
+  item_details: OrderItemDetail[];
+  shipping_method_id: number | null;
+  order_transaction_details: unknown[];
+  charges: OrderCharge[];
+  organization_id: number;
+  branch_id: number;
+}
+
+export interface CreateOrderResponse {
+  status: string;
+  message: string;
+  data?: unknown;
+}
+
+export async function createOrderApi(
+  data: CreateOrderRequest,
+): Promise<CreateOrderResponse> {
+  const response = await apiClient.post<CreateOrderResponse>(
+    ORDER_API.CREATE_ORDER,
+    data,
+  );
+  const responseData = response.data;
+  if (responseData.status === "failed") {
+    throw new Error(responseData.message || "Failed to create order");
+  }
+  return responseData;
+}
 
 export async function getOrdersApi(
   page: number = 1,

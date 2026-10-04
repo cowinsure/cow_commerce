@@ -261,7 +261,7 @@ export function Navbar({ className }: { className?: string }) {
           {/* =====================================================
                LEFT — LOGO
            ====================================================== */}
-          <div className="flex items-center">
+          <Link href={"/"} className="flex items-center">
             <motion.div
               className="flex items-center gap-10"
               whileHover={{ scale: 1.02 }}
@@ -272,7 +272,7 @@ export function Navbar({ className }: { className?: string }) {
                 <UseLogo imgWidth="w-9" />
               </div>
             </motion.div>
-          </div>
+          </Link>
 
           {/* =====================================================
                CENTER — DESKTOP NAVIGATION
@@ -339,7 +339,7 @@ export function Navbar({ className }: { className?: string }) {
 
             <div className="w-px h-6 bg-emerald-800/30 mx-1" />
 
-            {isAuthenticated ? (
+            {localStorage.getItem("access_token") ? (
               <div
                 className="relative"
                 onMouseEnter={() => setDropdownOpen(true)}

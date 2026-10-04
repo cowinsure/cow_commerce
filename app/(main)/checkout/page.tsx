@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { ShippingForm } from "@/components/cart/ShippingForm";
 import { TrustBadges } from "@/components/cart/TrustBadges";
+
 import { Modal } from "@/components/ui/Modal";
 import TermsPage from "@/components/ui/TermsPage";
 import {
@@ -14,16 +15,20 @@ import {
   Truck,
   AlertCircle,
   X,
+  Lock,
 } from "lucide-react";
 import Link from "next/link";
 import { LivestockItem } from "@/lib/models/productDTO";
 import { FaBangladeshiTakaSign } from "react-icons/fa6";
 import { ImageWithUrl } from "@/hooks/useImage";
-import useApi from "@/hooks/useApi";
 import { useToast } from "@/components/ui/Toast";
 import { useDeliveryTypes } from "@/hooks/deliveryTypes/useDeliveryTypes";
 import { DeliveryType } from "@/lib/models/deliveryTypeDTO";
+import { usePaymentTypes } from "@/hooks/payments/usePaymentTypes";
+import { PaymentType } from "@/lib/models/paymentTypeDTO";
 import { useLocalization } from "@/context/LocalizationContext";
+import { createOrderApi, CreateOrderRequest } from "@/lib/api/order/order";
+import { PaymentOptions } from "@/components/cart/PaymentOptions";
 
 // Animation variants
 const containerVariants = {
@@ -107,8 +112,8 @@ function CheckoutLoadingState() {
 }
 
 function CheckoutContent() {
-  const { post } = useApi();
   const { allDeliveryTypes } = useDeliveryTypes();
+  const { paymentTypes } = usePaymentTypes("ISSUE");
   const { showToast } = useToast();
   const { t } = useLocalization();
   const searchParams = useSearchParams();
@@ -133,6 +138,16 @@ function CheckoutContent() {
   });
   const [selectedDeliveryMethod, setSelectedDeliveryMethod] =
     useState<DeliveryType | null>(null);
+  const [paymentData, setPaymentData] = useState<{
+    paymentType: PaymentType | null;
+    referenceNo: string;
+    imageFile: File | null;
+    imagePreview?: string;
+  }>({
+    paymentType: null,
+    referenceNo: "",
+    imageFile: null,
+  });
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
 
@@ -155,6 +170,24 @@ function CheckoutContent() {
       return;
     }
 
+    if (!selectedDeliveryMethod) {
+      showToast(t("checkout_toast_select_delivery"));
+      setIsProcessing(false);
+      return;
+    }
+
+    if (!paymentData.paymentType) {
+      showToast(t("checkout_toast_select_payment"));
+      setIsProcessing(false);
+      return;
+    }
+
+    if (!paymentData.referenceNo.trim()) {
+      showToast(t("checkout_toast_enter_reference"));
+      setIsProcessing(false);
+      return;
+    }
+
     if (!acceptTerms) {
       showToast(t("checkout_toast_accept_terms"));
       setIsProcessing(false);
@@ -166,8 +199,31 @@ function CheckoutContent() {
     try {
       setIsProcessing(true);
 
-      const payload = {
+      let imagePath = "";
+      if (paymentData.imageFile) {
+        imagePath = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(new Error("Failed to read image file"));
+          reader.readAsDataURL(paymentData.imageFile!);
+        });
+      }
+
+      const orderTransactionDetails = paymentData.paymentType
+        ? [
+            {
+              payment_type_id: paymentData.paymentType.payment_type_id,
+              reference_no: paymentData.referenceNo.trim(),
+              image_path: imagePath,
+              amount: totalPrice,
+            },
+          ]
+        : [];
+
+      const payload: CreateOrderRequest = {
         delivery_address: formData.address,
+        organization_id: 1,
+        branch_id: 1,
         item_details: [
           {
             livestock_id: parsedPreloadedCow.livestock_id,
@@ -176,20 +232,18 @@ function CheckoutContent() {
             quantity: quantity,
           },
         ],
-        shipping_method_id: selectedDeliveryMethod?.id,
-        order_transaction_details: [],
+        shipping_method_id: selectedDeliveryMethod.id,
+        order_transaction_details: orderTransactionDetails,
         charges: [
           {
             charge_type: "Delivery",
             amount:
-              selectedDeliveryMethod?.delivery_charges?.[0]?.charge_amount,
+              selectedDeliveryMethod.delivery_charges?.[0]?.charge_amount ?? 0,
           },
         ],
       };
 
-      // console.log("FINAL PAYLOAD:", payload);
-
-      const res = await post("/invms/inventory-ecom-order-service/", payload);
+      const res = await createOrderApi(payload);
       if (res.status === "success") {
         setShowSuccess(true);
       }
@@ -475,7 +529,7 @@ function CheckoutContent() {
                     >
                       <Truck className="w-4 h-4 text-emerald-600" />
                       <p className="text-sm text-emerald-700 flex items-center">
-                        {t("checkout_selected")}: {" "}
+                        {t("checkout_selected")}:{" "}
                         <span className="font-semibold">
                           {
                             allDeliveryTypes.find(
@@ -507,7 +561,7 @@ function CheckoutContent() {
               {/* Payment Section */}
 
               {/* Code with original payment methods */}
-              {/* <div className="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
+              <div className="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
                     <Lock className="w-5 h-5 text-emerald-600" />
@@ -526,7 +580,7 @@ function CheckoutContent() {
                   value={paymentData}
                   onChange={setPaymentData}
                 />
-              </div> */}
+              </div>
               <div className="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">

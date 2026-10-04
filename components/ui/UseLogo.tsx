@@ -13,7 +13,7 @@ const UseLogo = ({ imgWidth, textSize }: LogoProps) => {
   return (
     <div>
       {/* Logo */}
-      <Link href="/" className="flex items-center gap-2 group">
+      <div className="flex items-center gap-2 group cursor-pointer">
         <motion.div
           whileHover={{ rotate: [0, -10, 10, 0] }}
           transition={{ duration: 0.5 }}
@@ -29,7 +29,7 @@ const UseLogo = ({ imgWidth, textSize }: LogoProps) => {
         >
           Fresh<span className="text-amber-400">Buy</span>
         </span>
-      </Link>
+      </div>
     </div>
   );
 };

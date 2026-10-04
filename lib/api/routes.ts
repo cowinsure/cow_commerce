@@ -20,14 +20,6 @@ export const BREED_API = {
   GET_BREEDS: "/lms/breed-service/",
 } as const;
 
-export const DELIVERY_SERVICE_API = {
-  GET_DELIVERY_TYPES: "/invms/inventory-shipping-method-service/",
-} as const;
-
-export const PAYMENT_TYPE_API = {
-  GET_PAYMENT_TYPES: "/invms/inventory-payment-type-service/",
-} as const;
-
 // ==================== AUTHENTICATED ENDPOINTS ====================
 // Require a logged-in user. Uses apiClient.
 
@@ -44,12 +36,21 @@ export const ORDER_API = {
   GET_ORDERS: "/invms/inventory-ecom-order-service/",
   GET_ORDER_BY_ID: (id: number) =>
     `/invms/inventory-ecom-order-service/?id=${id}`,
+  CREATE_ORDER: "/invms/inventory-ecom-order-service/",
   PROCESS_ORDER: "/invms/inventory-ecom-process-order-service/",
 } as const;
 
 export const PERSONALINFO_SERVICE_API = {
   CREATE_PERSONAL_INFO: "/v1/auth/user/personal-info/",
   GET_PERSONAL_INFO: "/v1/auth/user/personal-info/",
+} as const;
+
+export const DELIVERY_SERVICE_API = {
+  GET_DELIVERY_TYPES: "/invms/inventory-shipping-method-service/",
+} as const;
+
+export const PAYMENT_TYPE_API = {
+  GET_PAYMENT_TYPES: "/invms/inventory-payment-type-service/",
 } as const;
 
 // Type for combining all API routes
