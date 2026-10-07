@@ -39,7 +39,7 @@ export function useProduct() {
     // Cow Details State
     cowDetails: [],
     cowSummary: null,
-    organization_id: 1,
+    organization_id: -1,
   });
 
   const fetchProducts = useCallback(
@@ -61,7 +61,7 @@ export function useProduct() {
 
         // Build API params from filters
         const params: GetLiveStockParams = {
-          page_size: 10,
+          page_size: 99,
           start_record: 1,
           min_weight: filters?.minWeight ?? 0,
           max_weight: filters?.maxWeight ?? 9999,
@@ -69,7 +69,7 @@ export function useProduct() {
           max_price: filters?.maxPrice ?? 50000000,
           breed_id: breedIdFromFilter ?? -1,
           id: "-1",
-          organization_id: 1
+          organization_id: -1
         };
 
         const response = await getLiveStocksApi(params);

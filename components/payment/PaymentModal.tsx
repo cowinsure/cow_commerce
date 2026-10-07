@@ -140,6 +140,7 @@ export function PaymentModal({
             image_path: imagePath,
           },
         ],
+        organization_id: -1
       });
 
       // Show success state

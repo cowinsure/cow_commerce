@@ -165,31 +165,31 @@ function CheckoutContent() {
   const handleCheckout = async () => {
     setIsProcessing(true);
     if (!formData.address) {
-      showToast(t("checkout_toast_enter_address"));
+      showToast(t("checkout_toast_enter_address"), "error");
       setIsProcessing(false);
       return;
     }
 
     if (!selectedDeliveryMethod) {
-      showToast(t("checkout_toast_select_delivery"));
+      showToast(t("checkout_toast_select_delivery"), "error");
       setIsProcessing(false);
       return;
     }
 
     if (!paymentData.paymentType) {
-      showToast(t("checkout_toast_select_payment"));
+      showToast(t("checkout_toast_select_payment"), "error");
       setIsProcessing(false);
       return;
     }
 
     if (!paymentData.referenceNo.trim()) {
-      showToast(t("checkout_toast_enter_reference"));
+      showToast(t("checkout_toast_enter_reference"), "error");
       setIsProcessing(false);
       return;
     }
 
     if (!acceptTerms) {
-      showToast(t("checkout_toast_accept_terms"));
+      showToast(t("checkout_toast_accept_terms"), "error");
       setIsProcessing(false);
       return;
     }
@@ -222,7 +222,7 @@ function CheckoutContent() {
 
       const payload: CreateOrderRequest = {
         delivery_address: formData.address,
-        organization_id: 1,
+        organization_id: -1,
         branch_id: 1,
         item_details: [
           {

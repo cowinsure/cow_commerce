@@ -18,7 +18,7 @@ const MarketPlacePage = () => {
       minPrice: newFilters.minPrice,
       maxPrice: newFilters.maxPrice,
       breeds: newFilters.breeds,
-      organization_id: 1
+      organization_id: -1
     });
   }, [fetchProducts]);
 

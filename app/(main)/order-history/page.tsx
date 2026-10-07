@@ -116,7 +116,7 @@ export default function OrderHistoryPage() {
   useEffect(() => {
     const loadOrder = async () => {
       try {
-        const getOrders = await fetchOrders();
+        const getOrders = await fetchOrders(1, 99, 1);
         setApiOrders(getOrders.data);
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Failed to load orders";
@@ -162,7 +162,7 @@ export default function OrderHistoryPage() {
   const handlePaymentSuccess = async () => {
     // Refresh orders after successful payment
     try {
-      const getOrders = await fetchOrders();
+      const getOrders = await fetchOrders(1, 99, 1);
       setApiOrders(getOrders.data);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to refresh orders";

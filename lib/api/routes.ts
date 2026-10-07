@@ -34,8 +34,8 @@ export const AUTH_API = {
 
 export const ORDER_API = {
   GET_ORDERS: "/invms/inventory-ecom-order-service/",
-  GET_ORDER_BY_ID: (id: number) =>
-    `/invms/inventory-ecom-order-service/?id=${id}`,
+  GET_ORDER_BY_ID: (id: number, organization_id: number) =>
+    `/invms/inventory-ecom-order-service/?id=${id}&organization_id=${organization_id}`,
   CREATE_ORDER: "/invms/inventory-ecom-order-service/",
   PROCESS_ORDER: "/invms/inventory-ecom-process-order-service/",
 } as const;

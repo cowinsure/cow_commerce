@@ -51,10 +51,10 @@ export function useOrder() {
   // }, []);
 
   const fetchOrders = useCallback(
-    async (page: number = 1, pageSize: number = 10) => {
+    async (page: number = 1, pageSize: number = 10, organization_id: 1) => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
       try {
-        const response = await getOrdersApi(page, pageSize);
+        const response = await getOrdersApi(page, pageSize, organization_id);
         setState((prev) => ({
           ...prev,
           orders: response.data,
@@ -77,41 +77,17 @@ export function useOrder() {
     [],
   );
 
-  const fetchOrderById = useCallback(async (id: number) => {
-    setState((prev) => ({ ...prev, loading: true, error: null }));
-    try {
-      const response = await getOrderByIdApi(id);
-      const order = response.data?.[0] ?? null;
-      setState((prev) => ({ ...prev, currentOrder: order, loading: false }));
-      return response;
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to fetch order";
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
-      throw error;
-    }
-  }, []);
-
-  /**
-   * Submit payment for an order
-   * @param data - Process order request with payment details
-   * @returns Process order response
-   */
-  const submitPayment = useCallback(
-    async (data: ProcessOrderRequest) => {
+  const fetchOrderById = useCallback(
+    async (id: number, organization_id: number = 1) => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
       try {
-        const response = await processOrderApi(data);
-        // console.log(response);
-        setState((prev) => ({ ...prev, loading: false }));
+        const response = await getOrderByIdApi(id, organization_id);
+        const order = response.data?.[0] ?? null;
+        setState((prev) => ({ ...prev, currentOrder: order, loading: false }));
         return response;
       } catch (error: unknown) {
         const errorMessage =
-          error instanceof Error ? error.message : "Failed to submit payment";
+          error instanceof Error ? error.message : "Failed to fetch order";
         setState((prev) => ({
           ...prev,
           loading: false,
@@ -122,6 +98,30 @@ export function useOrder() {
     },
     [],
   );
+
+  /**
+   * Submit payment for an order
+   * @param data - Process order request with payment details
+   * @returns Process order response
+   */
+  const submitPayment = useCallback(async (data: ProcessOrderRequest) => {
+    setState((prev) => ({ ...prev, loading: true, error: null }));
+    try {
+      const response = await processOrderApi(data);
+      // console.log(response);
+      setState((prev) => ({ ...prev, loading: false }));
+      return response;
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to submit payment";
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        error: errorMessage,
+      }));
+      throw error;
+    }
+  }, []);
 
   const clearError = useCallback(() => {
     setState((prev) => ({ ...prev, error: null }));

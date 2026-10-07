@@ -184,6 +184,7 @@ export default function ProfilePage() {
                         src={profileImageUrl}
                         alt="Profile"
                         className="w-full h-full object-cover"
+                        onError={() => setProfileImageUrl("")}
                       />
                     </div>
                   ) : (

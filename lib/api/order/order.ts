@@ -20,6 +20,7 @@ export interface ProcessOrderRequest {
   order_id: number;
   action: "RECEIVE_PAYMENT";
   order_transaction_details: PaymentTransaction[];
+  organization_id: number
 }
 
 // Process order response interface
@@ -74,11 +75,12 @@ export async function createOrderApi(
 export async function getOrdersApi(
   page: number = 1,
   pageSize: number = 10,
+  organization_id = 1,
 ): Promise<GetOrdersResponse> {
   const response = await apiClient.get<GetOrdersResponse>(
     ORDER_API.GET_ORDERS,
     {
-      params: { page, page_size: pageSize },
+      params: { page, page_size: pageSize, organization_id },
     },
   );
   const responseData = response.data;
@@ -90,9 +92,10 @@ export async function getOrdersApi(
 
 export async function getOrderByIdApi(
   id: number,
+  organization_id: number,
 ): Promise<GetOrderByIdResponse> {
   const response = await apiClient.get<GetOrderByIdResponse>(
-    ORDER_API.GET_ORDER_BY_ID(id),
+    ORDER_API.GET_ORDER_BY_ID(id, organization_id),
   );
   const responseData = response.data;
   if (responseData.status === "failed") {
