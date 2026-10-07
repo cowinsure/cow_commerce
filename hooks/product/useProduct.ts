@@ -91,7 +91,6 @@ export function useProduct() {
           loading: false,
           error: errorMessage,
         }));
-        throw error;
       }
     },
     [],
@@ -135,14 +134,13 @@ export function useProduct() {
       }));
       return response;
     } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to fetch cow details";
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
-      throw error;
+        const errorMessage =
+          error instanceof Error ? error.message : "Failed to fetch cow details";
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+          error: errorMessage,
+        }));
     }
   }, []);
 

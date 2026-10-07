@@ -165,6 +165,7 @@
   "order_history.title": "Order",
   "order_history.title2": "History",
   "order_history.description": "Manage your digital livestock acquisitions. View real-time status updates and download historical documentation.",
+  "order_history.table_payment_status": "Payment Status",
   "order_history.search_placeholder": "Search orders by ID or animal name...",
   "order_history.filter_all": "all",
   "order_history.filter_pending": "pending",

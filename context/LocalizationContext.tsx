@@ -30,11 +30,10 @@ const LocalizationContext = createContext<LocalizationContextProps | undefined>(
   undefined,
 );
 
-export const LocalizationProvider = ({ children }: { children: ReactNode }) => {
-  // Initialize from cookie (server) or localStorage (client fallback)
+export const LocalizationProvider = ({ children, initialLocale }: { children: ReactNode; initialLocale?: Locale }) => {
   const [locale, setLocaleState] = useState<Locale>(() => {
+    if (initialLocale) return initialLocale;
     if (typeof window !== "undefined") {
-      // Check cookie first (set by server), then localStorage
       const cookies = document.cookie.split(";");
       const localeCookie = cookies.find((c) => c.trim().startsWith("locale="));
       if (localeCookie) {

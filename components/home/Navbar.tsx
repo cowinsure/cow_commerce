@@ -179,7 +179,7 @@ export function Navbar({ className }: { className?: string }) {
     };
 
     loadPersonalInfo();
-  }, [fetchPersonalInfo, t]);
+   }, [fetchPersonalInfo, isAuthenticated, t]);
 
   // =========================================================
   // LOGOUT HANDLER
@@ -339,7 +339,7 @@ export function Navbar({ className }: { className?: string }) {
 
             <div className="w-px h-6 bg-emerald-800/30 mx-1" />
 
-            {localStorage.getItem("access_token") ? (
+             {isAuthenticated ? (
               <div
                 className="relative"
                 onMouseEnter={() => setDropdownOpen(true)}

@@ -5,6 +5,7 @@ import "./globals.css";
 import { Navbar } from "@/components/home/Navbar";
 import Footer from "@/components/home/Footer";
 import { LocalizationProvider } from "@/context/LocalizationContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { cookies } from "next/headers";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import Script from "next/script";
@@ -70,15 +71,17 @@ export default async function RootLayout({
 
   gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_TAG_KEY}');`}
         </Script>
-        <LocalizationProvider>
-          <ToastProvider>
-            <Navbar />
-            {children}
-            <AnalyticsTracker />
-            <WhatsAppButton />
-          </ToastProvider>
-          <Footer />
-        </LocalizationProvider>
+        <AuthProvider>
+          <LocalizationProvider initialLocale={locale}>
+            <ToastProvider>
+              <Navbar />
+              {children}
+              <AnalyticsTracker />
+              <WhatsAppButton />
+            </ToastProvider>
+            <Footer />
+          </LocalizationProvider>
+        </AuthProvider>
       </body>
     </html>
   );

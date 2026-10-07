@@ -290,12 +290,12 @@ export default function OrderHistoryPage() {
             className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden"
           >
             {/* Table Header */}
-            <div className="hidden lg:grid grid-cols-5 gap-4 p-6 bg-slate-50/50 border-b border-slate-100 text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <div className="hidden lg:grid grid-cols-6 gap-4 p-6 bg-slate-50/50 border-b border-slate-100 text-xs font-bold text-slate-500 uppercase tracking-wider">
               <div className="">{t("order_history.table_date")}</div>
               <div className="">{t("order_history.table_order_no")}</div>
               <div className="text-center">{t("order_history.table_amount")}</div>
               <div className="text-center">{t("order_history.table_status")}</div>
-              {/* <div className="text-center">Payment Status</div> */}
+              <div className="text-center">{t("order_history.table_payment_status")}</div>
               <div className="text-center">{t("order_history.table_action")}</div>
             </div>
 
@@ -312,9 +312,9 @@ export default function OrderHistoryPage() {
                       transition={{ delay: i * 0.05 }}
                       onHoverStart={() => setHoveredOrder(order.mobile_number)}
                       onHoverEnd={() => setHoveredOrder(null)}
-                      className={cn(
-                        "group grid grid-cols-1 lg:grid-cols-5 gap-4 p-4 items-center *:transition-transform *:duration-300 *:ease-out hover:bg-emerald-50/40 *:group-hover:scale-105",
-                      )}
+                       className={cn(
+                         "group grid grid-cols-1 lg:grid-cols-6 gap-4 p-4 items-center *:transition-transform *:duration-300 *:ease-out hover:bg-emerald-50/40 *:group-hover:scale-105",
+                       )}
                     >
                       {/* Order Date */}
                       <div className=" flex items-center gap-4">
@@ -349,19 +349,19 @@ export default function OrderHistoryPage() {
                         </span>
                       </div>
 
-                      {/* payment status */}
-                      {/* <div className="text-center text-sm">
-                        <span
-                          className={getStatusBadge(
-                            order.payment_status,
-                            "payment",
-                          )}
-                        >
-                          {order.payment_status}
-                        </span>
-                      </div> */}
+                       {/* payment status */}
+                       <div className="text-center text-sm">
+                         <span
+                           className={getStatusBadge(
+                             order.payment_status,
+                             "payment",
+                           )}
+                         >
+                           {order.payment_status}
+                         </span>
+                       </div>
 
-                      {/* Action */}
+                       {/* Action */}
                       <div className="flex justify-center items-center gap-2">
                         {/* Pay Now button for APPROVED + UNPAID orders */}
 
