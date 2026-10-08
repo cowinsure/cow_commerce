@@ -30,6 +30,7 @@ import { useLocalization } from "@/context/LocalizationContext";
 import { useToast } from "@/components/ui/Toast";
 import UseLogo from "../ui/UseLogo";
 import { usePersonalInfo } from "@/hooks/personalInfo/usePersonalInfo";
+import BellNotification from "@/components/order/BellNotification";
 
 // =========================================================
 // TOOLTIP COMPONENT
@@ -179,7 +180,7 @@ export function Navbar({ className }: { className?: string }) {
     };
 
     loadPersonalInfo();
-   }, [fetchPersonalInfo, isAuthenticated, t]);
+  }, [fetchPersonalInfo, isAuthenticated, t]);
 
   // =========================================================
   // LOGOUT HANDLER
@@ -339,7 +340,9 @@ export function Navbar({ className }: { className?: string }) {
 
             <div className="w-px h-6 bg-emerald-800/30 mx-1" />
 
-             {isAuthenticated ? (
+            <BellNotification />
+
+            {isAuthenticated ? (
               <div
                 className="relative"
                 onMouseEnter={() => setDropdownOpen(true)}
@@ -347,13 +350,13 @@ export function Navbar({ className }: { className?: string }) {
               >
                 <motion.button
                   className="flex items-center gap-3 pl-2 pr-4 py-2 rounded-full bg-white/5 border border-emerald-800/20 hover:bg-emerald-900/20 transition-colors duration-300"
-                  whileHover={{ scale: 1.05 }}
+                  // whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <div className="w-8 h-8 rounded-full bg-linear-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
                     <User className="w-4 h-4 text-white" />
                   </div>
-                  <span className="text-sm font-medium text-zinc-200">
+                  <span className="text-sm font-medium text-zinc-200 truncate">
                     {userName}
                   </span>
                   <motion.div

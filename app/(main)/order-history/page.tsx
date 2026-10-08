@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -9,14 +9,16 @@ import {
   Eye,
   Banknote,
 } from "lucide-react";
-import useOrder from "@/hooks/order/useOrder";
 import { Order } from "@/lib/models/orderDTO";
 import Tooltip from "@/components/ui/ToolTip";
 import { Modal } from "@/components/ui/Modal";
 import OrderDetails from "@/components/order/OrderDetails";
 import { PaymentModal } from "@/components/payment/PaymentModal";
+import { CustomDropDown } from "@/components/ui/CustomDropDown";
 import { useLocalization } from "@/context/LocalizationContext";
 import { useToast } from "@/components/ui/Toast";
+import { useOrderContext } from "@/context/OrderContext";
+import { useSearchParams } from "next/navigation";
 
 // Animation variants
 const containerVariants = {
@@ -99,33 +101,34 @@ export default function OrderHistoryPage() {
   const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedFilter, setSelectedFilter] = useState("all");
+  const [selectedOrderStatus, setSelectedOrderStatus] = useState("all");
+  const [selectedPaymentStatus, setSelectedPaymentStatus] = useState("all");
   const [hoveredOrder, setHoveredOrder] = useState<string | null>(null);
-  const [apiOrders, setApiOrders] = useState<Order[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
+  const [highlightedOrderNo, setHighlightedOrderNo] = useState<string | null>(null);
+  const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // Payment modal state
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [paymentOrder, setPaymentOrder] = useState<Order | null>(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
 
-  const { fetchOrders, fetchOrderById } = useOrder();
+  const { orders, refreshOrders, fetchOrderById } = useOrderContext();
+  const searchParams = useSearchParams();
+  const orderNoParam = searchParams.get("orderNo");
 
   useEffect(() => {
-    const loadOrder = async () => {
-      try {
-        const getOrders = await fetchOrders(1, 99, 1);
-        setApiOrders(getOrders.data);
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "Failed to load orders";
-        showToast(message, "error");
-      }
-    };
-
-    loadOrder();
-  }, [fetchOrders]);
+    if (!orderNoParam) return;
+    setHighlightedOrderNo(orderNoParam);
+    const node = rowRefs.current[orderNoParam];
+    if (node) {
+      node.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    const timer = setTimeout(() => setHighlightedOrderNo(null), 3000);
+    return () => clearTimeout(timer);
+  }, [orderNoParam, orders]);
 
   const handleViewOrder = async (order: Order) => {
     try {
@@ -160,20 +163,24 @@ export default function OrderHistoryPage() {
   };
 
   const handlePaymentSuccess = async () => {
-    // Refresh orders after successful payment
     try {
-      const getOrders = await fetchOrders(1, 99, 1);
-      setApiOrders(getOrders.data);
+      await refreshOrders();
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to refresh orders";
       showToast(message, "error");
     }
   };
 
-  const filteredOrders = (apiOrders || []).filter(
-    (order) =>
-      selectedFilter === "all" ||
-      order.order_status.toLowerCase() === selectedFilter,
+  const filteredOrders = (orders || []).filter(
+    (order) => {
+      const matchesOrderStatus =
+        selectedOrderStatus === "all" ||
+        order.order_status.toLowerCase() === selectedOrderStatus;
+      const matchesPaymentStatus =
+        selectedPaymentStatus === "all" ||
+        order.payment_status.toLowerCase() === selectedPaymentStatus;
+      return matchesOrderStatus && matchesPaymentStatus;
+    },
   );
 
   return (
@@ -265,22 +272,35 @@ export default function OrderHistoryPage() {
               />
             </div>
 
-            <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 overflow-hidden">
-              {["all", "pending", "approved"].map((filter) => (
-                <motion.button
-                  key={filter}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setSelectedFilter(filter)}
-                  className={cn(
-                    "px-6 py-3 rounded-2xl font-semibold text-sm capitalize whitespace-nowrap transition-all cursor-pointer",
-                    selectedFilter === filter
-                      ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/25"
-                      : "bg-white text-slate-600 border border-slate-200 hover:border-emerald-300 hover:bg-emerald-100",
-                  )}
-                >
-                  {t(`order_history.filter_${filter}`)}
-                </motion.button>
-              ))}
+            <div className="flex flex-col gap-1">
+              <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                {t("order_history.filter_order_status")}
+              </label>
+              <CustomDropDown
+                options={[
+                  { value: "all", label: t("order_history.filter_all") },
+                  { value: "pending", label: t("order_history.filter_pending") },
+                  { value: "approved", label: t("order_history.filter_approved") },
+                ]}
+                value={selectedOrderStatus}
+                onChange={setSelectedOrderStatus}
+                placeholder={t("order_history.filter_order_status")}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                {t("order_history.filter_payment_status")}
+              </label>
+              <CustomDropDown
+                options={[
+                  { value: "all", label: t("order_history.filter_all") },
+                  { value: "paid", label: t("order_history.filter_paid") },
+                  { value: "unpaid", label: t("order_history.filter_unpaid") },
+                ]}
+                value={selectedPaymentStatus}
+                onChange={setSelectedPaymentStatus}
+                placeholder={t("order_history.filter_payment_status")}
+              />
             </div>
           </motion.div>
 
@@ -312,8 +332,14 @@ export default function OrderHistoryPage() {
                       transition={{ delay: i * 0.05 }}
                       onHoverStart={() => setHoveredOrder(order.mobile_number)}
                       onHoverEnd={() => setHoveredOrder(null)}
+                      ref={(node) => {
+                        rowRefs.current[order.order_no] = node;
+                      }}
+                      data-order-no={order.order_no}
                        className={cn(
                          "group grid grid-cols-1 lg:grid-cols-6 gap-4 p-4 items-center *:transition-transform *:duration-300 *:ease-out hover:bg-emerald-50/40 *:group-hover:scale-105",
+                         highlightedOrderNo === order.order_no &&
+                           "ring-2 ring-emerald-500 ring-offset-2",
                        )}
                     >
                       {/* Order Date */}

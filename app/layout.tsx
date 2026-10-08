@@ -6,6 +6,7 @@ import { Navbar } from "@/components/home/Navbar";
 import Footer from "@/components/home/Footer";
 import { LocalizationProvider } from "@/context/LocalizationContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { OrderProvider } from "@/context/OrderContext";
 import { cookies } from "next/headers";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import Script from "next/script";
@@ -74,10 +75,12 @@ export default async function RootLayout({
         <AuthProvider>
           <LocalizationProvider initialLocale={locale}>
             <ToastProvider>
-              <Navbar />
-              {children}
-              <AnalyticsTracker />
-              <WhatsAppButton />
+              <OrderProvider>
+                <Navbar />
+                {children}
+                <AnalyticsTracker />
+                <WhatsAppButton />
+              </OrderProvider>
             </ToastProvider>
             <Footer />
           </LocalizationProvider>
