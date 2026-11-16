@@ -20,7 +20,7 @@ export interface ProcessOrderRequest {
   order_id: number;
   action: "RECEIVE_PAYMENT";
   order_transaction_details: PaymentTransaction[];
-  organization_id: number
+  organization_id: number;
 }
 
 // Process order response interface
@@ -76,6 +76,7 @@ export async function getOrdersApi(
   page: number = 1,
   pageSize: number = 10,
   organization_id = 1,
+  branch_id = -1,
 ): Promise<GetOrdersResponse> {
   const response = await apiClient.get<GetOrdersResponse>(
     ORDER_API.GET_ORDERS,

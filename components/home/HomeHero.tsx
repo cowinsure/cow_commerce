@@ -23,7 +23,7 @@ import { useLocalization } from "@/context/LocalizationContext";
 
 const slides = [
   {
-    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.13 PM.jpeg",
+    image: "/bannerImage/banner-book-share.png",
     tagKey: "home_hero.slides.0.tag",
     titleKey: "home_hero.slides.0.title",
     subtitleKey: "home_hero.slides.0.subtitle",
@@ -38,7 +38,7 @@ const slides = [
     deadlineKey: "home_hero.slides.0.deadline",
   },
   {
-    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.20 PM.jpeg",
+    image: "/bannerImage/banner-share-cost.png",
     tagKey: "home_hero.slides.1.tag",
     titleKey: "home_hero.slides.1.title",
     subtitleKey: "home_hero.slides.1.subtitle",
@@ -53,7 +53,7 @@ const slides = [
     deadlineKey: "home_hero.slides.1.deadline",
   },
   {
-    image: "/cowImg/WhatsApp Image 2026-04-01 at 3.57.31 PM.jpeg",
+    image: "/bannerImage/banner-fresh.png",
     tagKey: "home_hero.slides.2.tag",
     titleKey: "home_hero.slides.2.title",
     subtitleKey: "home_hero.slides.2.subtitle",
@@ -438,7 +438,7 @@ export function HomeHero({ className }: { className?: string }) {
               RIGHT — VISUAL COMPOSITION
           ====================================================== */}
 
-          <div className="relative hidden min-h-[650px] lg:block">
+          <div className="relative hidden min-h-162.5 lg:block">
             {/* Large image frame */}
             <motion.div
               initial={{
@@ -456,7 +456,7 @@ export function HomeHero({ className }: { className?: string }) {
                 delay: 0.2,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="absolute right-[4%] top-[4%] h-[590px] w-[68%]"
+              className="absolute right-[4%] top-[4%] h-147.5 w-[68%]"
             >
               {/* Cattle photograph behind */}
               <AnimatePresence mode="wait">
@@ -485,8 +485,8 @@ export function HomeHero({ className }: { className?: string }) {
                     className="h-full w-full object-cover"
                   />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#071815] via-[#071815]/20 to-transparent" />
-                  <div className="absolute inset-0 bg-emerald-950/20 mix-blend-multiply" />
+                  {/* <div className="absolute inset-0 bg-linear-to-t from-[#071815] via-[#071815]/20 to-transparent" /> */}
+                  {/* <div className="absolute inset-0 bg-emerald-950/20 mix-blend-multiply" /> */}
                 </motion.div>
               </AnimatePresence>
 
@@ -523,8 +523,8 @@ export function HomeHero({ className }: { className?: string }) {
               }}
               className="absolute bottom-[2%] left-[4%] z-20 w-[72%]"
             >
-              <motion.img
-                src="/banner1removebg.png"
+              {/* <motion.img
+                src={currentSlide.image}
                 alt="Livestock marketplace"
                 animate={{
                   y: [0, -8, 0],
@@ -535,14 +535,14 @@ export function HomeHero({ className }: { className?: string }) {
                   ease: "easeInOut",
                 }}
                 className="relative z-10 w-full object-contain drop-shadow-[0_35px_45px_rgba(0,0,0,0.35)]"
-              />
+              /> */}
             </motion.div>
 
             {/* =================================================
                 AVAILABILITY CARD
             ================================================= */}
 
-            <motion.div
+            {/* <motion.div
               initial={{
                 opacity: 0,
                 x: 50,
@@ -603,7 +603,7 @@ export function HomeHero({ className }: { className?: string }) {
                   {t(currentSlide.unitsAvailableKey)}
                 </p>
               </div>
-            </motion.div>
+            </motion.div> */}
 
             {/* =================================================
                 DATE / RESERVATION CHIP
@@ -707,9 +707,7 @@ export function HomeHero({ className }: { className?: string }) {
                 <span
                   className={cn(
                     "font-mono text-[10px] transition-colors",
-                    index === current
-                      ? "text-emerald-300"
-                      : "text-white/25",
+                    index === current ? "text-emerald-300" : "text-white/25",
                   )}
                 >
                   0{index + 1}
@@ -718,9 +716,7 @@ export function HomeHero({ className }: { className?: string }) {
                 <div
                   className={cn(
                     "relative h-px overflow-hidden transition-all duration-500",
-                    index === current
-                      ? "w-20 bg-white/10"
-                      : "w-7 bg-white/10",
+                    index === current ? "w-20 bg-white/10" : "w-7 bg-white/10",
                   )}
                 >
                   {index === current && (

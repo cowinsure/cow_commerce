@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import useOrder from "@/hooks/order/useOrder";
 import { Order } from "@/lib/models/orderDTO";
 import { useAuth } from "@/hooks/auth/useAuth";
@@ -20,14 +26,21 @@ interface OrderContextValue {
 const OrderContext = createContext<OrderContextValue | undefined>(undefined);
 
 export function OrderProvider({ children }: { children: ReactNode }) {
-  const { orders, loading, error, fetchOrders, fetchOrderById, submitPayment, clearError } =
-    useOrder();
+  const {
+    orders,
+    loading,
+    error,
+    fetchOrders,
+    fetchOrderById,
+    submitPayment,
+    clearError,
+  } = useOrder();
 
   const { isAuthenticated } = useAuth();
 
   const refreshOrders = async () => {
     try {
-      await fetchOrders(1, 99, 1);
+      await fetchOrders(1, 99, -1, -1);
     } catch {
       // error is handled by useOrder state
     }

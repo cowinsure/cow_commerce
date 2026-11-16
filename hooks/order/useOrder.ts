@@ -51,10 +51,10 @@ export function useOrder() {
   // }, []);
 
   const fetchOrders = useCallback(
-    async (page: number = 1, pageSize: number = 10, organization_id: 1) => {
+    async (page: number = 1, pageSize: number = 10, organization_id: -1, branch_id: -1) => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
       try {
-        const response = await getOrdersApi(page, pageSize, organization_id);
+        const response = await getOrdersApi(page, pageSize, organization_id ,branch_id);
         setState((prev) => ({
           ...prev,
           orders: response.data,

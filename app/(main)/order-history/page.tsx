@@ -2,13 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Search,
-  Box,
-  EyeClosed,
-  Eye,
-  Banknote,
-} from "lucide-react";
+import { Search, Box, EyeClosed, Eye, Banknote } from "lucide-react";
 import { Order } from "@/lib/models/orderDTO";
 import Tooltip from "@/components/ui/ToolTip";
 import { Modal } from "@/components/ui/Modal";
@@ -18,6 +12,7 @@ import { CustomDropDown } from "@/components/ui/CustomDropDown";
 import { useLocalization } from "@/context/LocalizationContext";
 import { useToast } from "@/components/ui/Toast";
 import { useOrderContext } from "@/context/OrderContext";
+import { useAuth } from "@/hooks/auth/useAuth";
 import { useSearchParams } from "next/navigation";
 
 // Animation variants
@@ -100,14 +95,16 @@ export default function OrderHistoryPage() {
   const { t, locale } = useLocalization();
   const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
   const [selectedOrderStatus, setSelectedOrderStatus] = useState("all");
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState("all");
   const [hoveredOrder, setHoveredOrder] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
-  const [highlightedOrderNo, setHighlightedOrderNo] = useState<string | null>(null);
+  const [highlightedOrderNo, setHighlightedOrderNo] = useState<string | null>(
+    null,
+  );
   const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // Payment modal state
@@ -116,8 +113,17 @@ export default function OrderHistoryPage() {
   const [paymentLoading, setPaymentLoading] = useState(false);
 
   const { orders, refreshOrders, fetchOrderById } = useOrderContext();
+  const { isAuthenticated } = useAuth();
+  const ordersRequestedRef = useRef(false);
   const searchParams = useSearchParams();
   const orderNoParam = searchParams.get("orderNo");
+
+  useEffect(() => {
+    if (ordersRequestedRef.current) return;
+    if (!isAuthenticated) return;
+    ordersRequestedRef.current = true;
+    refreshOrders();
+  }, [isAuthenticated, refreshOrders]);
 
   useEffect(() => {
     if (!orderNoParam) return;
@@ -139,7 +145,8 @@ export default function OrderHistoryPage() {
 
       setSelectedOrder(res?.data?.[0] ?? null); // Get first order from array
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to load order details";
+      const message =
+        err instanceof Error ? err.message : "Failed to load order details";
       showToast(message, "error");
     } finally {
       setDetailsLoading(false);
@@ -166,25 +173,27 @@ export default function OrderHistoryPage() {
     try {
       await refreshOrders();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to refresh orders";
+      const message =
+        err instanceof Error ? err.message : "Failed to refresh orders";
       showToast(message, "error");
     }
   };
 
-  const filteredOrders = (orders || []).filter(
-    (order) => {
-      const matchesOrderStatus =
-        selectedOrderStatus === "all" ||
-        order.order_status.toLowerCase() === selectedOrderStatus;
-      const matchesPaymentStatus =
-        selectedPaymentStatus === "all" ||
-        order.payment_status.toLowerCase() === selectedPaymentStatus;
-      return matchesOrderStatus && matchesPaymentStatus;
-    },
-  );
+  const filteredOrders = (orders || []).filter((order) => {
+    const matchesOrderStatus =
+      selectedOrderStatus === "all" ||
+      order.order_status.toLowerCase() === selectedOrderStatus;
+    const matchesPaymentStatus =
+      selectedPaymentStatus === "all" ||
+      order.payment_status.toLowerCase() === selectedPaymentStatus;
+    return matchesOrderStatus && matchesPaymentStatus;
+  });
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 mt-10" lang={locale === "bn" ? "bn" : "en"}>
+    <div
+      className="min-h-screen flex flex-col bg-slate-50 mt-10"
+      lang={locale === "bn" ? "bn" : "en"}
+    >
       <main className="grow pt-24 pb-24 overflow-hidden">
         {/* Background Elements */}
         <div className="fixed inset-0 pointer-events-none">
@@ -259,48 +268,65 @@ export default function OrderHistoryPage() {
           {/* Filters & Search */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-4 mb-8"
+            className="flex flex-col sm:flex-row gap-4 justify-between mb-8"
           >
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-              <input
-                type="text"
-                placeholder={t("order_history.search_placeholder")}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white rounded-2xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
-              />
+            <div className="flex flex-col gap-1 justify-center max-w-md min-w-lg">
+              <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                Search
+              </label>
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder={t("order_history.search_placeholder")}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-4 py-2 bg-white rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition-all"
+                />
+              </div>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                {t("order_history.filter_order_status")}
-              </label>
-              <CustomDropDown
-                options={[
-                  { value: "all", label: t("order_history.filter_all") },
-                  { value: "pending", label: t("order_history.filter_pending") },
-                  { value: "approved", label: t("order_history.filter_approved") },
-                ]}
-                value={selectedOrderStatus}
-                onChange={setSelectedOrderStatus}
-                placeholder={t("order_history.filter_order_status")}
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                {t("order_history.filter_payment_status")}
-              </label>
-              <CustomDropDown
-                options={[
-                  { value: "all", label: t("order_history.filter_all") },
-                  { value: "paid", label: t("order_history.filter_paid") },
-                  { value: "unpaid", label: t("order_history.filter_unpaid") },
-                ]}
-                value={selectedPaymentStatus}
-                onChange={setSelectedPaymentStatus}
-                placeholder={t("order_history.filter_payment_status")}
-              />
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                  {t("order_history.filter_order_status")}
+                </label>
+                <CustomDropDown
+                  options={[
+                    { value: "all", label: t("order_history.filter_all") },
+                    {
+                      value: "pending",
+                      label: t("order_history.filter_pending"),
+                    },
+                    {
+                      value: "approved",
+                      label: t("order_history.filter_approved"),
+                    },
+                  ]}
+                  value={selectedOrderStatus}
+                  onChange={setSelectedOrderStatus}
+                  placeholder={t("order_history.filter_order_status")}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                  {t("order_history.filter_payment_status")}
+                </label>
+                <CustomDropDown
+                  options={[
+                    { value: "all", label: t("order_history.filter_all") },
+                    { value: "paid", label: t("order_history.filter_paid") },
+                    {
+                      value: "unpaid",
+                      label: t("order_history.filter_unpaid"),
+                    },
+                  ]}
+                  value={selectedPaymentStatus}
+                  onChange={setSelectedPaymentStatus}
+                  placeholder={t("order_history.filter_payment_status")}
+                />
+              </div>
             </div>
           </motion.div>
 
@@ -313,10 +339,18 @@ export default function OrderHistoryPage() {
             <div className="hidden lg:grid grid-cols-6 gap-4 p-6 bg-slate-50/50 border-b border-slate-100 text-xs font-bold text-slate-500 uppercase tracking-wider">
               <div className="">{t("order_history.table_date")}</div>
               <div className="">{t("order_history.table_order_no")}</div>
-              <div className="text-center">{t("order_history.table_amount")}</div>
-              <div className="text-center">{t("order_history.table_status")}</div>
-              <div className="text-center">{t("order_history.table_payment_status")}</div>
-              <div className="text-center">{t("order_history.table_action")}</div>
+              <div className="text-center">
+                {t("order_history.table_amount")}
+              </div>
+              <div className="text-center">
+                {t("order_history.table_status")}
+              </div>
+              <div className="text-center">
+                {t("order_history.table_payment_status")}
+              </div>
+              <div className="text-center">
+                {t("order_history.table_action")}
+              </div>
             </div>
 
             {/* Table Body */}
@@ -336,11 +370,11 @@ export default function OrderHistoryPage() {
                         rowRefs.current[order.order_no] = node;
                       }}
                       data-order-no={order.order_no}
-                       className={cn(
-                         "group grid grid-cols-1 lg:grid-cols-6 gap-4 p-4 items-center *:transition-transform *:duration-300 *:ease-out hover:bg-emerald-50/40 *:group-hover:scale-105",
-                         highlightedOrderNo === order.order_no &&
-                           "ring-2 ring-emerald-500 ring-offset-2",
-                       )}
+                      className={cn(
+                        "group grid grid-cols-1 lg:grid-cols-6 gap-4 p-4 items-center *:transition-transform *:duration-300 *:ease-out hover:bg-emerald-50/40 *:group-hover:scale-105",
+                        highlightedOrderNo === order.order_no &&
+                          "ring-2 ring-emerald-500 ring-offset-2",
+                      )}
                     >
                       {/* Order Date */}
                       <div className=" flex items-center gap-4">
@@ -375,19 +409,19 @@ export default function OrderHistoryPage() {
                         </span>
                       </div>
 
-                       {/* payment status */}
-                       <div className="text-center text-sm">
-                         <span
-                           className={getStatusBadge(
-                             order.payment_status,
-                             "payment",
-                           )}
-                         >
-                           {order.payment_status}
-                         </span>
-                       </div>
+                      {/* payment status */}
+                      <div className="text-center text-sm">
+                        <span
+                          className={getStatusBadge(
+                            order.payment_status,
+                            "payment",
+                          )}
+                        >
+                          {order.payment_status}
+                        </span>
+                      </div>
 
-                       {/* Action */}
+                      {/* Action */}
                       <div className="flex justify-center items-center gap-2">
                         {/* Pay Now button for APPROVED + UNPAID orders */}
 
